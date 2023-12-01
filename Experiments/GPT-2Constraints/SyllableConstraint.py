@@ -77,7 +77,7 @@ class SyllableConstraint(Constraint):
         
 
         if result > self.syllable_amount or (result == self.syllable_amount and count_syllables(current_token_text) == 0):
-            next_score = next_score + next_score*(100) ** ( current_length ** length_penalty)
+            next_score = next_score + next_score*(10) * ( current_length ** length_penalty)
             #next_score = float('-inf')
         elif result == self.syllable_amount:
             next_score = next_score - next_score*0.1 * ( current_length ** length_penalty)
