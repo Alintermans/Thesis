@@ -2,6 +2,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, set_seed, Stopping
 from BeamSearchScorerConstrained import BeamSearchScorerConstrained
 from Constraint import ConstraintList, Constraint
 from SyllableConstraint import SyllableConstraint,get_syllable_count_of_sentence
+import SyllableConstraint
 import torch
 import bitsandbytes
 
