@@ -1,19 +1,17 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM, set_seed, StoppingCriteriaList, MaxLengthCriteria, LogitsProcessorList, NoBadWordsLogitsProcessor
+from transformers import AutoTokenizer, AutoModelForCausalLM, set_seed, StoppingCriteriaList, MaxLengthCriteria, LogitsProcessorList, NoBadWordsLogitsProcessor, NoRepeatNGramLogitsProcessor
 from BeamSearchScorerConstrained import BeamSearchScorerConstrained
 from Constraint import ConstraintList, Constraint
 from SyllableConstraint import SyllableConstraint,get_syllable_count_of_sentence
-import SyllableConstraint
 import torch
-import bitsandbytes
 
 
-tokenizer = AutoTokenizer.from_pretrained("epfl-llm/meditron-7b")
-model = AutoModelForCausalLM.from_pretrained("epfl-llm/meditron-7b", load_in_8bit=True)    
+tokenizer = AutoTokenizer.from_pretrained("gpt2")
+model = AutoModelForCausalLM.from_pretrained("gpt2")    
 
 set_seed(42)
-num_beams = 5
+num_beams = 10
 
-forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '\\', '/', '_', '-', '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?', '\n']
+forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '\\', '/', '_', '——', ' — ', '..' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?', '\n', '...']
 forbidden_tokens = [[tokenizer.encode(c)[0]] for c in forbidden_charachters]
 
 def generate_parodie_line(prompt, line):
@@ -28,6 +26,7 @@ def generate_parodie_line(prompt, line):
     stopping_criteria_list = constraints.get_stopping_criteria_list()
     stopping_criteria = StoppingCriteriaList(stopping_criteria_list)
     logits_processor_list = constraints.get_logits_processor_list()
+    logits_processor_list.append(NoRepeatNGramLogitsProcessor(2))
     logits_processor_list.append(NoBadWordsLogitsProcessor(forbidden_tokens, eos_token_id=tokenizer.eos_token_id))
     logits_processor = LogitsProcessorList(logits_processor_list)
 
@@ -45,6 +44,7 @@ def generate_parodie_line(prompt, line):
         stopping_criteria=stopping_criteria,
         logits_processor = logits_processor,
         )
+
     sentence = tokenizer.decode(generated[0], skip_special_tokens=True)[len(prompt):]
     print('syllable count: ', get_syllable_count_of_sentence(sentence))
     return sentence

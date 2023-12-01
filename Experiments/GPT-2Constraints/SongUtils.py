@@ -9,7 +9,6 @@ def divide_song_into_paragraphs(song):
             if first_done:
                 paragraphs.append((current_paragraph_name, current_paragraph))
                 current_paragraph = []
-
             else:
                 first_done = True
             current_paragraph_name = line
@@ -17,5 +16,6 @@ def divide_song_into_paragraphs(song):
                 continue
         else:
             current_paragraph.append(line)
+    paragraphs.append((current_paragraph_name, current_paragraph))
     return paragraphs
 

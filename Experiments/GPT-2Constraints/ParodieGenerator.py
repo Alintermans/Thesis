@@ -18,21 +18,26 @@ paragraps = divide_song_into_paragraphs(original_song)
 
 original_song = "ORIGINAL SONG: \n\n" + original_song 
 
-parodie = "\n\nPARODIE: \n\n"
+parodie = "\n\nAlready generated PARODIE: \n\n"
+next_line_text = "The original line is: "
+next_line_text_parodie = "The parodie line is: "
 
-prompt = initial_text_prompt + context + original_song + parodie
+prompt = initial_text_prompt + context 
+
 
 # generate line per line
 for paragraph in paragraps:
     parodie += paragraph[0] + "\n"
     prompt += paragraph[0] + "\n"
     for line in paragraph[1]:
-        result = generate_parodie_line(prompt, line) + "\n"
+        new_prompt = prompt + parodie + next_line_text + line + "\n" + next_line_text_parodie
+        result = generate_parodie_line(new_prompt, line) + "\n"
         parodie += result
-        prompt += result
+        
         print(line, " | ",result)
     parodie += "\n"
     prompt += "\n"
+    
 
 print("Paordie: ", parodie)
 

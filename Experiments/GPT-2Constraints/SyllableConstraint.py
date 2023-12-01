@@ -10,10 +10,20 @@ d = cmudict.dict()
 
 
 def tokenize_sentence(sentence):
-    first_round = nltk.word_tokenize(sentence)
+    
+    
+    first_round = nltk.word_tokenize(sentence, language='english', preserve_line=False)
+    temp = []
+    for i in range(len(first_round)):
+        if first_round[i].endswith("-"):
+            temp.append(first_round[i][:-1])
+        elif not first_round[i] in [".", ",", "!", "?", ";", ":", "-", "\"", "(", ")", "[", "]", "{", "}", '&', '#', '*', '$', '£', '`', '+', '\n', '_', '``']:
+            temp.append(first_round[i])
+        
+    first_round = temp
     result = []
     last_one_appended = False
-    for i in range(len(first_round)-2):
+    for i in range(len(first_round)-1):
         if first_round[i+1].startswith("'"):
             result.append(first_round[i]+first_round[i+1])
             if i == len(first_round)-2:
@@ -24,14 +34,17 @@ def tokenize_sentence(sentence):
             result.append(first_round[i])
 
     if not last_one_appended:
-        result.append(first_round[-2])
-    result.append(first_round[-1])
+        result.append(first_round[-1])
+    
+    if result[-1].endswith("'"):
+        result[-1] = result[-1][:-1]
+    
     return result
 
 
 def count_syllables(word):
     #if the string is a puntcuation mark, return 0
-    if word in [".", ",", "!", "?", ";", ":", "-", "'", "\"", "(", ")", "[", "]", "{", "}",'``' , '&', '#', '*', '$', '£', '`', '+', '\n']:
+    if word in [".", ",", "!", "?", ";", ":", "-", "'", "\"", "(", ")", "[", "]", "{", "}",'``' , '&', '#', '*', '$', '£', '`', '+', '\n', '_']:
         return 0
     try:
         result =  [len(list(y for y in x if y[-1].isdigit())) for x in d[word.lower()]][0]
@@ -105,3 +118,142 @@ class SyllableConstraint(Constraint):
     
     def is_logits_processor_active(self):
         return False
+
+#write tests to test the tokenize_sentence function so it will correctly put all words like I'm, I've etc. together
+def test_tokenize_sentence():
+    sentence = "I'm a test sentence"
+    result = tokenize_sentence(sentence)
+    assert result == ["I'm", "a", "test", "sentence"]
+    
+    sentence = "I'm a test sentence."
+    result = tokenize_sentence(sentence)
+    assert result == ["I'm", "a", "test", "sentence"]
+    
+    sentence = "I'm a test sentence!"
+    result = tokenize_sentence(sentence)
+    assert result == ["I'm", "a", "test", "sentence"]
+    
+    sentence = "I'm a test sentence?"
+    result = tokenize_sentence(sentence)
+    assert result == ["I'm", "a", "test", "sentence"]
+    
+    sentence = "I'm a test sentence;"
+    result = tokenize_sentence(sentence)
+    assert result == ["I'm", "a", "test", "sentence"]
+    
+    sentence = "I'm a test sentence:"
+    result = tokenize_sentence(sentence)
+    assert result == ["I'm", "a", "test", "sentence"]
+    
+    sentence = "I'm a test sentence-"
+    result = tokenize_sentence(sentence)
+    assert result == ["I'm", "a", "test", "sentence"]
+    
+    sentence = "I'm a test sentence'"
+    result = tokenize_sentence(sentence)
+    assert result == ["I'm", "a", "test", "sentence"]
+    
+    sentence = "I'm a test sentence\n"
+    result = tokenize_sentence(sentence)
+    assert result == ["I'm", "a", "test", "sentence"]
+    
+    sentence = "I'm a test sentence("
+    result = tokenize_sentence(sentence)
+    assert result == ["I'm", "a", "test", "sentence"]
+    
+    sentence = "I'm a test sentence)"
+    result = tokenize_sentence(sentence)
+    assert result == ["I'm", "a", "test", "sentence"]
+    
+    sentence = "I'm a test sentence["
+    result = tokenize_sentence(sentence)
+    assert result == ["I'm", "a", "test", "sentence"]
+    
+    sentence = "I'm a test sentence]"
+    result = tokenize_sentence(sentence)
+    assert result == ["I'm", "a", "test", "sentence"]
+    
+    sentence = "I'm a test sentence{"
+    result = tokenize_sentence(sentence )
+    assert result == ["I'm", "a", "test", "sentence"]
+
+    sentence = "I'm a test sentence}"
+    result = tokenize_sentence(sentence)
+    assert result == ["I'm", "a", "test", "sentence"]
+
+    sentence = "I'm "
+    result = tokenize_sentence(sentence)
+    assert result == ["I'm"]
+
+
+def test_count_syllables():
+    assert count_syllables("test") == 1
+    assert count_syllables("sentence") == 2
+    assert count_syllables("I'm") == 1
+    assert count_syllables("I've") == 1
+    assert count_syllables("I'll") == 1
+    assert count_syllables("I'd") == 1
+    assert count_syllables("I") == 1
+    assert count_syllables("I've") == 1
+    assert count_syllables("I'll") == 1
+    assert count_syllables("I'd") == 1
+    assert count_syllables("I") == 1
+    assert count_syllables("I've") == 1
+    assert count_syllables("I'll") == 1
+    assert count_syllables("I'd") == 1
+    assert count_syllables("I") == 1
+    assert count_syllables("I've") == 1
+    assert count_syllables("I'll") == 1
+    assert count_syllables("I'd") == 1
+    assert count_syllables("I") == 1
+    assert count_syllables("I've") == 1
+    assert count_syllables("I'll") == 1
+    assert count_syllables("I'd") == 1
+    assert count_syllables("I") == 1
+    assert count_syllables("I've") == 1
+    assert count_syllables("I'll") == 1
+    assert count_syllables("I'd") == 1
+    assert count_syllables("I") == 1
+    assert count_syllables("I've") == 1
+    assert count_syllables("I'll") == 1
+    assert count_syllables("I'd") == 1
+    assert count_syllables("I") == 1
+    assert count_syllables("I've") == 1
+    assert count_syllables("I'll") == 1
+    assert count_syllables("I'd") == 1
+    assert count_syllables("I") == 1
+    assert count_syllables("I've") == 1
+
+def test_count_syllables_sentences():
+    assert get_syllable_count_of_sentence("I'm a test sentence") == 5
+    assert get_syllable_count_of_sentence("I'm a test sentence.") == 5
+    assert get_syllable_count_of_sentence("I'm a test sentence!") == 5
+    assert get_syllable_count_of_sentence("I'm a test sentence?") == 5
+    assert get_syllable_count_of_sentence("I'm a test sentence;") == 5
+    assert get_syllable_count_of_sentence("I'm a test sentence:") == 5
+    assert get_syllable_count_of_sentence("I'm a test sentence-") == 5
+    assert get_syllable_count_of_sentence("I'm a test sentence'") == 5
+    assert get_syllable_count_of_sentence("I'm a test sentence\n") == 5
+    assert get_syllable_count_of_sentence("I'm a test sentence(") == 5
+    assert get_syllable_count_of_sentence("I'm a test sentence)") == 5
+    assert get_syllable_count_of_sentence("I'm a test sentence[") == 5
+    assert get_syllable_count_of_sentence("I'm a test sentence]") == 5
+    assert get_syllable_count_of_sentence("I'm a test sentence{") == 5
+    assert get_syllable_count_of_sentence("I'm a test sentence}") == 5
+    assert get_syllable_count_of_sentence("I'm ") == 1
+    assert get_syllable_count_of_sentence("I'm") == 1
+    assert get_syllable_count_of_sentence("I'm a") == 2
+    assert get_syllable_count_of_sentence("I'm a ") == 2
+    assert get_syllable_count_of_sentence("I'm a test") == 3
+    assert get_syllable_count_of_sentence("I'm a test ") == 3
+    
+    assert get_syllable_count_of_sentence("I'm a test sentence\nI'm a test sentence") == 10
+    assert get_syllable_count_of_sentence("I'm a test sentence\nI'm a test sentence\nI'm a test sentence") == 15
+    
+
+
+if __name__ == "__main__":
+    test_tokenize_sentence()
+    test_count_syllables()
+    test_count_syllables_sentences()
+    print("All tests passed")
