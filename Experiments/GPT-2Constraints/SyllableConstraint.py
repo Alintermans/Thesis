@@ -4,10 +4,10 @@ from nltk.corpus import cmudict
 import nltk
 import torch
 
-
-d = cmudict.dict()
 nltk.download('punkt')
 nltk.download('cmudict')
+d = cmudict.dict()
+
 
 def tokenize_sentence(sentence):
     first_round = nltk.word_tokenize(sentence)
