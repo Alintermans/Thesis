@@ -5,11 +5,11 @@ from SyllableConstraint import SyllableConstraint,get_syllable_count_of_sentence
 import torch
 
 
-tokenizer = AutoTokenizer.from_pretrained("gpt2")
-model = AutoModelForCausalLM.from_pretrained("gpt2")    
+tokenizer = AutoTokenizer.from_pretrained("gpt2-medium")
+model = AutoModelForCausalLM.from_pretrained("gpt2-medium")    
 
 set_seed(42)
-num_beams = 10
+num_beams = 2
 
 forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '\\', '/', '_', '——', ' — ', '..' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?', '\n', '...']
 forbidden_tokens = [[tokenizer.encode(c)[0]] for c in forbidden_charachters]

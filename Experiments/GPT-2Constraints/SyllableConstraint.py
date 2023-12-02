@@ -10,7 +10,8 @@ d = cmudict.dict()
 
 
 def tokenize_sentence(sentence):
-    
+    if sentence == "":
+        return []
     
     first_round = nltk.word_tokenize(sentence, language='english', preserve_line=False)
     temp = []
@@ -43,6 +44,8 @@ def tokenize_sentence(sentence):
 
 
 def count_syllables(word):
+    if word == "":
+        return 0
     #if the string is a puntcuation mark, return 0
     if word in [".", ",", "!", "?", ";", ":", "-", "'", "\"", "(", ")", "[", "]", "{", "}",'``' , '&', '#', '*', '$', '£', '`', '+', '\n', '_']:
         return 0
@@ -194,35 +197,8 @@ def test_count_syllables():
     assert count_syllables("I'll") == 1
     assert count_syllables("I'd") == 1
     assert count_syllables("I") == 1
-    assert count_syllables("I've") == 1
-    assert count_syllables("I'll") == 1
-    assert count_syllables("I'd") == 1
-    assert count_syllables("I") == 1
-    assert count_syllables("I've") == 1
-    assert count_syllables("I'll") == 1
-    assert count_syllables("I'd") == 1
-    assert count_syllables("I") == 1
-    assert count_syllables("I've") == 1
-    assert count_syllables("I'll") == 1
-    assert count_syllables("I'd") == 1
-    assert count_syllables("I") == 1
-    assert count_syllables("I've") == 1
-    assert count_syllables("I'll") == 1
-    assert count_syllables("I'd") == 1
-    assert count_syllables("I") == 1
-    assert count_syllables("I've") == 1
-    assert count_syllables("I'll") == 1
-    assert count_syllables("I'd") == 1
-    assert count_syllables("I") == 1
-    assert count_syllables("I've") == 1
-    assert count_syllables("I'll") == 1
-    assert count_syllables("I'd") == 1
-    assert count_syllables("I") == 1
-    assert count_syllables("I've") == 1
-    assert count_syllables("I'll") == 1
-    assert count_syllables("I'd") == 1
-    assert count_syllables("I") == 1
-    assert count_syllables("I've") == 1
+    assert count_syllables("I don't have") == 3
+    assert count_syllables("-- I haven't had a") == 5
 
 def test_count_syllables_sentences():
     assert get_syllable_count_of_sentence("I'm a test sentence") == 5
@@ -246,6 +222,9 @@ def test_count_syllables_sentences():
     assert get_syllable_count_of_sentence("I'm a ") == 2
     assert get_syllable_count_of_sentence("I'm a test") == 3
     assert get_syllable_count_of_sentence("I'm a test ") == 3
+    assert get_syllable_count_of_sentence("-- I haven't had a") == 5
+    assert get_syllable_count_of_sentence("-- ") == 0
+    assert get_syllable_count_of_sentence("") == 0
     
     assert get_syllable_count_of_sentence("I'm a test sentence\nI'm a test sentence") == 10
     assert get_syllable_count_of_sentence("I'm a test sentence\nI'm a test sentence\nI'm a test sentence") == 15
