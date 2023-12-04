@@ -1,5 +1,5 @@
 from Constraint import Constraint
-from SyllableConstraint import tokenize_sentence, get_syllable_count_of_sentence
+from SongUtils import tokenize_sentence, get_syllable_count_of_sentence
 import torch
 import pronouncing
 

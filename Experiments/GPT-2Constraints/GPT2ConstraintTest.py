@@ -1,7 +1,8 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM, set_seed, StoppingCriteriaList, MaxLengthCriteria, LogitsProcessorList, NoBadWordsLogitsProcessor
 from BeamSearchScorerConstrained import BeamSearchScorerConstrained
 from Constraint import ConstraintList, Constraint
-from SyllableConstraint import SyllableConstraint,get_syllable_count_of_sentence
+from SyllableConstraint import SyllableConstraint
+from SongUtils import get_syllable_count_of_sentence
 from RhyminConstraint import EndRhymeWith
 import torch
 
