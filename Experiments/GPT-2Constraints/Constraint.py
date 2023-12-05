@@ -6,33 +6,33 @@ class Constraint(ABC):
     #Abstract class for constraints
     
     #Returns a score for the next token, given the current token, the current score and the current input_ids within the beam search, the next score is the cumulated neg log likelihood of the beam search
-    def apply_beam_constraint(nexttoken, next_score, input_ids, cur_len, length_penalty):
+    def apply_beam_constraint(self, nexttoken, next_score, input_ids, cur_len, length_penalty):
         if self.is_beam_constraint_active():
             raise NotImplementedError("apply_beam_constraint not implemented")
         else:
             return next_score
     
     
-    def stopping_criteria(input_ids: torch.LongTensor, score: torch.FloatTensor, **kwargs) -> bool:
+    def stopping_criteria(self, input_ids: torch.LongTensor, score: torch.FloatTensor, **kwargs) -> bool:
         raise NotImplementedError("stopping_criteria not implemented")
     
     
-    def logits_processor(input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
+    def logits_processor(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
         if self.is_logits_processor_active():
             raise NotImplementedError("logits_processor not implemented")
         else:
             return scores
     
     @abstractmethod
-    def is_beam_constraint_active():
+    def is_beam_constraint_active(self):
         raise NotImplementedError("is_beam_constraint_active not implemented")
     
     @abstractmethod
-    def is_stopping_criteria_active():
+    def is_stopping_criteria_active(self):
         raise NotImplementedError("get_stopping_criteria not implemented")
     
     @abstractmethod
-    def is_logits_processor_active():
+    def is_logits_processor_active(self):
         raise NotImplementedError("get_logits_processor not implemented")
 
 

@@ -44,6 +44,8 @@ def tokenize_sentence(sentence):
             temp.append(first_round[i])
         
     first_round = temp
+    if first_round == []:
+        return []
     result = []
     last_one_appended = False
     for i in range(len(first_round)-1):
