@@ -2,79 +2,9 @@ import nltk
 from nltk.corpus import cmudict
 from multiprocessing import Pool
 import multiprocessing
-
-d = cmudict.dict()
-
-# Define function to count the number of syllables in a word
-def count_syllables(word):
-    #if the string is a puntcuation mark, return 0
-    if word in [".", ",", "!", "?", ";", ":", "-", "'", "\"", "(", ")", "[", "]", "{", "}"]:
-        return 0
-
-    
-    try:
-        result =  [len(list(y for y in x if y[-1].isdigit())) for x in d[word.lower()]][0]
-    except KeyError:
-        # if word not found in cmudict
-        result =  count_syllables_hard(word)
-    return result
-def count_syllables_hard(word):
-    word = word.lower()
-    count = 0
-    vowels = "aeiouy"
-    if word[0] in vowels:
-        count += 1
-    for index in range(1, len(word)):
-        if word[index] in vowels and word[index - 1] not in vowels:
-            count += 1
-    if word.endswith("e"):
-        count -= 1
-    if count == 0:
-        count += 1
-    return count
-        
-
-
-# Define function to count the number of syllables in a line of text
-def count_syllables_line(line):
-    words = nltk.word_tokenize(line)
-    result = sum(count_syllables(word) for word in words)
-    #print("Line:", line, "Syllables:", result)
-    return result
-
-# Define a function to count matching lines in a paragraph
-def count_matching_lines(paragraph):
-    lines1 = paragraph[0]
-    lines2 = paragraph[1]
-
-    # Remove empty lines from the lists of lines
-    lines1 = [line for line in lines1 if line != ""]
-    lines2 = [line for line in lines2 if line != ""]
-
-    # Print the number of lines in each paragraph
-    # print("Number of lines in paragraph of original song:", len(lines1))
-    # print("Number of lines in paragraph of parodie song:", len(lines2))
-
-    syllable_counts1 = list(map(count_syllables_line, lines1))
-    syllable_counts2 = list(map(count_syllables_line, lines2))
-    # Count the number of matching lines in the paragraph
-    matching_lines = sum(
-        1 for syllables1, syllables2 in zip(syllable_counts1, syllable_counts2) if syllables1 == syllables2
-    )
-
-    syllable_count_differences = []
-    
-    for syllables1, syllables2 in zip(syllable_counts1, syllable_counts2):
-        syllable_count_differences.append(abs(syllables1 - syllables2))
-        
-    
-    return matching_lines, syllable_count_differences
-
-
+from SongUtils import count_matching_lines_on_syllable_amount
 
 if __name__ == '__main__':
-    nltk.download('punkt')
-    nltk.download('cmudict')
     #Ask the user for the path to the input file, which contains two songs one ORIGINAL and one PARODIE, the song has a structure dictated by [] tags and the lines are separated by \n characters
     #The program will count the number of lines with matching syllable counts per paragraph and print the result
     path = input("Enter the path to the input file: ")
@@ -82,16 +12,14 @@ if __name__ == '__main__':
     # Read the input file
     with open(path, "r") as f:
         text = f.read()
-
     # Split the text into to the original and parodie song by the ORIGINAL: and PARODIE: tags
     text = text.split("ORIGINAL:")[1]
     text = text.split("PARODIE:")
-    lines1 = text[0].split("\n")
-    lines2 = text[1].split("\n")
+    original = text[0].split("\n")
+    parodie = text[1].split("\n")
 
-    # Remove empty lines from the lists of lines
-    lines1 = [line for line in lines1 if line != ""]
-    lines2 = [line for line in lines2 if line != ""]
+    lines1 = [line for line in original if line != ""]
+    lines2 = [line for line in parodie if line != ""]
 
     # dived the lines into paragraphs by the [] tags the text within the tags is ignored
     paragraphs1 =  []
@@ -126,12 +54,10 @@ if __name__ == '__main__':
     matching_lines = 0
     total_lines = 0
 
-
-
     # Use multiprocessing to count matching lines in each paragraph
     pool = Pool(multiprocessing.cpu_count())
 
-    matching_lines_list = pool.map(count_matching_lines, zip(paragraphs1, paragraphs2))
+    matching_lines_list = pool.map(count_matching_lines_on_syllable_amount, zip(paragraphs1, paragraphs2))
     matching_lines_list, syllable_count_differences_list = zip(*matching_lines_list)
     print("Matching lines list:", matching_lines_list)
     print("Syllable count differences list:", syllable_count_differences_list)

@@ -99,6 +99,32 @@ def get_syllable_count_of_sentence(sentence):
     result = sum(count_syllables(word) for word in words)
     return result
 
+# Count the number of matching lines in respect to the same number of syllables in two paragraphs, where each paragraph is a list of lines
+def count_matching_lines_on_syllable_amount(args):
+    paragraph1, paragraph2 = args
+
+    # Remove empty lines from the lists of lines
+    lines1 = [line for line in paragraph1 if line != ""]
+    lines2 = [line for line in paragraph2 if line != ""]
+
+    # Print the number of lines in each paragraph
+    # print("Number of lines in paragraph of original song:", len(lines1))
+    # print("Number of lines in paragraph of parodie song:", len(lines2))
+
+    syllable_counts1 = list(map(get_syllable_count_of_sentence, lines1))
+    syllable_counts2 = list(map(get_syllable_count_of_sentence, lines2))
+    # Count the number of matching lines in the paragraph
+    matching_lines = sum(
+        1 for syllables1, syllables2 in zip(syllable_counts1, syllable_counts2) if syllables1 == syllables2
+    )
+
+    syllable_count_differences = []
+    
+    for syllables1, syllables2 in zip(syllable_counts1, syllable_counts2):
+        syllable_count_differences.append(abs(syllables1 - syllables2))
+        
+    
+    return matching_lines, syllable_count_differences
 
 
 

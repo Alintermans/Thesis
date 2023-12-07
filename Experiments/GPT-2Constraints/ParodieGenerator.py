@@ -39,5 +39,5 @@ for paragraph in paragraps:
     prompt += "\n"
     
 
-print("Paordie: ", parodie)
+print("Parodie: ", parodie)
 
