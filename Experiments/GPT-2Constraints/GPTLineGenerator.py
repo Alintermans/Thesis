@@ -23,12 +23,20 @@ bnb_config = BitsAndBytesConfig(
 )
 
 
-tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf", token= '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',)
-model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf",
-                                                low_cpu_mem_usage=True, 
-                                                token= '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',
-                                                quantization_config=bnb_config,
-                                                )    
+# tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf", token= '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',)
+# model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf",
+#                                                 #torch_dtype=torch.bfloat16, 
+#                                                 #low_cpu_mem_usage=True, 
+#                                                 token= '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',
+#                                                 quantization_config=bnb_config,
+#                                                 # max_memory={"cpu": "11GIB"},
+#                                                 # offload_state_dict=True,
+#                                                 # offload_folder = '/Volumes/Samsung\ SSD/offload'
+#                                                 #load_in_8bit=True
+#                                                 )    
+
+tokenizer = AutoTokenizer.from_pretrained("gpt2-medium")
+model = AutoModelForCausalLM.from_pretrained("gpt2-medium")
 
 set_seed(42)
 num_beams = 2
