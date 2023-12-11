@@ -6,8 +6,16 @@ from SongUtils import get_syllable_count_of_sentence
 import torch
 
 
-tokenizer = AutoTokenizer.from_pretrained("gpt2-medium")
-model = AutoModelForCausalLM.from_pretrained("gpt2-medium")    
+tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf")
+model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf",
+                                                torch_dtype=torch.bfloat16, 
+                                                low_cpu_mem_usage=True, 
+                                                token= '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',
+                                                # max_memory={"cpu": "11GIB"},
+                                                # offload_state_dict=True,
+                                                # offload_folder = '/Volumes/Samsung\ SSD/offload'
+                                                load_in_8bits=True
+                                                )    
 
 set_seed(42)
 num_beams = 2
