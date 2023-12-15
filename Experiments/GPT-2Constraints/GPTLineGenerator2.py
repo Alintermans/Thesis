@@ -10,7 +10,7 @@ import torch
 def generate_parodie(prompt, paragraphs, tokenizer = AutoTokenizer.from_pretrained("gpt2-medium"),  model = AutoModelForCausalLM.from_pretrained("gpt2-medium") ):
 
     set_seed(42)
-    num_beams = 3
+    num_beams = 2
 
     forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '\\', '/', '_', '——', ' — ', '..' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?', '\n', '...']
     forbidden_tokens = [[tokenizer.encode(c)[0]] for c in forbidden_charachters]

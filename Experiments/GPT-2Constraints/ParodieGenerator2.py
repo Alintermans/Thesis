@@ -3,7 +3,7 @@ import sys
 from SongUtils import divide_song_into_paragraphs, get_syllable_count_of_sentence
 from GPTLineGenerator2 import generate_parodie
 
-initial_text_prompt = ""
+initial_text_prompt = "I'm a lyric parodie writer and I make sure that the parodie has the same exact syllable count as the original song."
 
 #context = "I'm a lyric parodie writer this is an example of one and it's about that pineaple shouldn't be on pizza:\n"
 context = "The new parodie will be about that pineaple shouldn't be on pizza\n"
@@ -17,7 +17,9 @@ original_song_file.close()
 
 paragraphs = divide_song_into_paragraphs(original_song)
 
-prompt = initial_text_prompt + context 
+original_song = "ORIGINAL SONG: \n" + original_song
+
+prompt = initial_text_prompt + context + original_song + '\n' + "PARODIE: \n[Verse 1]\n"
 
 
 # generate line per line
