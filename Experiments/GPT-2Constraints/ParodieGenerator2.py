@@ -10,7 +10,7 @@ context = "The new parodie will be about that pineaple shouldn't be on pizza\n"
 
 original_song = ""
 
-original_song_file_path = 'Experiments/GPT-2Constraints/songs/it_is_over_now-taylor_swift_small.txt'
+original_song_file_path = 'Experiments/GPT-2Constraints/songs/it_is_over_now-taylor_swift_small_2.txt'
 original_song_file = open(original_song_file_path, 'r')
 original_song += original_song_file.read()
 original_song_file.close()
