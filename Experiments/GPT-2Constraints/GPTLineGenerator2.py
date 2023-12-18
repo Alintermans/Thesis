@@ -1,4 +1,4 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM, set_seed, StoppingCriteriaList, MaxLengthCriteria, LogitsProcessorList, NoBadWordsLogitsProcessor, NoRepeatNGramLogitsProcessor
+from transformers import AutoTokenizer, AutoModelForCausalLM, set_seed, StoppingCriteriaList, MaxLengthCriteria, LogitsProcessorList, NoBadWordsLogitsProcessor, NoRepeatNGramLogitsProcessor,  TopKLogitsWarper, TemperatureLogitsWarper, TopPLogitsWarper
 from BeamSearchScorerConstrained import BeamSearchScorerConstrained
 from Constraint import ConstraintList, Constraint
 from SyllableConstraint2 import SyllableConstraint
@@ -25,6 +25,13 @@ def generate_parodie(prompt, paragraphs, tokenizer = AutoTokenizer.from_pretrain
     logits_processor_list += constraints.get_logits_processor_list()
     logits_processor = LogitsProcessorList(logits_processor_list)
 
+    # logits_warper = LogitsProcessorList(
+    #     [
+    #         TopPLogitsWarper(0.9),
+    #         TemperatureLogitsWarper(0.5),
+    #     ]
+    # )
+
     beam_scorer = BeamSearchScorerConstrained(
         batch_size= 1,
         max_length=100000,
@@ -40,6 +47,7 @@ def generate_parodie(prompt, paragraphs, tokenizer = AutoTokenizer.from_pretrain
         beam_scorer,
         stopping_criteria=stopping_criteria,
         logits_processor = logits_processor,
+        
         )
     sentence = tokenizer.decode(generated[0], skip_special_tokens=True)[len(prompt):]
     return sentence
