@@ -43,7 +43,7 @@ def generate_parodie(prompt, paragraphs, tokenizer = AutoTokenizer.from_pretrain
     )
 
     generated = model.beam_search(
-        torch.cat([model_inputs['input_ids']] * num_beams),
+        torch.cat([model_inputs['input_ids']] * num_beams, dim=0),
         beam_scorer,
         stopping_criteria=stopping_criteria,
         logits_processor = logits_processor,
