@@ -35,6 +35,7 @@ model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf",
                                                 # offload_folder = '/Volumes/Samsung\ SSD/offload'
                                                 #load_in_8bit=True
                                                 max_memory=max_memory_mapping,
+                                                load_in_4bit=use_4bit,
                                                 )    
 
 # tokenizer = AutoTokenizer.from_pretrained("gpt2-medium")
