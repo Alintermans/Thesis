@@ -23,26 +23,37 @@ bnb_config = BitsAndBytesConfig(
 )
 
 
-# tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf", token= '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',)
-# model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf",
-#                                                 #torch_dtype=torch.bfloat16, 
-#                                                 #low_cpu_mem_usage=True, 
-#                                                 token= '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',
-#                                                 quantization_config=bnb_config,
-#                                                 # max_memory={"cpu": "11GIB"},
-#                                                 # offload_state_dict=True,
-#                                                 # offload_folder = '/Volumes/Samsung\ SSD/offload'
-#                                                 #load_in_8bit=True
-#                                                 )    
+tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf", token= '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',)
+model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf",
+                                                #torch_dtype=torch.bfloat16, 
+                                                #low_cpu_mem_usage=True, 
+                                                token= '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',
+                                                quantization_config=bnb_config,
+                                                # max_memory={"cpu": "11GIB"},
+                                                # offload_state_dict=True,
+                                                # offload_folder = '/Volumes/Samsung\ SSD/offload'
+                                                #load_in_8bit=True
+                                                )    
 
-tokenizer = AutoTokenizer.from_pretrained("gpt2-medium")
-model = AutoModelForCausalLM.from_pretrained("gpt2-medium")
+# tokenizer = AutoTokenizer.from_pretrained("gpt2-medium")
+# model = AutoModelForCausalLM.from_pretrained("gpt2-medium")
 
 set_seed(42)
-num_beams = 2
+num_beams = 3
 
 forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '\\', '/', '_', '——', ' — ', '..' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?', '\n', '...']
 forbidden_tokens = [[tokenizer.encode(c)[0]] for c in forbidden_charachters]
+
+syllable_constraint = SyllableConstraint(0, tokenizer)
+constraints = ConstraintList([syllable_constraint])
+stopping_criteria_list = constraints.get_stopping_criteria_list()
+stopping_criteria = StoppingCriteriaList(stopping_criteria_list)
+logits_processor_list = constraints.get_logits_processor_list()
+logits_processor_list.append(NoRepeatNGramLogitsProcessor(2))
+logits_processor_list.append(NoBadWordsLogitsProcessor(forbidden_tokens, eos_token_id=tokenizer.eos_token_id))
+logits_processor = LogitsProcessorList(logits_processor_list)
+
+
 
 def generate_parodie_line(prompt, line):
     model_inputs = tokenizer(prompt, return_tensors="pt")
@@ -52,21 +63,17 @@ def generate_parodie_line(prompt, line):
     print('Syllable count prompt: ', syllable_amount_prompt)
     print("Line: ", line, '| Syllable count: ', syllable_amount_line)
     syllable_amount = syllable_amount_prompt + syllable_amount_line
-    constraints = ConstraintList([SyllableConstraint(syllable_amount, tokenizer)])
-    stopping_criteria_list = constraints.get_stopping_criteria_list()
-    stopping_criteria = StoppingCriteriaList(stopping_criteria_list)
-    logits_processor_list = constraints.get_logits_processor_list()
-    logits_processor_list.append(NoRepeatNGramLogitsProcessor(2))
-    logits_processor_list.append(NoBadWordsLogitsProcessor(forbidden_tokens, eos_token_id=tokenizer.eos_token_id))
-    logits_processor = LogitsProcessorList(logits_processor_list)
+    syllable_constraint.set_syllable_amount(syllable_amount)
+
+    torch.cuda.empty_cache()
 
     beam_scorer = BeamSearchScorerConstrained(
-        batch_size= model_inputs['input_ids'].shape[0],
-        max_length=1000,
-        num_beams=num_beams,
-        device=model.device,
-        constraints = constraints,
-    )
+    batch_size= model_inputs['input_ids'].shape[0],
+    max_length=1000,
+    num_beams=num_beams,
+    device=model.device,
+    constraints = constraints,
+)
 
     generated = model.beam_search(
         torch.cat([model_inputs['input_ids']] * num_beams),

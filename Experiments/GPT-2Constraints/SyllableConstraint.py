@@ -9,6 +9,9 @@ class SyllableConstraint(Constraint):
         self.syllable_amount = syllable_amount
         self.tokenizer = tokenizer
     
+    def set_syllable_amount(self, syllable_amount):
+        self.syllable_amount = syllable_amount
+    
     def apply_beam_constraint(self, next_token, next_score, input_ids, cur_len, length_penalty):
         previous_text = self.tokenizer.decode(input_ids)
         current_token_text = self.tokenizer.decode(next_token)
