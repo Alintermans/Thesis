@@ -22,6 +22,7 @@ bnb_config = BitsAndBytesConfig(
     bnb_4bit_use_double_quant=use_nested_quant,
 )
 
+max_memory_mapping = {0: "10GB"}
 
 tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf", token= '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',)
 model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf",
@@ -33,6 +34,7 @@ model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf",
                                                 # offload_state_dict=True,
                                                 # offload_folder = '/Volumes/Samsung\ SSD/offload'
                                                 #load_in_8bit=True
+                                                max_memory=max_memory_mapping,
                                                 )    
 
 # tokenizer = AutoTokenizer.from_pretrained("gpt2-medium")
