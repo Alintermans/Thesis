@@ -1,1 +1,1 @@
-import Constraints.ParodieGenLBL as ParodieGenLBL
+from Constraints.SyllableConstraint.SyllableConstraintLBL import SyllableConstraintLBL

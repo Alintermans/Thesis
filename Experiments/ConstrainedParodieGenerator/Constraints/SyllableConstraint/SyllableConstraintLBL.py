@@ -4,7 +4,7 @@ import torch
 ################################################ CONSTRAINT CLASS ################################################
 
 
-class SyllableConstraint(Constraint):
+class SyllableConstraintLBL(Constraint):
     def __init__(self, syllable_amount, tokenizer):
         self.syllable_amount = syllable_amount
         self.tokenizer = tokenizer
