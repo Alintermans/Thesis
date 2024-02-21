@@ -69,6 +69,7 @@ def generate_line(prompt, **kwargs):
 #print(generate_line("Hello\n", new_syllable_amount=7))
 
 song_file_path = 'Songs/json/Taylor_Swift-Is_It_Over_Now_(Small_Version).json'
+song_file_path = 'Songs/json/Coldplay-Viva_La_Vida.json'
 
 system_prompt = "I'm a parodie genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\n"
 context = "The following parodie will be about that pineaple shouldn't be on pizza\n"
@@ -79,15 +80,20 @@ if(__name__ == '__main__'):
 
     prompt = system_prompt + context + "ORIGINAL SONG : \n\n" + song + "\n\nAlready generated PARODIE: \n\n"
     parodie = ""
+    state = "Finished Correctly"
+    try: 
+        for paragraph in song_in_paragraphs:
+            parodie += paragraph[0] + "\n"
+            for line in paragraph[1]:
+                syllable_amount = get_syllable_count_of_sentence(line)
+                new_line = generate_line(prompt + parodie, new_syllable_amount=syllable_amount)
+                parodie += new_line + "\n"
+                print(line, " | ",new_line)
+            parodie += "\n"
+    except Exception as e:
+        print(e)
+        state = "Error has occured " + str(e) + "\n" + "Not finished correctly"
 
-    for paragraph in song_in_paragraphs:
-        parodie += paragraph[0] + "\n"
-        for line in paragraph[1]:
-            syllable_amount = get_syllable_count_of_sentence(line)
-            new_line = generate_line(prompt + parodie, new_syllable_amount=syllable_amount)
-            parodie += new_line + "\n"
-            print(line, " | ",new_line)
-        parodie += "\n"
 
     print("Parodie: ", parodie)
     write_song('Experiments/ConstrainedParodieGenerator/GeneratedParodies/', 
@@ -96,5 +102,6 @@ if(__name__ == '__main__'):
                 system_prompt = system_prompt, 
                 prompt = prompt, 
                 constraints_used = "SyllableConstraintLBL",
-                language_model_name = lm.get_name())
+                language_model_name = lm.get_name(),
+                state = state)
 

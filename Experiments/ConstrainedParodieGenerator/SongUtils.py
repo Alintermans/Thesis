@@ -43,6 +43,7 @@ def write_song(folder_path, **kwargs):
     prompt = kwargs['prompt']
     parodie = kwargs['parodie']
     constraints_used = kwargs['constraints_used']
+    state = kwargs['state']
 
     date_today = date.today().strftime("%d-%m-%Y")
 
@@ -86,6 +87,7 @@ def write_song(folder_path, **kwargs):
         "context": context,
         "prompt": prompt,
         "constraints_used": constraints_used,
+        "state": state,
         "parodie": parodie
     }
 
