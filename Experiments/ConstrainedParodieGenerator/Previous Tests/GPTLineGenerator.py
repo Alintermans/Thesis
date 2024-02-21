@@ -71,12 +71,12 @@ def generate_parodie_line(prompt, line):
     torch.cuda.empty_cache()
 
     beam_scorer = BeamSearchScorerConstrained(
-    batch_size= model_inputs['input_ids'].shape[0],
-    max_length=1000,
-    num_beams=num_beams,
-    device=model.device,
-    constraints = constraints,
-)
+        batch_size= model_inputs['input_ids'].shape[0],
+        max_length=1000,
+        num_beams=num_beams,
+        device=model.device,
+        constraints = constraints,
+    )
 
     generated = model.beam_search(
         torch.cat([model_inputs['input_ids']] * num_beams),

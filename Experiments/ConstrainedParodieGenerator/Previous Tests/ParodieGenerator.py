@@ -24,7 +24,6 @@ next_line_text_parodie = "The parodie line is: "
 
 prompt = initial_text_prompt + context 
 
-
 # generate line per line
 for paragraph in paragraps:
     parodie += paragraph[0] + "\n"

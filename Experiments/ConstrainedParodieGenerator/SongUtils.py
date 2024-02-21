@@ -1,6 +1,9 @@
 from nltk.corpus import cmudict
 import nltk
 import torch
+import os 
+import json
+from datetime import date
 
 ################################################ TEXT HELPER FUNCTIONS ################################################
 
@@ -23,6 +26,73 @@ def divide_song_into_paragraphs(song):
             current_paragraph.append(line)
     paragraphs.append((current_paragraph_name, current_paragraph))
     return paragraphs
+
+def read_song(file_path):
+    song = ""
+    song_file = open(file_path, 'r')
+    song_json = json.load(song_file)
+    song = song_json['lyrics']
+    song_file.close()
+    return song
+
+def write_song(folder_path, **kwargs):
+    original_song_file_path = kwargs['original_song_file_path']
+    LM = kwargs['language_model_name']
+    system_prompt = kwargs['system_prompt']
+    context = kwargs['context']
+    prompt = kwargs['prompt']
+    parodie = kwargs['parodie']
+    constraints_used = kwargs['constraints_used']
+
+    date_today = date.today().strftime("%d-%m-%Y")
+
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+    
+    if not os.path.exists(folder_path + LM):
+        os.makedirs(folder_path + LM)
+    
+    if not os.path.exists(folder_path + LM + "/json"):
+        os.makedirs(folder_path + LM + "/json")
+    
+    if not os.path.exists(folder_path + LM + "/text"):
+        os.makedirs(folder_path + LM + "/text")
+
+    
+    original_song = json.load(open(original_song_file_path, 'r'))
+    original_song_title = original_song['title']
+    
+    file_name_json = original_song_title + "_parodie_" + date_today + ".json"
+    file_path_json = folder_path + LM + "/json/" +file_name_json
+
+    file_name_txt = original_song_title + "_parodie_" + date_today + ".txt"
+    file_path_txt = folder_path + LM + "/text/" + file_name_txt
+
+    if os.path.exists(file_path_txt):
+        time = datetime.now().strftime("%H-%M-%S")
+        file_name_json = original_song_title + "_parodie_" + date_today + "_" + time + ".json"
+        file_path_json = folder_path + LM + "/" + file_name_json
+
+        file_name_txt = original_song_title + "_parodie_" + date_today + "_" + time + ".txt"
+        file_path_txt = folder_path + LM + "/" + file_name_txt
+    
+    with open(file_path_txt, 'w') as file:
+        file.write(parodie)
+    
+    song = {
+        "original_song_title": original_song_title,
+        "language_model_name": LM,
+        "system_prompt": system_prompt,
+        "context": context,
+        "prompt": prompt,
+        "constraints_used": constraints_used,
+        "parodie": parodie
+    }
+
+    with open(file_path_json, 'w') as file:
+        json.dump(song, file)
+    
+    return file_path_json
 
 ################################################## SYLLABLE COUNTER FUNCTIONS ##################################################
 
