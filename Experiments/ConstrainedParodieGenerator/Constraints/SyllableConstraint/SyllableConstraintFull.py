@@ -1,5 +1,5 @@
 from Constraint import Constraint
-from SongUtils import tokenize_sentence, count_syllables, get_syllable_count_of_sentence
+from SongUtils import get_syllable_count_of_sentence
 import torch
 ################################################ CONSTRAINT CLASS ################################################
 

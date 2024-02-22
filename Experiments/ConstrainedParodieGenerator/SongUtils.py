@@ -3,7 +3,7 @@ import nltk
 import torch
 import os 
 import json
-from datetime import date
+from datetime import date, datetime
 
 ################################################ TEXT HELPER FUNCTIONS ################################################
 
@@ -44,8 +44,10 @@ def write_song(folder_path, **kwargs):
     parodie = kwargs['parodie']
     constraints_used = kwargs['constraints_used']
     state = kwargs['state']
+    way_of_generation = kwargs['way_of_generation']
 
     date_today = date.today().strftime("%d-%m-%Y")
+    time = datetime.now().strftime("%Hh-%Mm-%Ss")
 
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
@@ -63,19 +65,11 @@ def write_song(folder_path, **kwargs):
     original_song = json.load(open(original_song_file_path, 'r'))
     original_song_title = original_song['title']
     
-    file_name_json = original_song_title + "_parodie_" + date_today + ".json"
-    file_path_json = folder_path + LM + "/json/" +file_name_json
+    file_name_json = original_song_title + "_parodie_" + date_today + "_" + time + ".json"
+    file_path_json = folder_path + LM + "/json/" + file_name_json
 
-    file_name_txt = original_song_title + "_parodie_" + date_today + ".txt"
+    file_name_txt = original_song_title + "_parodie_" + date_today + "_" + time + ".txt"
     file_path_txt = folder_path + LM + "/text/" + file_name_txt
-
-    if os.path.exists(file_path_txt):
-        time = datetime.now().strftime("%H-%M-%S")
-        file_name_json = original_song_title + "_parodie_" + date_today + "_" + time + ".json"
-        file_path_json = folder_path + LM + "/" + file_name_json
-
-        file_name_txt = original_song_title + "_parodie_" + date_today + "_" + time + ".txt"
-        file_path_txt = folder_path + LM + "/" + file_name_txt
     
     with open(file_path_txt, 'w') as file:
         file.write(parodie)
@@ -87,12 +81,15 @@ def write_song(folder_path, **kwargs):
         "context": context,
         "prompt": prompt,
         "constraints_used": constraints_used,
+        "way_of_generation": way_of_generation,
         "state": state,
+        "date": date_today,
+        "time": time,
         "parodie": parodie
     }
 
     with open(file_path_json, 'w') as file:
-        json.dump(song, file)
+        json.dump(song, file, indent=4)
     
     return file_path_json
 

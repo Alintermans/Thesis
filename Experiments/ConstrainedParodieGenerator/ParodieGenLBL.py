@@ -66,15 +66,9 @@ def generate_line(prompt, **kwargs):
 
 ########## Generate Parodie  ##########
 
-#print(generate_line("Hello\n", new_syllable_amount=7))
+#print(generate_line("Hello\n", new_syllable_amount=7)
 
-song_file_path = 'Songs/json/Taylor_Swift-Is_It_Over_Now_(Small_Version).json'
-song_file_path = 'Songs/json/Coldplay-Viva_La_Vida.json'
-
-system_prompt = "I'm a parodie genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\n"
-context = "The following parodie will be about that pineaple shouldn't be on pizza\n"
-
-if(__name__ == '__main__'):
+def generate_parodie(song_file_path, system_prompt, context):
     song = read_song(song_file_path) #expects a json file, where the lyrics is stored in the key 'lyrics'
     song_in_paragraphs = divide_song_into_paragraphs(song)
 
@@ -93,6 +87,7 @@ if(__name__ == '__main__'):
     except Exception as e:
         print(e)
         state = "Error has occured " + str(e) + "\n" + "Not finished correctly"
+        parodie += "\n\n" + "[ERROR]: Not finished correctly" + "\n\n"
 
 
     print("Parodie: ", parodie)
@@ -103,5 +98,17 @@ if(__name__ == '__main__'):
                 prompt = prompt, 
                 constraints_used = "SyllableConstraintLBL",
                 language_model_name = lm.get_name(),
-                state = state)
+                state = state,
+                way_of_generation = "Line by Line")
+
+
+
+if(__name__ == '__main__'):
+    song_file_path = 'Songs/json/Taylor_Swift-Is_It_Over_Now_(Small_Version).json'
+    song_file_path = 'Songs/json/Coldplay-Viva_La_Vida.json'
+
+    system_prompt = "I'm a parodie genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\n"
+    context = "The following parodie will be about that pineaple shouldn't be on pizza\n"
+
+    generate_parodie(song_file_path, system_prompt, context)
 
