@@ -54,6 +54,28 @@ class SyllableConstraintLBL(Constraint):
 
         return False
     
+    def logits_processor(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
+        if self.new_syllable_amount is None:
+            raise Exception('Syllable amount not set')
+
+        for i in range(len(input_ids)):
+            input = input_ids[i]
+            sentence = self.tokenizer.decode(input, skip_special_tokens=True)
+            last_line = sentence.split('\n')[-1]
+            sum = get_syllable_count_of_sentence(last_line)
+            if sum < self.new_syllable_amount:
+                scores[i][self.tokenizer.eos_token_id] = float('-inf')
+            else:
+                print('sum: ',sum, 'sentence: ', sentence)
+                scores[i] = abs(scores[i]) * float('-inf')
+                scores[i][self.tokenizer.eos_token_id] = 0
+                
+
+
+
+
+        return scores
+    
     def is_beam_constraint_active(self):
         return True
     
@@ -61,6 +83,6 @@ class SyllableConstraintLBL(Constraint):
         return True
     
     def is_logits_processor_active(self):
-        return False
+        return True
 
 

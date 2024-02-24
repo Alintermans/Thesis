@@ -1,13 +1,15 @@
 {
     "original_song_title": "Is It Over Now (Small Version)",
+    "original_song_artist": "Taylor Swift",
     "language_model_name": "GPT2",
     "system_prompt": "I'm a parodie genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\n",
     "context": "The following parodie will be about that pineaple shouldn't be on pizza\n",
     "prompt": "I'm a parodie genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\nThe following parodie will be about that pineaple shouldn't be on pizza\nORIGINAL SONG : \n\n[Verse 1]\nOnce the flight had flown (Uh-huh)\nWith the wilt of the rose (Uh-huh)\nI slept all alone (Uh-huh)\nYou still wouldn't go\n\n[Pre-Chorus]\nLet's fast forward to three hundred takeout coffees later\nI see your profile and your smile on unsuspecting waiters\nYou dream of my mouth before it called you a lying traitor\nYou search in every maiden's bed for somethin' greater, baby\n\n[Chorus]\nWas it over when she laid down on your couch?\nWas it over when he unbuttoned my blouse?\n\"Come here,\" I whispered in your ear\nIn your dream as you pass\u0435d out, baby\nWas it over then? And is it over now?\n\n\n\nAlready generated PARODIE: \n\n",
     "constraints_used": "SyllableConstraintFull",
     "way_of_generation": "Generated in one go",
+    "decoding_method": "Beam Search",
     "state": "Finished Correctly",
-    "date": "22-02-2024",
-    "time": "22h-04m-01s",
+    "date": "23-02-2024",
+    "time": "09h-26m-51s",
     "parodie": "[Verse 1]\n (I know I'm not the best par\nBut I know that I can make it\nSo I'll do what I want to\nCause I don't know\n\n[Pre-Chorus]\nAnd I won't let you get away with it if you're not\nIt's not over yet but it's gonna be when I get home from\n 'cause I've got to get out of here before you can get back to me\n (Oh my God I love you so much I wish I could see you again\n\n[Chorus]\nAin't no one can see me but me and you\nThat's the only thing that can stop me from getting\nFrom here to here and back and forth and\nLike I said before I have to go\nTo the airport and get to the hospital\n\n"
 }

@@ -17,7 +17,6 @@ model = lm.get_model()
 set_seed(42)
 num_beams = 3
 
-
 ######### Constraints ##########
 syllable_constraint = SyllableConstraintFull(tokenizer)
 
@@ -47,6 +46,7 @@ def generate_lines(prompt, **kwargs):
     syllable_constraint.set_paragraphs(kwargs['song_in_paragraphs'])
     syllable_constraint.set_prompt_length(len(prompt))
 
+    ## Beam Search
     beam_scorer = BeamSearchScorerConstrained(
         batch_size= input_ids.shape[0],
         max_length=1000,
@@ -55,6 +55,8 @@ def generate_lines(prompt, **kwargs):
         constraints = constraints,
         length_penalty=10.0,
     )
+
+    ## Generate
 
     outputs = model.beam_search(
         torch.cat([input_ids] * num_beams),
@@ -104,7 +106,8 @@ def generate_parodie(song_file_path, system_prompt, context):
                 constraints_used = "SyllableConstraintFull",
                 language_model_name = lm.get_name(),
                 state = state,
-                way_of_generation = "Generated in one go")
+                way_of_generation = "Generated in one go",
+                decoding_method = "Beam Search")
 
 
 
