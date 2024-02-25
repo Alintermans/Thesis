@@ -5,6 +5,21 @@ import os
 import json
 from datetime import date, datetime
 
+################################################## Language Model Functions ##################################################
+def forbidden_charachters_to_tokens(tokenizer, forbidden_charachters):
+    result = []
+    start_token = tokenizer.encode("")
+    if len(start_token) > 0:
+        start_token = start_token[0]
+    else:
+        start_token = None
+    for c in forbidden_charachters:
+        tokens = tokenizer.encode(c)
+        if len(tokens) > 1 and tokens[0] == start_token:
+                tokens = tokens[1:]
+        result.append(tokens)
+    return result
+        
 ################################################ TEXT HELPER FUNCTIONS ################################################
 
 def divide_song_into_paragraphs(song):

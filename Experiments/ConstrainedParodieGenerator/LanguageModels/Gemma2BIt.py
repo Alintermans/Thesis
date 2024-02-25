@@ -5,7 +5,7 @@ class Gemma2BIt(LM):
     def __init__(self):
         super().__init__()
         self.tokenizer = AutoTokenizer.from_pretrained("google/gemma-2b-it")
-        self.model = AutoModelForCausalLM.from_pretrained("google/gemma-2b-it", device_map="auto")
+        self.model = AutoModelForCausalLM.from_pretrained("google/gemma-2b-it")
         self.name = 'Gemma 2B It'
         return None
     

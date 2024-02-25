@@ -1,0 +1,15 @@
+{
+    "original_song_title": "It Is Over Now (Very Small)",
+    "original_song_artist": "Taylor Swift",
+    "language_model_name": "Gemma 2B It",
+    "system_prompt": "I'm a parodie genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\n",
+    "context": "The following parodie will be about that pineaple shouldn't be on pizza\n",
+    "prompt": "I'm a parodie genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\nThe following parodie will be about that pineaple shouldn't be on pizza\nORIGINAL SONG : \n\n[Verse 1]\nOnce the flight had flown (Uh-huh)\nWith the wilt of the rose (Uh-huh)\n\n\n\n\nAlready generated PARODIE: \n\n",
+    "constraints_used": "SyllableConstraintLBL",
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_k: 50 | top_p: 0.7 | temperature: 0.7",
+    "state": "Finished Correctly",
+    "date": "24-02-2024",
+    "time": "17h-34m-54s",
+    "parodie": "[Verse 1]\nOh no the pineapples on\nAre a blight on the pizza scene\n\n"
+}

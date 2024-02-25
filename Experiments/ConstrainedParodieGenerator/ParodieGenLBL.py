@@ -3,7 +3,7 @@ from Constraint import ConstraintList
 from BeamSearchScorerConstrained import BeamSearchScorerConstrained
 from LanguageModels.GPT2 import GPT2
 from LanguageModels.Gemma2BIt import Gemma2BIt
-from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song
+from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens
 
 from transformers import (
                 set_seed, 
@@ -27,14 +27,14 @@ model = lm.get_model()
 
 ######### Settings ##########
 set_seed(42)
-num_beams = 3
+num_beams = 2
 
 
 ######### Constraints ##########
 syllable_constraint = SyllableConstraintLBL(tokenizer)
 
 forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '\\', '/', '_', '——', ' — ', '..' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?', '\n', '\n\n', '  ', '...']
-forbidden_tokens = [[tokenizer.encode(c)[0]] for c in forbidden_charachters]
+forbidden_tokens = forbidden_charachters_to_tokens(tokenizer, forbidden_charachters)
 forbidden_tokens_logit_processor = NoBadWordsLogitsProcessor(forbidden_tokens, eos_token_id=tokenizer.eos_token_id)
 
 no_ngram_logits_processor = NoRepeatNGramLogitsProcessor(2)
@@ -53,14 +53,26 @@ logits_processor = LogitsProcessorList(logits_processor_list)
 def generate_line(prompt, **kwargs):
     input_ids = tokenizer.encode(prompt, return_tensors="pt")
     input_ids = input_ids.to(model.device)
+    batch_size = input_ids.shape[0]
+    input_ids = input_ids.repeat_interleave(num_beams, dim=0)
+    eos_token_id = tokenizer.eos_token_id
+    pad_token_id = tokenizer.pad_token_id
+    if pad_token_id is None:
+        pad_token_id = tokenizer.eos_token_id
 
+    attention_mask = None
+    if lm.accepts_attention_mask():
+        attention_mask = model._prepare_attention_mask_for_generation(
+            input_ids, pad_token_id, eos_token_id
+        )
+    
     ## Constraints
     syllable_constraint.set_new_syllable_amount(kwargs['new_syllable_amount'])
-
+    
 
     ## Beam Search
     beam_scorer = BeamSearchScorerConstrained(
-        batch_size= input_ids.shape[0],
+        batch_size= batch_size,
         max_length=1000,
         num_beams=num_beams,
         device=model.device,
@@ -78,34 +90,44 @@ def generate_line(prompt, **kwargs):
         top_p = kwargs['top_p']
         temperature = kwargs['temperature']
         logits_warper = LogitsProcessorList(
-             [
-                TopPLogitsWarper(top_p),
-                TopKLogitsWarper(top_k),
+             [  
                 TemperatureLogitsWarper(temperature),
+                #TopKLogitsWarper(top_k),
+                TopPLogitsWarper(top_p),
+                
              ]
         )
-
-        pad_token_id = tokenizer.pad_token_id
-        if pad_token_id is None:
-            pad_token_id = tokenizer.eos_token_id
-
-        outputs = model.sample(
-            torch.cat([input_ids] * num_beams),
+        
+        outputs = model.beam_sample(
+            input_ids,
             beam_scorer=beam_scorer,
             stopping_criteria=stopping_criteria,
             logits_processor=logits_processor,
             logits_warper=logits_warper,
             pad_token_id=pad_token_id,
+            eos_token_id=eos_token_id,
+            output_scores = False,
+            return_dict_in_generate=False,
+            attention_mask=attention_mask,
+            output_attentions=False,
+            output_hidden_states=False,
+            use_cache=True
         )
     else:
         outputs = model.beam_search(
-            torch.cat([input_ids] * num_beams),
+            input_ids,
             beam_scorer=beam_scorer,
             stopping_criteria=stopping_criteria,
             logits_processor=logits_processor,
-            
+            pad_token_id=pad_token_id,
+            eos_token_id=eos_token_id,
+            output_scores = False,
+            return_dict_in_generate=False,
+            attention_mask=attention_mask,
+            output_attentions=False,
+            output_hidden_states=False,
+            use_cache=True
         )
-
     return tokenizer.decode(outputs[0], skip_special_tokens=True)[len(prompt):]
 
 
@@ -119,6 +141,7 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
     song_in_paragraphs = divide_song_into_paragraphs(song)
 
     prompt = system_prompt + context + "ORIGINAL SONG : \n\n" + song + "\n\nAlready generated PARODIE: \n\n"
+    #prompt = system_prompt + context + "\n\nAlready generated PARODIE: \n\n"
     parodie = ""
     state = "Finished Correctly"
 
@@ -147,7 +170,7 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
 
     decoding_method = "Beam Search"
     if (kwargs.get('do_sample') is not None or kwargs.get('do_sample') == True):
-        decoding_method = "Sampling Beam Search" + " | top_k: " + str(kwargs['top_k']) + " | top_p: " + str(kwargs['top_p'] + " | temperature: " + str(kwargs['temperature']))
+        decoding_method = "Sampling Beam Search" + " | top_k: " + str(kwargs['top_k']) + " | top_p: " + str(kwargs['top_p']) + " | temperature: " + str(kwargs['temperature'])
 
 
 
@@ -166,12 +189,18 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
 
 
 if(__name__ == '__main__'):
-    song_file_path = 'Songs/json/Taylor_Swift-Is_It_Over_Now_(Small_Version).json'
+    song_file_path = 'Songs/json/Taylor_Swift-It_Is_Over_Now_(Very_Small).json'
     #song_file_path = 'Songs/json/Coldplay-Viva_La_Vida.json'
 
     system_prompt = "I'm a parodie genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\n"
     context = "The following parodie will be about that pineaple shouldn't be on pizza\n"
 
-    generate_parodie(song_file_path, system_prompt, context, do_sample=True, top_k=50, top_p=0.7, temperature=0.7)
+    generate_parodie(song_file_path, system_prompt, context, do_sample=False, top_k=50, top_p=0.7, temperature=0.7)
     #print(generate_line("Hello\n", new_syllable_amount=7, do_sample=True, top_k=50, top_p=0.9, temperature=0.7))
+    # input_text = "Write me a poem about Machine Learning."
+    # input_ids = lm.tokenizer(input_text, return_tensors="pt")
+
+    # outputs = lm.model.generate(**input_ids, num_beams=2, do_sample=True, top_k=50, top_p=0.95, temperature=0.7, max_length=1000, pad_token_id=lm.tokenizer.eos_token_id, return_dict_in_generate=True)
+    # print(lm.tokenizer.decode(outputs[0]))
+    
 

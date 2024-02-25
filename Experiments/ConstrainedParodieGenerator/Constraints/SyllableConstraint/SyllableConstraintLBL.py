@@ -9,6 +9,10 @@ class SyllableConstraintLBL(Constraint):
         self.new_syllable_amount = None
         self.syllable_amount_prompt = None
         self.tokenizer = tokenizer
+        self.start_token = tokenizer.encode('')[0] if (len(tokenizer.encode(''))>0)  else None
+        self.new_line_tokens = tokenizer.encode('\n')
+        if self.start_token is not None and self.start_token in self.new_line_tokens:
+            self.new_line_tokens.remove(self.start_token)
     
     def set_new_syllable_amount(self, new_syllable_amount):
         self.new_syllable_amount = new_syllable_amount
@@ -57,6 +61,14 @@ class SyllableConstraintLBL(Constraint):
     def logits_processor(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
         if self.new_syllable_amount is None:
             raise Exception('Syllable amount not set')
+        
+        new_line_token = self.new_line_tokens
+        # if (len(new_line_token) > 1):
+        #     for i in range(len(input_ids)):
+        #         input = input_ids[i]
+        #         last_token = input[-1].item()
+        #         if last_token == new_line_token[-2]:
+        #             scores[i][new_line_token[-1]] = float('-inf')
 
         for i in range(len(input_ids)):
             input = input_ids[i]
@@ -66,7 +78,6 @@ class SyllableConstraintLBL(Constraint):
             if sum < self.new_syllable_amount:
                 scores[i][self.tokenizer.eos_token_id] = float('-inf')
             else:
-                print('sum: ',sum, 'sentence: ', sentence)
                 scores[i] = abs(scores[i]) * float('-inf')
                 scores[i][self.tokenizer.eos_token_id] = 0
                 
