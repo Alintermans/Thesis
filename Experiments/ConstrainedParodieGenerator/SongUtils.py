@@ -239,6 +239,10 @@ INVERTED_PERF_RHYMES_DICT = None
 INVERTED_ASSONANT_RHYMES_DICT = None
 
 def create_rhyming_dicts():
+    global PERF_RHYMES_DICT
+    global ASSONANT_RHYMES_DICT
+    global INVERTED_PERF_RHYMES_DICT
+    global INVERTED_ASSONANT_RHYMES_DICT
     perf_rhymes = {}
     assonant_rhymes = {}
     for word, prons in d.items():
@@ -274,8 +278,8 @@ def create_rhyming_dicts():
             inverted_assonant_rhymes[key].append(word)
 
     
-    if not os.path.exists(folder_path):
-        os.makedirs(folder_path)
+    if not os.path.exists(folder_path_rhyming_dicts):
+        os.makedirs(folder_path_rhyming_dicts)
 
     with open(folder_path_rhyming_dicts + 'perf_rhymes.pkl', 'wb') as f:
         pickle.dump(perf_rhymes, f,protocol=pickle.HIGHEST_PROTOCOL)
@@ -292,6 +296,10 @@ def create_rhyming_dicts():
 
 
 def load_rhyming_dicts():
+    global PERF_RHYMES_DICT
+    global ASSONANT_RHYMES_DICT
+    global INVERTED_PERF_RHYMES_DICT
+    global INVERTED_ASSONANT_RHYMES_DICT
     with open(folder_path_rhyming_dicts + 'perf_rhymes.pkl', 'rb') as f:
         perf_rhymes = pickle.load(f)
     with open(folder_path_rhyming_dicts + 'assonant_rhymes.pkl', 'rb') as f:
@@ -300,22 +308,52 @@ def load_rhyming_dicts():
         inverted_perf_rhymes = pickle.load(f)
     with open(folder_path_rhyming_dicts + 'inverted_assonant_rhymes.pkl', 'rb') as f:
         inverted_assonant_rhymes = pickle.load(f)
-    return perf_rhymes, assonant_rhymes, inverted_perf_rhymes, inverted_assonant_rhymes
+    PERF_RHYMES_DICT = perf_rhymes
+    ASSONANT_RHYMES_DICT = assonant_rhymes
+    INVERTED_PERF_RHYMES_DICT = inverted_perf_rhymes
+    INVERTED_ASSONANT_RHYMES_DICT = inverted_assonant_rhymes
 
 
 
-def do_two_words_rhyme(word1, word2):
-    return False
+def do_two_words_rhyme_perfectly(word1, word2):
+    if word1 not in PERF_RHYMES_DICT or word2 not in PERF_RHYMES_DICT:
+        return False
+    return PERF_RHYMES_DICT[word1] == PERF_RHYMES_DICT[word2]
+
+def do_two_words_rhyme_assonantly(word1, word2):
+    if word1 not in ASSONANT_RHYMES_DICT or word2 not in ASSONANT_RHYMES_DICT:
+        return False
+    return ASSONANT_RHYMES_DICT[word1] == ASSONANT_RHYMES_DICT[word2]
 
 def do_two_lines_rhyme(sentence1, sentence2):
-    return False
-
+    words1 = tokenize_sentence(sentence1)
+    words2 = tokenize_sentence(sentence2)
+    if len(words1) == 0 or len(words2) == 0:
+        return False
+    return do_two_words_rhyme_assonantly(words1[-1], words2[-1])
 
 def get_rhyming_words(word):
-    return []
+    if word not in INVERTED_PERF_RHYMES_DICT:
+        return []
+    return INVERTED_PERF_RHYMES_DICT[word]
 
 def get_rhyming_lines(paragraph):
-    return []
+    #it will return a list of lists, where each list contains the lines index that rhyme with each other
+    result = []
+    lines_to_exlude = []
+    for i in range(len(paragraph)):
+        if i in lines_to_exlude:
+            continue
+        line = paragraph[i]
+        rhyming_lines = [i]
+        for j in range(i+1, len(paragraph)):
+            if j in lines_to_exlude:
+                continue
+            if do_two_lines_rhyme(line, paragraph[j]):
+                rhyming_lines.append(j)
+                lines_to_exlude.append(j)
+        result.append(rhyming_lines)
+    return result
 
 def rhyming_words_to_tokens_and_syllable_count(tokenizer, rhyming_words, start_token = None):
     result = []
@@ -459,5 +497,8 @@ def test_syllable_counter_functions():
 if __name__ == "__main__":
     #test_syllable_counter_functions()
     #print("All tests passed")
-    perf_rhymes, assonant_rhymes, inverted_perf_rhymes, inverted_assonant_rhymes = create_rhyming_dicts()
-    print(perf_rhymes["test"])
+    #create_rhyming_dicts()
+    load_rhyming_dicts()
+    print(d['dice'], d['eyes'], d['sing'], d['king'], d['key'], d['me'], d['sand'])
+    test_lines = ["I used to roll the dice", "Feel the fear in my enemy's eyes", "Listen as the crowd would sing", "Now the old king is dead, long live the king", "One minute, I held the key", "Next, the walls were closed on me", "And I discovered that my castles stand", "Upon pillars of salt and pillars of sand"]
+    print(get_rhyming_lines(test_lines))
