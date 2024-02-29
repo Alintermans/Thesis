@@ -8,6 +8,9 @@ class LM(ABC):
         self.model = None
         return None
     
+    def get_start_token(self):
+        return self.tokenizer.encode('')[0] if (len(self.tokenizer.encode(''))>0)  else None
+    
     @abstractmethod
     def get_tokenizer(self):
         raise NotImplementedError("tokenizer not implemented yet")

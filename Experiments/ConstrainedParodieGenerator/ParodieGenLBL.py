@@ -20,10 +20,11 @@ import torch
 
 
 ########## LM ##########
-#lm = GPT2()
-lm = Gemma2BIt()
+lm = GPT2()
+#lm = Gemma2BIt()
 tokenizer = lm.get_tokenizer()
 model = lm.get_model()
+start_token = lm.get_start_token()
 
 ######### Settings ##########
 set_seed(42)
@@ -31,7 +32,7 @@ num_beams = 2
 
 
 ######### Constraints ##########
-syllable_constraint = SyllableConstraintLBL(tokenizer)
+syllable_constraint = SyllableConstraintLBL(tokenizer, start_token=start_token)
 
 forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '\\', '/', '_', '——', ' — ', '..' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?', '\n', '\n\n', '  ', '...']
 forbidden_tokens = forbidden_charachters_to_tokens(tokenizer, forbidden_charachters)

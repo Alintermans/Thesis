@@ -5,11 +5,11 @@ import torch
 
 
 class SyllableConstraintLBL(Constraint):
-    def __init__(self, tokenizer):
+    def __init__(self, tokenizer, start_token=None):
         self.new_syllable_amount = None
         self.syllable_amount_prompt = None
         self.tokenizer = tokenizer
-        self.start_token = tokenizer.encode('')[0] if (len(tokenizer.encode(''))>0)  else None
+        self.start_token = start_token
         self.new_line_tokens = tokenizer.encode('\n')
         if self.start_token is not None and self.start_token in self.new_line_tokens:
             self.new_line_tokens.remove(self.start_token)

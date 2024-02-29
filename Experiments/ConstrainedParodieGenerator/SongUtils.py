@@ -220,6 +220,25 @@ def count_matching_lines_on_syllable_amount(args):
     return matching_lines, syllable_count_differences
 
 
+################################################## Rhyming Functions ##################################################
+def do_two_words_rhyme(word1, word2):
+    return False
+
+def do_two_lines_rhyme(sentence1, sentence2):
+    return False
+
+
+def get_rhyming_words(word):
+    return []
+
+def get_rhyming_lines(paragraph):
+    return []
+
+
+
+
+
+
 
 ################################################## TEST FUNCTIONS ##################################################
 
