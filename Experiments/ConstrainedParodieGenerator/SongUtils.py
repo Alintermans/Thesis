@@ -5,6 +5,11 @@ import os
 import json
 from datetime import date, datetime
 
+################################################## Global Parameters ################################################
+#nltk.download('punkt')
+nltk.download('cmudict')
+d = cmudict.dict()
+
 ################################################## Language Model Functions ##################################################
 def forbidden_charachters_to_tokens(tokenizer, forbidden_charachters):
     result = []
@@ -119,9 +124,7 @@ def write_song(folder_path, **kwargs):
 
 ################################################## SYLLABLE COUNTER FUNCTIONS ##################################################
 
-nltk.download('punkt')
-nltk.download('cmudict')
-d = cmudict.dict()
+
 
 
 def tokenize_sentence(sentence):
@@ -221,6 +224,86 @@ def count_matching_lines_on_syllable_amount(args):
 
 
 ################################################## Rhyming Functions ##################################################
+## The following functions are implemented based upon the idea and code from https://github.com/heig-iict-ida/crpo/blob/main/rhyming
+## The code is licensed under the Apache License 2.0
+## The code comes from the paper Popescu-Belis A., Atrio A.R., Bernath B., Boisson E., Ferrari T., Theimer-Lienhard X., & Vernikos G. 2023. GPoeT: a Language Model Trained for Rhyme Generation on Synthetic Data. Proceedings of the 6th Joint SIGHUM Workshop on Computational Linguistics for Cultural Heritage, Social Sciences, Humanities and Literature (LaTeCH-CLfL), EACL 2023, Dubrovnik, Croatia.
+## The code is modified to fit the needs of the project
+
+phonemic_vowels = ["AA","AE","AH","AO","AW","AY","EH","EY","IH","IY","OW","OY","UH","UW","W","Y"] + ["ER"]
+folder_path_rhyming_dicts = "Experiments/ConstrainedParodieGenerator/Constraints/RhymingConstraint/RhymingDictionaries/"   
+import pickle
+
+PERF_RHYMES_DICT = None
+ASSONANT_RHYMES_DICT = None
+INVERTED_PERF_RHYMES_DICT = None
+INVERTED_ASSONANT_RHYMES_DICT = None
+
+def create_rhyming_dicts():
+    perf_rhymes = {}
+    assonant_rhymes = {}
+    for word, prons in d.items():
+        perf_rhymes[word] = []
+        assonant_rhymes[word] = []
+        for pron in prons:
+            index = -1
+            for i in reversed(range(len(pron))):
+                if pron[i][-1].isdigit():
+                    index = i
+                    break
+            
+            vowel = pron[index][:-1]
+            last_consonants = pron[i+1:] if i+1 < len(pron) else []
+            string = vowel +"".join(last_consonants)
+            perf_rhymes[word].append(string)
+            assonant_rhymes[word].append(vowel)
+                    
+    
+    inverted_perf_rhymes = {}
+    inverted_assonant_rhymes = {}
+    for word, prons in perf_rhymes.items():
+        for pron in prons:
+            key = pron
+            if key not in inverted_perf_rhymes:
+                inverted_perf_rhymes[key] = []
+            inverted_perf_rhymes[key].append(word)
+    for word, pron in assonant_rhymes.items():
+        for vowel in pron:
+            key = vowel
+            if key not in inverted_assonant_rhymes:
+                inverted_assonant_rhymes[key] = []
+            inverted_assonant_rhymes[key].append(word)
+
+    
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
+    with open(folder_path_rhyming_dicts + 'perf_rhymes.pkl', 'wb') as f:
+        pickle.dump(perf_rhymes, f,protocol=pickle.HIGHEST_PROTOCOL)
+    with open(folder_path_rhyming_dicts + 'assonant_rhymes.pkl', 'wb') as f:
+        pickle.dump(assonant_rhymes, f,protocol=pickle.HIGHEST_PROTOCOL)
+    with open(folder_path_rhyming_dicts + 'inverted_perf_rhymes.pkl', 'wb') as f:
+        pickle.dump(inverted_perf_rhymes, f,protocol=pickle.HIGHEST_PROTOCOL)
+    with open(folder_path_rhyming_dicts + 'inverted_assonant_rhymes.pkl', 'wb') as f:
+        pickle.dump(inverted_assonant_rhymes, f,protocol=pickle.HIGHEST_PROTOCOL)
+    PERF_RHYMES_DICT = perf_rhymes
+    ASSONANT_RHYMES_DICT = assonant_rhymes
+    INVERTED_PERF_RHYMES_DICT = inverted_perf_rhymes
+    INVERTED_ASSONANT_RHYMES_DICT = inverted_assonant_rhymes
+
+
+def load_rhyming_dicts():
+    with open(folder_path_rhyming_dicts + 'perf_rhymes.pkl', 'rb') as f:
+        perf_rhymes = pickle.load(f)
+    with open(folder_path_rhyming_dicts + 'assonant_rhymes.pkl', 'rb') as f:
+        assonant_rhymes = pickle.load(f)
+    with open(folder_path_rhyming_dicts + 'inverted_perf_rhymes.pkl', 'rb') as f:
+        inverted_perf_rhymes = pickle.load(f)
+    with open(folder_path_rhyming_dicts + 'inverted_assonant_rhymes.pkl', 'rb') as f:
+        inverted_assonant_rhymes = pickle.load(f)
+    return perf_rhymes, assonant_rhymes, inverted_perf_rhymes, inverted_assonant_rhymes
+
+
+
 def do_two_words_rhyme(word1, word2):
     return False
 
@@ -234,7 +317,22 @@ def get_rhyming_words(word):
 def get_rhyming_lines(paragraph):
     return []
 
+def rhyming_words_to_tokens_and_syllable_count(tokenizer, rhyming_words, start_token = None):
+    result = []
+    for word in rhyming_words:
+        tokens = tokenizer.encode(word)
+        if start_token is not None and tokens[0] == start_token:
+            tokens = tokens[1:]
+        dict = { 
+            "tokens": tokens,
+            "syllable_count": count_syllables(word)
+        }
+        result.append(dict)
+    return result
 
+
+
+        
 
 
 
@@ -359,5 +457,7 @@ def test_syllable_counter_functions():
 ################################################## MAIN ##################################################
 
 if __name__ == "__main__":
-    test_syllable_counter_functions()
-    print("All tests passed")
+    #test_syllable_counter_functions()
+    #print("All tests passed")
+    perf_rhymes, assonant_rhymes, inverted_perf_rhymes, inverted_assonant_rhymes = create_rhyming_dicts()
+    print(perf_rhymes["test"])
