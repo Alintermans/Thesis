@@ -1,9 +1,10 @@
 from Constraints.SyllableConstraint.SyllableConstraintLBL import SyllableConstraintLBL
+from Constraints.RhymingConstraint.RhymingConstraintLBL import RhymingConstraintLBL
 from Constraint import ConstraintList
 from BeamSearchScorerConstrained import BeamSearchScorerConstrained
 from LanguageModels.GPT2 import GPT2
 from LanguageModels.Gemma2BIt import Gemma2BIt
-from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens
+from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens, get_rhyming_lines
 
 from transformers import (
                 set_seed, 
@@ -34,14 +35,18 @@ num_beams = 2
 ######### Constraints ##########
 syllable_constraint = SyllableConstraintLBL(tokenizer, start_token=start_token)
 
+rhyming_constraint = RhymingConstraintLBL(tokenizer, start_token=start_token)
+
 forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '\\', '/', '_', '——', ' — ', '..' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?', '\n', '\n\n', '  ', '...']
 forbidden_tokens = forbidden_charachters_to_tokens(tokenizer, forbidden_charachters)
 forbidden_tokens_logit_processor = NoBadWordsLogitsProcessor(forbidden_tokens, eos_token_id=tokenizer.eos_token_id)
 
 no_ngram_logits_processor = NoRepeatNGramLogitsProcessor(2)
 
+
+
 ## Combine Constraints
-constraints = ConstraintList([syllable_constraint])
+constraints = ConstraintList([syllable_constraint, rhyming_constraint])
 
 stopping_criteria_list = constraints.get_stopping_criteria_list() + []
 stopping_criteria = StoppingCriteriaList(stopping_criteria_list)
@@ -69,6 +74,8 @@ def generate_line(prompt, **kwargs):
     
     ## Constraints
     syllable_constraint.set_new_syllable_amount(kwargs['new_syllable_amount'])
+    rhyming_constraint.set_rhyming_word(kwargs['rhyming_word'])
+    rhyming_constraint.set_required_syllable_count(kwargs['new_syllable_amount'])
     
 
     ## Beam Search
@@ -156,10 +163,23 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
 
     try: 
         for paragraph in song_in_paragraphs:
+            rhyming_lines = get_rhyming_lines(paragraph[1])
+            rhyming_constraint.reset_rhyming_words_to_ignore()
             parodie += paragraph[0] + "\n"
-            for line in paragraph[1]:
+            for i in range(len(paragraph[1])):
+                line = paragraph[1][i]
+                
+                ## Constraints Settings
                 syllable_amount = get_syllable_count_of_sentence(line)
-                new_line = generate_line(prompt + parodie, new_syllable_amount=syllable_amount, **kwargs)
+
+                rhyming_word = None
+                if rhyming_lines[i] is not None:
+                    
+                    rhyming_word = parodie.split('\n')[rhyming_lines[i]-i-1].split(' ')[-1]
+
+                ##Generate new line
+                new_line = generate_line(prompt + parodie, new_syllable_amount=syllable_amount, rhyming_word=rhyming_word, **kwargs)
+                rhyming_constraint.add_rhyming_words_to_ignore(rhyming_word)
                 parodie += new_line + "\n"
                 print(line, " | ",new_line)
             parodie += "\n"
@@ -191,7 +211,7 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
 
 if(__name__ == '__main__'):
     song_file_path = 'Songs/json/Taylor_Swift-It_Is_Over_Now_(Very_Small).json'
-    #song_file_path = 'Songs/json/Coldplay-Viva_La_Vida.json'
+    song_file_path = 'Songs/json/Coldplay-Viva_La_Vida.json'
 
     system_prompt = "I'm a parodie genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\n"
     context = "The following parodie will be about that pineaple shouldn't be on pizza\n"

@@ -330,16 +330,29 @@ def do_two_lines_rhyme(sentence1, sentence2):
     words2 = tokenize_sentence(sentence2)
     if len(words1) == 0 or len(words2) == 0:
         return False
-    return do_two_words_rhyme_assonantly(words1[-1], words2[-1])
+    return do_two_words_rhyme_perfectly(words1[-1], words2[-1])
 
-def get_rhyming_words(word):
-    if word not in INVERTED_PERF_RHYMES_DICT:
+def get_perfect_rhyming_words(word):
+    if word not in PERF_RHYMES_DICT:
         return []
-    return INVERTED_PERF_RHYMES_DICT[word]
+    rhymes = PERF_RHYMES_DICT[word]
+    result = []
+    for rhyme in rhymes:
+        result += INVERTED_PERF_RHYMES_DICT[rhyme]
+    return result
+
+def get_assonant_rhyming_words(word):
+    if word not in ASSONANT_RHYMES_DICT:
+        return []
+    rhymes = ASSONANT_RHYMES_DICT[word]
+    result = []
+    for rhyme in rhymes:
+        result += INVERTED_ASSONANT_RHYMES_DICT[rhyme]
+    return result
 
 def get_rhyming_lines(paragraph):
-    #it will return a list of lists, where each list contains the lines index that rhyme with each other
-    result = []
+    #it will return a list and indicate for each line in the paragraph, to which other lines it rhymes
+    all_rhyming_lines = []
     lines_to_exlude = []
     for i in range(len(paragraph)):
         if i in lines_to_exlude:
@@ -352,21 +365,50 @@ def get_rhyming_lines(paragraph):
             if do_two_lines_rhyme(line, paragraph[j]):
                 rhyming_lines.append(j)
                 lines_to_exlude.append(j)
-        result.append(rhyming_lines)
+        all_rhyming_lines.append(rhyming_lines)
+    result = []
+    for i in range(len(paragraph)):
+        added = False
+        for rhyming_lines in all_rhyming_lines:
+            if i in rhyming_lines and rhyming_lines[0] != i:
+                result.append(rhyming_lines[0])
+                added = True
+                break
+        if not added:
+            result.append(None)
+
     return result
+
 
 def rhyming_words_to_tokens_and_syllable_count(tokenizer, rhyming_words, start_token = None):
     result = []
+    max_syllable_count = 0
+    space_token = tokenizer.encode(" ")[0]
     for word in rhyming_words:
+        tokens_with_space = tokenizer.encode(" "+word)
+        if start_token is None and tokens_with_space[0] == space_token:
+            tokens_with_space = tokens_with_space[1:]
+        elif start_token is not None and start_token == tokens_with_space[0] and tokens_with_space[1] == space_token:
+            tokens_with_space = tokens_with_space[2:]
+        
         tokens = tokenizer.encode(word)
         if start_token is not None and tokens[0] == start_token:
             tokens = tokens[1:]
-        dict = { 
-            "tokens": tokens,
-            "syllable_count": count_syllables(word)
+
+        syllable_count = count_syllables(word)
+        if syllable_count > max_syllable_count:
+            max_syllable_count = syllable_count
+        dict_with_space = { 
+            "tokens": tokens_with_space,
+            "syllable_count": syllable_count
         }
-        result.append(dict)
-    return result
+        dict_without_space = { 
+            "tokens": tokens,
+            "syllable_count": syllable_count
+        }
+        result.append(dict_with_space)
+        #result.append(dict_without_space)
+    return result, max_syllable_count
 
 
 
@@ -499,6 +541,8 @@ if __name__ == "__main__":
     #print("All tests passed")
     #create_rhyming_dicts()
     load_rhyming_dicts()
-    print(d['dice'], d['eyes'], d['sing'], d['king'], d['key'], d['me'], d['sand'])
-    test_lines = ["I used to roll the dice", "Feel the fear in my enemy's eyes", "Listen as the crowd would sing", "Now the old king is dead, long live the king", "One minute, I held the key", "Next, the walls were closed on me", "And I discovered that my castles stand", "Upon pillars of salt and pillars of sand"]
-    print(get_rhyming_lines(test_lines))
+
+    # test_lines = ["I used to roll the dice", "Feel the fear in my enemy's eyes", "Listen as the crowd would sing", "Now the old king is dead, long live the king", "One minute, I held the key", "Next, the walls were closed on me", "And I discovered that my castles stand", "Upon pillars of salt and pillars of sand"]
+    # print(get_rhyming_lines(test_lines))
+
+    print(get_perfect_rhyming_words("dice"))
