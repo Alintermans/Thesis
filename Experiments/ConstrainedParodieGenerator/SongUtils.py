@@ -228,15 +228,39 @@ def count_matching_lines_on_syllable_amount(args):
 ## The code is licensed under the Apache License 2.0
 ## The code comes from the paper Popescu-Belis A., Atrio A.R., Bernath B., Boisson E., Ferrari T., Theimer-Lienhard X., & Vernikos G. 2023. GPoeT: a Language Model Trained for Rhyme Generation on Synthetic Data. Proceedings of the 6th Joint SIGHUM Workshop on Computational Linguistics for Cultural Heritage, Social Sciences, Humanities and Literature (LaTeCH-CLfL), EACL 2023, Dubrovnik, Croatia.
 ## The code is modified to fit the needs of the project
+## We follow the same approach that for a perfect rhyme you have to look at the last vowel and the following consonants, and for an assonant rhyme you have to look at the last vowel. The defenition of a perfect rhyme states that it has to be the same vowels and consonants starting from the last stressed vowel. 
 
 phonemic_vowels = ["AA","AE","AH","AO","AW","AY","EH","EY","IH","IY","OW","OY","UH","UW","W","Y"] + ["ER"]
 folder_path_rhyming_dicts = "Experiments/ConstrainedParodieGenerator/Constraints/RhymingConstraint/RhymingDictionaries/"   
 import pickle
+import pronouncing
+import requests
 
 PERF_RHYMES_DICT = None
 ASSONANT_RHYMES_DICT = None
 INVERTED_PERF_RHYMES_DICT = None
 INVERTED_ASSONANT_RHYMES_DICT = None
+
+def get_perfect_rhyme_ending_from_pron(pron):
+    index = -1
+    for i in reversed(range(len(pron))):
+        if pron[i][-1].isdigit():
+            index = i
+            break
+    vowel = pron[index][:-1]
+    last_consonants = pron[i+1:] if i+1 < len(pron) else []
+    string = vowel +"".join(last_consonants)
+
+    return string
+
+def get_assonant_rhyme_ending_from_pron(pron):
+    index = -1
+    for i in reversed(range(len(pron))):
+        if pron[i][-1].isdigit():
+            index = i
+            break
+    vowel = pron[index][:-1]
+    return vowel
 
 def create_rhyming_dicts():
     global PERF_RHYMES_DICT
@@ -314,43 +338,146 @@ def load_rhyming_dicts():
     INVERTED_ASSONANT_RHYMES_DICT = inverted_assonant_rhymes
 
 
+def get_pronounciation_of_unknown_word(word):
+    #We use the legois tool from CMU, the code below is provided by Steven Rubin - srubin@cs.berkeley.edu, found at https://github.com/ucbvislab/p2fa-vislab/blob/master/pronunciation.py
+    url = "http://www.speech.cs.cmu.edu/cgi-bin/tools/logios/lextool2.pl"
+    files = {'wordfile': open('test.txt','rb'), 'handfile': 'empty'}
+    r = requests.post(url, files=files)
+    print(r)
+
+    
+
+def get_pronounciation_of_word(word):
+    if word in d:
+        return d[word]
+    else:
+        return get_pronounciation_of_unkown_word(word)
+
+def do_two_end_phon_seq_near_rhyme(phon_seq1, phon_seq2):
+    #The end sequence starts with the last vowel and goes to the end of the word
+    if len(phon_seq1) == 0 or len(phon_seq2) == 0:
+        return False
+    
+    vowel_1 = phon_seq1[0]
+    vowel_2 = phon_seq2[0]
+
+    consonants_1 = phon_seq1[1:]
+    consonants_2 = phon_seq2[1:]
+
+    if vowel_1[-1].isdigit():
+        vowel_1 = vowel_1[:-1]
+    if vowel_2[-1].isdigit():
+        vowel_2 = vowel_2[:-1]
+    
+    #Perfect Rhyme
+    if vowel_1 == vowel_2 and consonants_1 == consonants_2:
+        return True
+    
+
+
+
+
 
 def do_two_words_rhyme_perfectly(word1, word2):
-    if word1 not in PERF_RHYMES_DICT or word2 not in PERF_RHYMES_DICT:
-        return False
-    return PERF_RHYMES_DICT[word1] == PERF_RHYMES_DICT[word2]
+    word1_rhyming = None
+    try:
+        word1_rhyming = PERF_RHYMES_DICT[word1]
+    except KeyError:
+        word1_pron = get_pronounciation_of_unknown_word(word1)
+        word1_rhyming = get_perfect_rhyme_ending_from_pron(word1_pron)
+    
+    word2_rhyming = None
+    try:
+        word2_rhyming = PERF_RHYMES_DICT[word2]
+    except KeyError:   
+        word2_pron = get_pronounciation_of_unknown_word(word2)
+        word2_rhyming = get_perfect_rhyme_ending_from_pron(word2_pron)
+    
+    return word1_rhyming == word2_rhyming
 
 def do_two_words_rhyme_assonantly(word1, word2):
-    if word1 not in ASSONANT_RHYMES_DICT or word2 not in ASSONANT_RHYMES_DICT:
-        return False
-    return ASSONANT_RHYMES_DICT[word1] == ASSONANT_RHYMES_DICT[word2]
+    word1_rhyming = None
+    try:
+        word1_rhyming = ASSONANT_RHYMES_DICT[word1]
+    except KeyError:
+        word1_pron = get_pronounciation_of_unknown_word(word1)
+        word1_rhyming = get_assonant_rhyme_ending_from_pron(word1_pron)
 
-def do_two_lines_rhyme(sentence1, sentence2):
+    word2_rhyming = None
+    try:
+        word2_rhyming = ASSONANT_RHYMES_DICT[word2]
+    except KeyError:
+        word2_pron = get_pronounciation_of_unknown_word(word2)
+        word2_rhyming = get_assonant_rhyme_ending_from_pron(word2_pron)
+
+    return word1_rhyming == word2_rhyming
+
+def do_two_lines_rhyme(sentence1, sentence2, rhyme_type = "perfect"):
     words1 = tokenize_sentence(sentence1)
     words2 = tokenize_sentence(sentence2)
     if len(words1) == 0 or len(words2) == 0:
         return False
-    return do_two_words_rhyme_perfectly(words1[-1], words2[-1])
+    word1 = words1[-1]
+    word2 = words2[-1]
+    not_to_end_with = [".", ",", "!", "?", ";", ":", "-", "'", "\"", "(", ")", "[", "]", "{", "}",'``' , '&', '#', '*', '$', '£', '`', '+', '\n', '_']
+    for c in not_to_end_with:
+        if word1.endswith(c):
+            word1 = word1[:-(len(c))]
+        if word2.endswith(c):
+            word2 = word2[:-(len(c))]
+    
+    
+    if rhyme_type == "perfect":
+        return do_two_words_rhyme_perfectly(word1, word2)
+    elif rhyme_type == "assonant":
+        return do_two_words_rhyme_assonantly(word1, word2)
+    else:
+        return False
 
 def get_perfect_rhyming_words(word):
-    if word not in PERF_RHYMES_DICT:
-        return []
-    rhymes = PERF_RHYMES_DICT[word]
+    rhymes = []
+    try:
+        rhymes = PERF_RHYMES_DICT[word]
+    except KeyError:
+        # word_pron = get_pronounciation_of_unknown_word(word)
+        # rhymes.append(get_perfect_rhyme_ending_from_pron(word_pron))
+        pass
     result = []
     for rhyme in rhymes:
         result += INVERTED_PERF_RHYMES_DICT[rhyme]
     return result
 
 def get_assonant_rhyming_words(word):
-    if word not in ASSONANT_RHYMES_DICT:
-        return []
-    rhymes = ASSONANT_RHYMES_DICT[word]
+    rhymes = []
+    try:
+        rhymes = ASSONANT_RHYMES_DICT[word]
+    except KeyError:
+        #word_pron = get_pronounciation_of_unknown_word(word)
+        #rhymes.append(get_assonant_rhyme_ending_from_pron(word_pron))
+        pass
     result = []
     for rhyme in rhymes:
         result += INVERTED_ASSONANT_RHYMES_DICT[rhyme]
     return result
 
-def get_rhyming_lines(paragraph):
+def _do_two_words_rhyme(word1, word2, rhyme_type = "perfect"):
+    if rhyme_type == "perfect":
+        return do_two_words_rhyme_perfectly(word1, word2)
+    elif rhyme_type == "assonant":
+        return do_two_words_rhyme_assonantly(word1, word2)
+    else:
+        return False
+
+def _get_rhyming_words(word, rhyme_type = "perfect"):
+    if rhyme_type == "perfect":
+        return get_perfect_rhyming_words(word)
+    elif rhyme_type == "assonant":
+        return get_assonant_rhyming_words(word)
+    else:
+        return []
+
+def _get_rhyming_lines(paragraph, rhyme_type = "perfect"):
+    
     #it will return a list and indicate for each line in the paragraph, to which other lines it rhymes
     all_rhyming_lines = []
     lines_to_exlude = []
@@ -362,7 +489,7 @@ def get_rhyming_lines(paragraph):
         for j in range(i+1, len(paragraph)):
             if j in lines_to_exlude:
                 continue
-            if do_two_lines_rhyme(line, paragraph[j]):
+            if do_two_lines_rhyme(line, paragraph[j], rhyme_type):
                 rhyming_lines.append(j)
                 lines_to_exlude.append(j)
         all_rhyming_lines.append(rhyming_lines)
@@ -400,11 +527,13 @@ def rhyming_words_to_tokens_and_syllable_count(tokenizer, rhyming_words, start_t
             max_syllable_count = syllable_count
         dict_with_space = { 
             "tokens": tokens_with_space,
-            "syllable_count": syllable_count
+            "syllable_count": syllable_count,
+            "word": word
         }
         dict_without_space = { 
             "tokens": tokens,
-            "syllable_count": syllable_count
+            "syllable_count": syllable_count,
+            "word": word
         }
         result.append(dict_with_space)
         #result.append(dict_without_space)
@@ -544,5 +673,5 @@ if __name__ == "__main__":
 
     # test_lines = ["I used to roll the dice", "Feel the fear in my enemy's eyes", "Listen as the crowd would sing", "Now the old king is dead, long live the king", "One minute, I held the key", "Next, the walls were closed on me", "And I discovered that my castles stand", "Upon pillars of salt and pillars of sand"]
     # print(get_rhyming_lines(test_lines))
-
-    print(get_perfect_rhyming_words("dice"))
+    #print(get_perfect_rhyming_words("dice"))
+    print(get_pronounciation_of_unknown_word('kweezlebotter'))

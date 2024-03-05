@@ -4,7 +4,7 @@ from Constraint import ConstraintList
 from BeamSearchScorerConstrained import BeamSearchScorerConstrained
 from LanguageModels.GPT2 import GPT2
 from LanguageModels.Gemma2BIt import Gemma2BIt
-from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens, get_rhyming_lines
+from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens
 
 from transformers import (
                 set_seed, 
@@ -35,7 +35,7 @@ num_beams = 2
 ######### Constraints ##########
 syllable_constraint = SyllableConstraintLBL(tokenizer, start_token=start_token)
 
-rhyming_constraint = RhymingConstraintLBL(tokenizer, start_token=start_token)
+rhyming_constraint = RhymingConstraintLBL(tokenizer, start_token=start_token, top_k_rhyme_words=10, rhyme_type="assonant")
 
 forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '\\', '/', '_', '——', ' — ', '..' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?', '\n', '\n\n', '  ', '...']
 forbidden_tokens = forbidden_charachters_to_tokens(tokenizer, forbidden_charachters)
@@ -100,7 +100,7 @@ def generate_line(prompt, **kwargs):
         logits_warper = LogitsProcessorList(
              [  
                 TemperatureLogitsWarper(temperature),
-                #TopKLogitsWarper(top_k),
+                TopKLogitsWarper(top_k),
                 TopPLogitsWarper(top_p),
                 
              ]
@@ -163,7 +163,7 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
 
     try: 
         for paragraph in song_in_paragraphs:
-            rhyming_lines = get_rhyming_lines(paragraph[1])
+            rhyming_lines = rhyming_constraint.get_rhyming_lines(paragraph[1])
             rhyming_constraint.reset_rhyming_words_to_ignore()
             parodie += paragraph[0] + "\n"
             for i in range(len(paragraph[1])):
@@ -216,7 +216,7 @@ if(__name__ == '__main__'):
     system_prompt = "I'm a parodie genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\n"
     context = "The following parodie will be about that pineaple shouldn't be on pizza\n"
 
-    generate_parodie(song_file_path, system_prompt, context, do_sample=False, top_k=50, top_p=0.7, temperature=0.7)
+    generate_parodie(song_file_path, system_prompt, context, do_sample=False, top_k=50, top_p=0.9, temperature=0.7)
     #print(generate_line("Hello\n", new_syllable_amount=7, do_sample=True, top_k=50, top_p=0.9, temperature=0.7))
     # input_text = "Write me a poem about Machine Learning."
     # input_ids = lm.tokenizer(input_text, return_tensors="pt")
