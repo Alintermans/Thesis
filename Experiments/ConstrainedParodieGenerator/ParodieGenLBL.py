@@ -213,7 +213,7 @@ if(__name__ == '__main__'):
     song_file_path = 'Songs/json/Taylor_Swift-It_Is_Over_Now_(Very_Small).json'
     song_file_path = 'Songs/json/Coldplay-Viva_La_Vida.json'
 
-    system_prompt = "I'm a parodie genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\n"
+    system_prompt = "I'm a parody genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\n"
     context = "The following parodie will be about that pineaple shouldn't be on pizza\n"
 
     generate_parodie(song_file_path, system_prompt, context, do_sample=False, top_k=50, top_p=0.9, temperature=0.7)

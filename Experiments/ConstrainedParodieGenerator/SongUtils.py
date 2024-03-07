@@ -241,26 +241,7 @@ ASSONANT_RHYMES_DICT = None
 INVERTED_PERF_RHYMES_DICT = None
 INVERTED_ASSONANT_RHYMES_DICT = None
 
-def get_perfect_rhyme_ending_from_pron(pron):
-    index = -1
-    for i in reversed(range(len(pron))):
-        if pron[i][-1].isdigit():
-            index = i
-            break
-    vowel = pron[index][:-1]
-    last_consonants = pron[i+1:] if i+1 < len(pron) else []
-    string = vowel +"".join(last_consonants)
 
-    return string
-
-def get_assonant_rhyme_ending_from_pron(pron):
-    index = -1
-    for i in reversed(range(len(pron))):
-        if pron[i][-1].isdigit():
-            index = i
-            break
-    vowel = pron[index][:-1]
-    return vowel
 
 def create_rhyming_dicts():
     global PERF_RHYMES_DICT
@@ -340,11 +321,35 @@ def load_rhyming_dicts():
 
 def get_pronounciation_of_unknown_word(word):
     #We use the legois tool from CMU, the code below is provided by Steven Rubin - srubin@cs.berkeley.edu, found at https://github.com/ucbvislab/p2fa-vislab/blob/master/pronunciation.py
+    from io import BytesIO
+    import re
     url = "http://www.speech.cs.cmu.edu/cgi-bin/tools/logios/lextool2.pl"
-    files = {'wordfile': open('test.txt','rb'), 'handfile': 'empty'}
-    r = requests.post(url, files=files)
-    print(r)
 
+    word = word.upper()
+    word_bytes=BytesIO(word.encode('utf-8'))
+
+
+    files = {'wordfile': ('wordfile', word_bytes)}
+    request = requests.post(url, files=files)
+    request.raise_for_status()
+    matches = re.findall(r'\<!-- DICT .*?\  -->', request.text)
+    url_dict = ""
+    if len(matches) >0:
+        match = matches[0]
+        url_dict = re.sub(r'\<!-- DICT ', '', match)
+        url_dict = re.sub(r'  -->', '', url_dict)
+
+    pron_dict_request = requests.get(url_dict)
+    pron_dict_request.raise_for_status()
+    pron_dict = pron_dict_request.text.split("\n")[0]
+    pron = pron_dict.split('\t')[1].split(" ")
+
+    #add stress
+    for i in range(len(pron)):
+        if pron[i] in phonemic_vowels:
+            pron[i] = pron[i] + "1"
+    
+    return pron
     
 
 def get_pronounciation_of_word(word):
@@ -352,6 +357,31 @@ def get_pronounciation_of_word(word):
         return d[word]
     else:
         return get_pronounciation_of_unkown_word(word)
+
+def get_perfect_rhyme_ending_from_pron(pron):
+    index = -1
+    for i in reversed(range(len(pron))):
+        if pron[i][-1].isdigit():
+            index = i
+            break
+    if index == -1:
+        return ""
+    vowel = pron[index][:-1]
+    last_consonants = pron[i+1:] if i+1 < len(pron) else []
+    string = vowel +"".join(last_consonants)
+
+    return string
+
+def get_assonant_rhyme_ending_from_pron(pron):
+    index = -1
+    for i in reversed(range(len(pron))):
+        if pron[i][-1].isdigit():
+            index = i
+            break
+    if index == -1:
+        return ""
+    vowel = pron[index][:-1]
+    return vowel
 
 def do_two_end_phon_seq_near_rhyme(phon_seq1, phon_seq2):
     #The end sequence starts with the last vowel and goes to the end of the word
@@ -439,9 +469,9 @@ def get_perfect_rhyming_words(word):
     try:
         rhymes = PERF_RHYMES_DICT[word]
     except KeyError:
-        # word_pron = get_pronounciation_of_unknown_word(word)
-        # rhymes.append(get_perfect_rhyme_ending_from_pron(word_pron))
-        pass
+        word_pron = get_pronounciation_of_unknown_word(word)
+        rhymes.append(get_perfect_rhyme_ending_from_pron(word_pron))
+        
     result = []
     for rhyme in rhymes:
         result += INVERTED_PERF_RHYMES_DICT[rhyme]
@@ -452,9 +482,9 @@ def get_assonant_rhyming_words(word):
     try:
         rhymes = ASSONANT_RHYMES_DICT[word]
     except KeyError:
-        #word_pron = get_pronounciation_of_unknown_word(word)
-        #rhymes.append(get_assonant_rhyme_ending_from_pron(word_pron))
-        pass
+        word_pron = get_pronounciation_of_unknown_word(word)
+        rhymes.append(get_assonant_rhyme_ending_from_pron(word_pron))
+        
     result = []
     for rhyme in rhymes:
         result += INVERTED_ASSONANT_RHYMES_DICT[rhyme]
@@ -674,4 +704,4 @@ if __name__ == "__main__":
     # test_lines = ["I used to roll the dice", "Feel the fear in my enemy's eyes", "Listen as the crowd would sing", "Now the old king is dead, long live the king", "One minute, I held the key", "Next, the walls were closed on me", "And I discovered that my castles stand", "Upon pillars of salt and pillars of sand"]
     # print(get_rhyming_lines(test_lines))
     #print(get_perfect_rhyming_words("dice"))
-    print(get_pronounciation_of_unknown_word('kweezlebotter'))
+    print(get_pronounciation_of_unknown_word('Hallo'))
