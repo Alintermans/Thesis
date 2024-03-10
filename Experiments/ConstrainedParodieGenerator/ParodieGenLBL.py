@@ -35,7 +35,7 @@ num_beams = 2
 ######### Constraints ##########
 syllable_constraint = SyllableConstraintLBL(tokenizer, start_token=start_token)
 
-rhyming_constraint = RhymingConstraintLBL(tokenizer, start_token=start_token, top_k_rhyme_words=10, rhyme_type="assonant")
+rhyming_constraint = RhymingConstraintLBL(tokenizer, start_token=start_token, top_k_rhyme_words=10, rhyme_type="near")
 
 forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '\\', '/', '_', '——', ' — ', '..' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?', '\n', '\n\n', '  ', '...']
 forbidden_tokens = forbidden_charachters_to_tokens(tokenizer, forbidden_charachters)

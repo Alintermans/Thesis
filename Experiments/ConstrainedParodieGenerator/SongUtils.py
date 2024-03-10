@@ -238,6 +238,7 @@ import requests
 
 PERF_RHYMES_DICT = None
 ASSONANT_RHYMES_DICT = None
+NEAR_RHYME_CLASSES = None
 INVERTED_PERF_RHYMES_DICT = None
 INVERTED_ASSONANT_RHYMES_DICT = None
 
@@ -246,6 +247,7 @@ INVERTED_ASSONANT_RHYMES_DICT = None
 def create_rhyming_dicts():
     global PERF_RHYMES_DICT
     global ASSONANT_RHYMES_DICT
+    global NEAR_RHYME_CLASSES
     global INVERTED_PERF_RHYMES_DICT
     global INVERTED_ASSONANT_RHYMES_DICT
     perf_rhymes = {}
@@ -259,11 +261,13 @@ def create_rhyming_dicts():
                 if pron[i][-1].isdigit():
                     index = i
                     break
+            if index == -1:
+                continue
             
             vowel = pron[index][:-1]
             last_consonants = pron[i+1:] if i+1 < len(pron) else []
-            string = vowel +"".join(last_consonants)
-            perf_rhymes[word].append(string)
+            key = tuple([vowel] + last_consonants)
+            perf_rhymes[word].append(key)
             assonant_rhymes[word].append(vowel)
                     
     
@@ -281,6 +285,20 @@ def create_rhyming_dicts():
             if key not in inverted_assonant_rhymes:
                 inverted_assonant_rhymes[key] = []
             inverted_assonant_rhymes[key].append(word)
+    
+
+
+    near_rhyme_classes = {}
+    #Create the near rhyme dictionary starting from the perfect rhyme dictionary
+    for pron_1 in inverted_perf_rhymes.keys():
+        near_rhyme_classes[pron_1] = [pron_1]
+        for pron_2 in inverted_perf_rhymes.keys():
+            if pron_1 == pron_2:
+                continue
+            if do_two_end_phon_seq_near_rhyme(list(pron_1), list(pron_2)):
+                near_rhyme_classes[pron_1].append(pron_2)
+    
+
 
     
     if not os.path.exists(folder_path_rhyming_dicts):
@@ -290,37 +308,46 @@ def create_rhyming_dicts():
         pickle.dump(perf_rhymes, f,protocol=pickle.HIGHEST_PROTOCOL)
     with open(folder_path_rhyming_dicts + 'assonant_rhymes.pkl', 'wb') as f:
         pickle.dump(assonant_rhymes, f,protocol=pickle.HIGHEST_PROTOCOL)
+    with open(folder_path_rhyming_dicts + 'near_rhyme_classes.pkl', 'wb') as f:
+        pickle.dump(near_rhyme_classes, f,protocol=pickle.HIGHEST_PROTOCOL)
     with open(folder_path_rhyming_dicts + 'inverted_perf_rhymes.pkl', 'wb') as f:
         pickle.dump(inverted_perf_rhymes, f,protocol=pickle.HIGHEST_PROTOCOL)
     with open(folder_path_rhyming_dicts + 'inverted_assonant_rhymes.pkl', 'wb') as f:
         pickle.dump(inverted_assonant_rhymes, f,protocol=pickle.HIGHEST_PROTOCOL)
     PERF_RHYMES_DICT = perf_rhymes
     ASSONANT_RHYMES_DICT = assonant_rhymes
+    NEAR_RHYME_CLASSES = near_rhyme_classes
     INVERTED_PERF_RHYMES_DICT = inverted_perf_rhymes
     INVERTED_ASSONANT_RHYMES_DICT = inverted_assonant_rhymes
+
+
 
 
 def load_rhyming_dicts():
     global PERF_RHYMES_DICT
     global ASSONANT_RHYMES_DICT
+    global NEAR_RHYME_CLASSES
     global INVERTED_PERF_RHYMES_DICT
     global INVERTED_ASSONANT_RHYMES_DICT
     with open(folder_path_rhyming_dicts + 'perf_rhymes.pkl', 'rb') as f:
         perf_rhymes = pickle.load(f)
     with open(folder_path_rhyming_dicts + 'assonant_rhymes.pkl', 'rb') as f:
         assonant_rhymes = pickle.load(f)
+    with open(folder_path_rhyming_dicts + 'near_rhyme_classes.pkl', 'rb') as f:
+        near_rhyme_classes = pickle.load(f)
     with open(folder_path_rhyming_dicts + 'inverted_perf_rhymes.pkl', 'rb') as f:
         inverted_perf_rhymes = pickle.load(f)
     with open(folder_path_rhyming_dicts + 'inverted_assonant_rhymes.pkl', 'rb') as f:
         inverted_assonant_rhymes = pickle.load(f)
     PERF_RHYMES_DICT = perf_rhymes
     ASSONANT_RHYMES_DICT = assonant_rhymes
+    NEAR_RHYME_CLASSES = near_rhyme_classes
     INVERTED_PERF_RHYMES_DICT = inverted_perf_rhymes
     INVERTED_ASSONANT_RHYMES_DICT = inverted_assonant_rhymes
 
 
 def get_pronounciation_of_unknown_word(word):
-    #We use the legois tool from CMU, the code below is provided by Steven Rubin - srubin@cs.berkeley.edu, found at https://github.com/ucbvislab/p2fa-vislab/blob/master/pronunciation.py
+    #We use the legois tool from CMU
     from io import BytesIO
     import re
     url = "http://www.speech.cs.cmu.edu/cgi-bin/tools/logios/lextool2.pl"
@@ -354,9 +381,26 @@ def get_pronounciation_of_unknown_word(word):
 
 def get_pronounciation_of_word(word):
     if word in d:
-        return d[word]
+        return d[word][0]
     else:
         return get_pronounciation_of_unkown_word(word)
+
+def get_rhyme_ending(word, rhyme_type = "perfect"):
+    if rhyme_type == "perfect":
+        try:
+            return PERF_RHYMES_DICT[word]
+        except KeyError:
+            pron = get_pronounciation_of_unknown_word(word)
+            return get_perfect_rhyme_ending_from_pron(pron)
+    elif rhyme_type == "assonant":
+        try:
+            return ASSONANT_RHYMES_DICT[word]
+        except KeyError:
+            pron = get_pronounciation_of_unknown_word(word)
+            return get_assonant_rhyme_ending_from_pron(pron)
+    else:
+        return ""
+
 
 def get_perfect_rhyme_ending_from_pron(pron):
     index = -1
@@ -365,12 +409,10 @@ def get_perfect_rhyme_ending_from_pron(pron):
             index = i
             break
     if index == -1:
-        return ""
+        return ("")
     vowel = pron[index][:-1]
     last_consonants = pron[i+1:] if i+1 < len(pron) else []
-    string = vowel +"".join(last_consonants)
-
-    return string
+    return tuple([vowel] + last_consonants)
 
 def get_assonant_rhyme_ending_from_pron(pron):
     index = -1
@@ -384,6 +426,21 @@ def get_assonant_rhyme_ending_from_pron(pron):
     return vowel
 
 def do_two_end_phon_seq_near_rhyme(phon_seq1, phon_seq2):
+    #The following sequence is adopted from the code from weirdAI on github by Riedl M. (https://github.com/markriedl/weirdai/blob/master/weird_ai.ipynb)
+    NEAR_SETS = [
+        ['T', 'D'],
+        ['P', 'B'],
+        ['K', 'G'],
+        ['F', 'V'],
+        ['TH', 'DH'],
+        ['S', 'Z'],
+        ['SH', 'ZH'],
+        ['CH', 'JH'],
+        ['M', 'N'],
+        ['NG', 'L'],
+
+             ]
+
     #The end sequence starts with the last vowel and goes to the end of the word
     if len(phon_seq1) == 0 or len(phon_seq2) == 0:
         return False
@@ -398,14 +455,44 @@ def do_two_end_phon_seq_near_rhyme(phon_seq1, phon_seq2):
         vowel_1 = vowel_1[:-1]
     if vowel_2[-1].isdigit():
         vowel_2 = vowel_2[:-1]
+
+    #If the vowel is not the same retrun false
+    if vowel_1 != vowel_2:
+        if vowel_1 == 'ER' and vowel_2 == 'EH' and len(consonants_2) >0 and consonants_2[0] == 'R':
+            consonants_2 = consonants_2[1:]
+        elif vowel_1 == 'EH' and vowel_2 == 'ER' and len(consonants_1) >0 and consonants_1[0] == 'R':
+            consonants_1 = consonants_1[1:]
+        else:
+            return False
     
     #Perfect Rhyme
-    if vowel_1 == vowel_2 and consonants_1 == consonants_2:
+    if consonants_1 == consonants_2:
         return True
     
+    if len(consonants_1) == 0 or len(consonants_2) == 0:
+        return False
+
+    #If they have the same or near same end consonant, but different consonants between the vowel and the end consonant 
+    if consonants_1[-1] == consonants_2[-1] or [consonants_1[-1], consonants_2[-1]] in NEAR_SETS or [consonants_2[-1], consonants_1[-1]] in NEAR_SETS:
+        return True
+    
+    #If they have the same  or near same first consonant but different end consonants
+    # if consonants_1[0] == consonants_2[0] or [consonants_1[0], consonants_2[0]] in NEAR_SETS or [consonants_2[0], consonants_1[0]] in NEAR_SETS:
+    #     return True
+    
+
+    return False
 
 
+def do_two_words_near_rhyme(word1, word2):
+    word1_rhyming = get_rhyme_ending(word1, "perfect")
+    word2_rhyming = get_rhyme_ending(word2, "perfect")
+    for ending1 in word1_rhyming:
+        for ending2 in word2_rhyming:
+            if do_two_end_phon_seq_near_rhyme(list(ending1), list(ending2)):
+                return True
 
+    return False
 
 
 def do_two_words_rhyme_perfectly(word1, word2):
@@ -461,6 +548,8 @@ def do_two_lines_rhyme(sentence1, sentence2, rhyme_type = "perfect"):
         return do_two_words_rhyme_perfectly(word1, word2)
     elif rhyme_type == "assonant":
         return do_two_words_rhyme_assonantly(word1, word2)
+    elif rhyme_type == "near":
+        return do_two_words_near_rhyme(word1, word2)
     else:
         return False
 
@@ -490,11 +579,23 @@ def get_assonant_rhyming_words(word):
         result += INVERTED_ASSONANT_RHYMES_DICT[rhyme]
     return result
 
+def get_near_rhyming_words(word):
+    end_pron = get_rhyme_ending(word, "perfect")
+    near_rhyme_endings = []
+    for ending in end_pron:
+        near_rhyme_endings = NEAR_RHYME_CLASSES[ending]
+    result = []
+    for ending in near_rhyme_endings:
+        result += INVERTED_PERF_RHYMES_DICT[ending]
+    return result
+
 def _do_two_words_rhyme(word1, word2, rhyme_type = "perfect"):
     if rhyme_type == "perfect":
         return do_two_words_rhyme_perfectly(word1, word2)
     elif rhyme_type == "assonant":
         return do_two_words_rhyme_assonantly(word1, word2)
+    elif rhyme_type == "near":
+        return do_two_words_near_rhyme(word1, word2)
     else:
         return False
 
@@ -503,6 +604,8 @@ def _get_rhyming_words(word, rhyme_type = "perfect"):
         return get_perfect_rhyming_words(word)
     elif rhyme_type == "assonant":
         return get_assonant_rhyming_words(word)
+    elif rhyme_type == "near":
+        return get_near_rhyming_words(word)
     else:
         return []
 
@@ -701,7 +804,9 @@ if __name__ == "__main__":
     #create_rhyming_dicts()
     load_rhyming_dicts()
 
-    # test_lines = ["I used to roll the dice", "Feel the fear in my enemy's eyes", "Listen as the crowd would sing", "Now the old king is dead, long live the king", "One minute, I held the key", "Next, the walls were closed on me", "And I discovered that my castles stand", "Upon pillars of salt and pillars of sand"]
-    # print(get_rhyming_lines(test_lines))
-    #print(get_perfect_rhyming_words("dice"))
-    print(get_pronounciation_of_unknown_word('Hallo'))
+    # pron_1 = get_pronounciation_of_word("world")
+    # pron_2 = get_pronounciation_of_word("word")
+
+    # print(do_two_end_phon_seq_near_rhyme(pron_1, pron_2))
+    print(get_near_rhyming_words("without"))
+    
