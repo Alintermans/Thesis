@@ -38,8 +38,8 @@ class RhymingConstraintLBL(Constraint):
                 self.rhyming_words.remove(word)
         self.rhyming_words_tokens, self.max_syllable_count = rhyming_words_to_tokens_and_syllable_count(self.tokenizer, self.rhyming_words, start_token=self.start_token)
 
-        if self.max_syllable_count > 4:
-            self.max_syllable_count = 4
+        if self.max_syllable_count > 3:
+            self.max_syllable_count = 3
     
     def set_required_syllable_count(self, required_syllable_count):
         self.required_syllable_count = required_syllable_count
@@ -70,10 +70,22 @@ class RhymingConstraintLBL(Constraint):
         current_syllable_count = get_syllable_count_of_sentence(last_line)
         
         if current_syllable_count == self.required_syllable_count:
+            
             last_word = last_line.split(' ')[-1]
-            print(last_word)
+
             if _do_two_words_rhyme(last_word, self.rhyming_word, self.rhyme_type):
-                return next_score - next_score*0.8 
+                
+                next_score = next_score - next_score*0.95
+                return next_score
+            
+            ## Because the syllable constraints stops the generation when the syllable count is reached,it can happpen sometimes that last consonants are not generated, as no extra syllable is added when adding consonants
+            ## This may cause it be a near perfect rhyme even though perfect rhymes were chosen. Therefore we check if the last vowels are the same.
+
+            if _do_two_words_rhyme(last_word, self.rhyming_word, "assonant"):
+                
+                next_score = next_score - next_score*0.9
+                
+                return next_score
         return next_score
 
         
@@ -97,17 +109,24 @@ class RhymingConstraintLBL(Constraint):
             last_line = sentence.split('\n')[-1]
             syllable_count = get_syllable_count_of_sentence(last_line)
             syllables_left = self.required_syllable_count - syllable_count
-
+            
             if syllables_left <= 0 or syllables_left > self.max_syllable_count:
                 return scores
 
             #first check if the rhyming word is already initialized and the first token of one of the rhyming words is the last token of the sentence
+            started_with_rhyming_word = False
+            prev_scores = scores[i].clone()
             for rhyming_word in self.rhyming_words_tokens:
                 if input[-1] in rhyming_word['tokens']:
                     
                     current_token_index = rhyming_word['tokens'].index(input[-1])
-                    if current_token_index + 1 == len(rhyming_word['tokens']):
-                        return scores
+                    
+                    #verify the whole word is in the input
+                    # print(input[-current_token_index - 1:])
+                    # print(rhyming_word['tokens'][:current_token_index + 1])
+                    if input[-current_token_index - 1:].tolist() != rhyming_word['tokens'][:current_token_index + 1]:
+                        continue
+                    
                     input_without_rhyme = input[:len(input)-current_token_index - 1]
                     text = self.tokenizer.decode(input_without_rhyme, skip_special_tokens=True)
                     last_line = text.split('\n')[-1]
@@ -115,9 +134,16 @@ class RhymingConstraintLBL(Constraint):
                     if syllable_count_without_rhyme + rhyming_word['syllable_count'] != self.required_syllable_count:
                         continue
                     next_token = rhyming_word['tokens'][current_token_index + 1]
-                    scores[i] = abs(scores[i]) * float('-inf')
-                    scores[i][next_token] = 0
-                    return scores
+                    score = prev_scores[next_token]
+                    if not started_with_rhyming_word:
+                        scores[i] = abs(scores[i]) * float('-inf')
+                        started_with_rhyming_word = True
+                    scores[i][next_token] = score + 0.99*abs(score)
+
+
+                    
+            if started_with_rhyming_word:
+                return scores
             
             
             #get the rhyming words that have the same syllable count as the syllables left
@@ -128,22 +154,23 @@ class RhymingConstraintLBL(Constraint):
             
             
             #Get the top k best tokens
-            _,best_tokens = scores[i].topk(self.top_k_rhyme_words, largest=True, sorted=True)
-            #print(best_tokens)
+            scores_rhyme_word = [scores[i][word['tokens'][0]] for word in rhyming_words_with_syllables_left]
+            ordered_rhyming_words = [x for _, x in sorted(zip(scores_rhyme_word, rhyming_words_with_syllables_left), key=lambda pair: pair[0], reverse=True)]
+            
 
+            
             # #get the rhyming words that have the same syllable count as the syllables left and the first token of one of the rhyming words is the last token of the sentence
-            for rhyming_word in rhyming_words_with_syllables_left:
+            for rhyming_word in ordered_rhyming_words[:self.top_k_rhyme_words]:
                 first_token = rhyming_word['tokens'][0]
-                #if the first token isn't in the best tokens, we continue
-                if first_token not in best_tokens:
-                    continue
-                #print(rhyming_word['word'])
-                score = scores[i][first_token]
-                #print('first token: ', first_token, ' score: ', score + 1*abs(score))
-                if score != float('-inf'):
-                    #scores[i] = abs(scores[i]) * float('-inf')
-                    scores[i][first_token] = score + 0.9*abs(score)
                 
+                #if the first token isn't in the best tokens, we continue
+                score = prev_scores[first_token]
+                
+                #print('first token: ', first_token, ' score: ', score + 1*abs(score))
+                
+                if score != float('-inf'):
+                    scores[i][first_token] = score + 0.9*abs(score)
+                    
         return scores
     
     def is_beam_constraint_active(self):

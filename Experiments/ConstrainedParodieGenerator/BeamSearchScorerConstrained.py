@@ -91,7 +91,7 @@ class BeamSearchScorerConstrained(BeamSearchScorer):
             ):
                 batch_beam_idx = batch_idx * self.group_size + next_index
 
-
+                ################## apply constraints
                 for constraint in self.constraints:
                     next_score = constraint.apply_beam_constraint(next_token, next_score, input_ids[batch_beam_idx], cur_len, self.length_penalty)
                 

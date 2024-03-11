@@ -8,6 +8,8 @@ from datetime import date, datetime
 ################################################## Global Parameters ################################################
 #nltk.download('punkt')
 nltk.download('cmudict')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('universal_tagset')
 d = cmudict.dict()
 
 ################################################## Language Model Functions ##################################################
@@ -121,6 +123,19 @@ def write_song(folder_path, **kwargs):
         json.dump(song, file, indent=4)
     
     return file_path_json
+
+
+def get_final_word_of_line(line):
+    words = nltk.word_tokenize(line, language='english', preserve_line=False)
+    
+    #remove all punctuation marks and symbols that don't belong to a word
+    not_to_end_with = [".", ",", "!", "?", ";", ":", "-", "'", "\"", "(", ")", "[", "]", "{", "}",'``' , '&', '#', '*', '$', '£', '`', '+', '\n', '_']
+    for word in words:
+        if word in not_to_end_with:
+            words.remove(word)
+    return words[-1]
+
+    
 
 ################################################## SYLLABLE COUNTER FUNCTIONS ##################################################
 
@@ -674,7 +689,21 @@ def rhyming_words_to_tokens_and_syllable_count(tokenizer, rhyming_words, start_t
 
 
 
-        
+
+
+################################################## POS TAGGING FUNCTIONS ##################################################
+
+def get_pos_tags_of_line(line):
+    words = nltk.word_tokenize(line, language='english', preserve_line=False)
+    tags = nltk.pos_tag(words, tagset='universal')
+
+    #Put them in a list
+    result = []
+    for word, tag in tags:
+        result.append(tag)
+    
+    return result
+
 
 
 
@@ -808,5 +837,6 @@ if __name__ == "__main__":
     # pron_2 = get_pronounciation_of_word("word")
 
     # print(do_two_end_phon_seq_near_rhyme(pron_1, pron_2))
-    print(get_near_rhyming_words("without"))
+    #print(get_near_rhyming_words("ought"))
+    print(get_pos_tags_of_line("It is "))
     

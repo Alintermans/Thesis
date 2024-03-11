@@ -4,7 +4,7 @@ from Constraint import ConstraintList
 from BeamSearchScorerConstrained import BeamSearchScorerConstrained
 from LanguageModels.GPT2 import GPT2
 from LanguageModels.Gemma2BIt import Gemma2BIt
-from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens
+from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens, get_final_word_of_line
 
 from transformers import (
                 set_seed, 
@@ -35,7 +35,7 @@ num_beams = 2
 ######### Constraints ##########
 syllable_constraint = SyllableConstraintLBL(tokenizer, start_token=start_token)
 
-rhyming_constraint = RhymingConstraintLBL(tokenizer, start_token=start_token, top_k_rhyme_words=10, rhyme_type="near")
+rhyming_constraint = RhymingConstraintLBL(tokenizer, start_token=start_token, top_k_rhyme_words=5, rhyme_type="assonant")
 
 forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '\\', '/', '_', '——', ' — ', '..' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?', '\n', '\n\n', '  ', '...']
 forbidden_tokens = forbidden_charachters_to_tokens(tokenizer, forbidden_charachters)
@@ -46,7 +46,7 @@ no_ngram_logits_processor = NoRepeatNGramLogitsProcessor(2)
 
 
 ## Combine Constraints
-constraints = ConstraintList([syllable_constraint, rhyming_constraint])
+constraints = ConstraintList([rhyming_constraint, syllable_constraint])
 
 stopping_criteria_list = constraints.get_stopping_criteria_list() + []
 stopping_criteria = StoppingCriteriaList(stopping_criteria_list)
@@ -114,12 +114,13 @@ def generate_line(prompt, **kwargs):
             logits_warper=logits_warper,
             pad_token_id=pad_token_id,
             eos_token_id=eos_token_id,
-            output_scores = False,
+            output_scores = True,
             return_dict_in_generate=False,
             attention_mask=attention_mask,
             output_attentions=False,
             output_hidden_states=False,
-            use_cache=True
+            use_cache=True,
+            
         )
     else:
         outputs = model.beam_search(
@@ -129,13 +130,15 @@ def generate_line(prompt, **kwargs):
             logits_processor=logits_processor,
             pad_token_id=pad_token_id,
             eos_token_id=eos_token_id,
-            output_scores = False,
+            output_scores = True,
             return_dict_in_generate=False,
             attention_mask=attention_mask,
             output_attentions=False,
             output_hidden_states=False,
-            use_cache=True
+            use_cache=True,
+
         )
+    
     return tokenizer.decode(outputs[0], skip_special_tokens=True)[len(prompt):]
 
 
@@ -174,8 +177,8 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
 
                 rhyming_word = None
                 if rhyming_lines[i] is not None:
-                    
-                    rhyming_word = parodie.split('\n')[rhyming_lines[i]-i-1].split(' ')[-1]
+                    last_line = parodie.split('\n')[rhyming_lines[i]-i-1]
+                    rhyming_word = get_final_word_of_line(last_line)
 
                 ##Generate new line
                 new_line = generate_line(prompt + parodie, new_syllable_amount=syllable_amount, rhyming_word=rhyming_word, **kwargs)
@@ -216,8 +219,8 @@ if(__name__ == '__main__'):
     system_prompt = "I'm a parody genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\n"
     context = "The following parodie will be about that pineaple shouldn't be on pizza\n"
 
-    generate_parodie(song_file_path, system_prompt, context, do_sample=False, top_k=50, top_p=0.9, temperature=0.7)
-    #print(generate_line("Hello\n", new_syllable_amount=7, do_sample=True, top_k=50, top_p=0.9, temperature=0.7))
+    generate_parodie(song_file_path, system_prompt, context, do_sample=True, top_k=100, top_p=0.95, temperature=0.7)
+    #print(generate_line("In a world where nobody wins\n", new_syllable_amount=8, do_sample=False, top_k=100, top_p=0.95, temperature=0.7, rhyming_word='wins'))
     # input_text = "Write me a poem about Machine Learning."
     # input_ids = lm.tokenizer(input_text, return_tensors="pt")
 
