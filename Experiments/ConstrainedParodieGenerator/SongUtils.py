@@ -704,7 +704,36 @@ def get_pos_tags_of_line(line):
     
     return result
 
+def dtw_distance(s1, s2):
+    dist = lambda x, y: 0 if x == y else 1
+    n, m = len(s1), len(s2)
+    dtw_matrix = [[float('inf')] * (m + 1) for x in range(n + 1)]
+    dtw_matrix[0][0] = 0
+    
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            cost = dist(s1[i - 1], s2[j - 1])
+            dtw_matrix[i][j] = cost + min(dtw_matrix[i-1][j],    # insertion
+                                          dtw_matrix[i][j-1],    # deletion
+                                          dtw_matrix[i-1][j-1])  # match
 
+    return dtw_matrix[n][m]
+
+
+
+
+
+
+
+def similarity_of_pos_tags_sequences(seq1, seq2):
+    if len(seq1) == 0 or len(seq2) == 0:
+        return 0
+    # Calculate DTW distance
+    dtw_dist = dtw_distance(seq1, seq2)
+    
+    normalized_dtw_similarity = 1 - (dtw_dist / (len(seq1) + len(seq2)))
+
+    return normalized_dtw_similarity
 
 
 

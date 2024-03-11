@@ -1,10 +1,11 @@
 from Constraints.SyllableConstraint.SyllableConstraintLBL import SyllableConstraintLBL
 from Constraints.RhymingConstraint.RhymingConstraintLBL import RhymingConstraintLBL
+from Constraints.PosConstraint.PosConstraintLBL import PosConstraintLBL
 from Constraint import ConstraintList
 from BeamSearchScorerConstrained import BeamSearchScorerConstrained
 from LanguageModels.GPT2 import GPT2
 from LanguageModels.Gemma2BIt import Gemma2BIt
-from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens, get_final_word_of_line
+from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens, get_final_word_of_line,get_pos_tags_of_line
 
 from transformers import (
                 set_seed, 
@@ -35,7 +36,9 @@ num_beams = 2
 ######### Constraints ##########
 syllable_constraint = SyllableConstraintLBL(tokenizer, start_token=start_token)
 
-rhyming_constraint = RhymingConstraintLBL(tokenizer, start_token=start_token, top_k_rhyme_words=5, rhyme_type="assonant")
+rhyming_constraint = RhymingConstraintLBL(tokenizer, start_token=start_token, top_k_rhyme_words=10, rhyme_type="assonant")
+
+pos_constraint = PosConstraintLBL(tokenizer, start_token=start_token, top_k_words_to_consider=200)
 
 forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '\\', '/', '_', '——', ' — ', '..' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?', '\n', '\n\n', '  ', '...']
 forbidden_tokens = forbidden_charachters_to_tokens(tokenizer, forbidden_charachters)
@@ -46,7 +49,7 @@ no_ngram_logits_processor = NoRepeatNGramLogitsProcessor(2)
 
 
 ## Combine Constraints
-constraints = ConstraintList([rhyming_constraint, syllable_constraint])
+constraints = ConstraintList([pos_constraint, rhyming_constraint, syllable_constraint])
 
 stopping_criteria_list = constraints.get_stopping_criteria_list() + []
 stopping_criteria = StoppingCriteriaList(stopping_criteria_list)
@@ -76,6 +79,8 @@ def generate_line(prompt, **kwargs):
     syllable_constraint.set_new_syllable_amount(kwargs['new_syllable_amount'])
     rhyming_constraint.set_rhyming_word(kwargs['rhyming_word'])
     rhyming_constraint.set_required_syllable_count(kwargs['new_syllable_amount'])
+
+    pos_constraint.set_expected_pos_tags(kwargs['pos_tags'])
     
 
     ## Beam Search
@@ -177,11 +182,14 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
 
                 rhyming_word = None
                 if rhyming_lines[i] is not None:
-                    last_line = parodie.split('\n')[rhyming_lines[i]-i-1]
-                    rhyming_word = get_final_word_of_line(last_line)
+                    rhyming_line = parodie.split('\n')[rhyming_lines[i]-i-1]
+                    rhyming_word = get_final_word_of_line(rhyming_line)
+
+                
+                pos_tags = get_pos_tags_of_line(line)
 
                 ##Generate new line
-                new_line = generate_line(prompt + parodie, new_syllable_amount=syllable_amount, rhyming_word=rhyming_word, **kwargs)
+                new_line = generate_line(prompt + parodie, new_syllable_amount=syllable_amount, rhyming_word=rhyming_word, pos_tags=pos_tags, **kwargs)
                 rhyming_constraint.add_rhyming_words_to_ignore(rhyming_word)
                 parodie += new_line + "\n"
                 print(line, " | ",new_line)
@@ -220,7 +228,7 @@ if(__name__ == '__main__'):
     context = "The following parodie will be about that pineaple shouldn't be on pizza\n"
 
     generate_parodie(song_file_path, system_prompt, context, do_sample=True, top_k=100, top_p=0.95, temperature=0.7)
-    #print(generate_line("In a world where nobody wins\n", new_syllable_amount=8, do_sample=False, top_k=100, top_p=0.95, temperature=0.7, rhyming_word='wins'))
+    #print(generate_line("In a world where nobody wins\n", new_syllable_amount=9, do_sample=False, top_k=100, top_p=0.95, temperature=0.7, rhyming_word='wins', pos_tags=get_pos_tags_of_line("In a world where nobody wins")))
     # input_text = "Write me a poem about Machine Learning."
     # input_ids = lm.tokenizer(input_text, return_tensors="pt")
 

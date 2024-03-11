@@ -1,13 +1,19 @@
 from Constraint import Constraint
-from SongUtils import get_pos_tags_of_line
+from SongUtils import get_pos_tags_of_line, similarity_of_pos_tags_sequences
 import torch
 ################################################ CONSTRAINT CLASS ################################################
 
 
-class RhymingConstraintLBL(Constraint):
-    def __init__(self, tokenizer, start_token=None):
+class PosConstraintLBL(Constraint):
+    def __init__(self, tokenizer, start_token=None, top_k_words_to_consider=100):
         self.tokenizer = tokenizer
         self.start_token = start_token
+        self.expected_pos_tags = None
+        self.top_k_words_to_consider = top_k_words_to_consider
+    
+
+    def set_expected_pos_tags(self, expected_pos_tags):
+        self.expected_pos_tags = expected_pos_tags
 
 
     
@@ -17,6 +23,21 @@ class RhymingConstraintLBL(Constraint):
         current_token = self.tokenizer.decode(next_token, skip_special_tokens=True)
         candidate_text = previous_text + current_token
         last_line = candidate_text.split('\n')[-1]
+
+        pos_tags = get_pos_tags_of_line(last_line)
+
+        if pos_tags is None:
+            return next_score
+        
+        if self.expected_pos_tags is None:
+            raise Exception('Expected pos tags not set')
+
+        min_length = min(len(pos_tags), len(self.expected_pos_tags))
+        similarity = similarity_of_pos_tags_sequences(pos_tags[:min_length], self.expected_pos_tags[:min_length])
+        print('similarity: ', similarity, 'pos_tags: ', pos_tags, 'expected_pos_tags: ', self.expected_pos_tags)
+        if similarity > 0.5:
+            return next_score - next_score*(similarity)*0.1 * ( cur_len ** length_penalty)
+
         
         return next_score
 
@@ -33,7 +54,28 @@ class RhymingConstraintLBL(Constraint):
 
 
         for i in range(len(input_ids)):
-            pass
+            input = input_ids[i]
+            text = self.tokenizer.decode(input, skip_special_tokens=True)
+            last_line = text.split('\n')[-1]
+
+            _, best_tokens = scores[i].topk(self.top_k_words_to_consider)
+            for token in best_tokens:
+                pos_tags_last_line = get_pos_tags_of_line(last_line)
+                min_length = min(len(pos_tags_last_line), len(self.expected_pos_tags))
+                similarity_of_last_line = similarity_of_pos_tags_sequences(pos_tags_last_line[:min_length], self.expected_pos_tags[:min_length])
+                candidate_text = last_line + self.tokenizer.decode(token, skip_special_tokens=True)
+                pos_tags = get_pos_tags_of_line(candidate_text)
+                min_length = min(len(pos_tags), len(self.expected_pos_tags))
+                similarity_with_new_token = similarity_of_pos_tags_sequences(pos_tags[:min_length], self.expected_pos_tags[:min_length])
+                if pos_tags is not None:
+                    
+                    if similarity_with_new_token > similarity_of_last_line + 0.1:
+                        #print('similarity_with_new_token: ', similarity_with_new_token, 'similarity_of_last_line: ', similarity_of_last_line)
+                        scores[i][token] = scores[i][token] - scores[i][token]*0.6*(similarity_with_new_token - similarity_of_last_line)
+                    
+            
+
+            
                     
         return scores
     
