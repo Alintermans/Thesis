@@ -720,11 +720,6 @@ def dtw_distance(s1, s2):
     return dtw_matrix[n][m]
 
 
-
-
-
-
-
 def similarity_of_pos_tags_sequences(seq1, seq2):
     if len(seq1) == 0 or len(seq2) == 0:
         return 0
