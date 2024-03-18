@@ -1,5 +1,7 @@
 import json
 from SongUtils import divide_song_into_paragraphs, get_pos_tags_of_line, similarity_of_pos_tags_sequences, get_syllable_count_of_sentence, _get_rhyming_lines
+from evaluate import load
+
 
 #The following function will check if the original and parodie song have the same number of paragraphs and lines and will return the paragraphs and lines that both the original and the parodie song have. 
 def count_same_nb_lines_and_return_same_paragraphs(original_song_paragraps, parody_song_in_paragraphs):
@@ -58,10 +60,51 @@ def calculate_pos_tag_similarity(original_song_paragraph, parody_song_paragraph)
     return pos_tag_similarities
 
 
+def calculate_perplexity(original_song_paragraph, parody_song_paragraph):
+    #for each song the perplexity is calculated per line and then the mean over the whole song is calculated
+    full_original_song_per_line = []
+    full_parody_song_per_line = []
+    for i in range(len(original_song_paragraph)):
+        for j in range(len(original_song_paragraph[i])):
+            original_line = original_song_paragraph[i][j]
+            parody_line = parody_song_paragraph[i][j]
+            full_original_song_per_line.append(original_line)
+            full_parody_song_per_line.append(parody_line)
+    
+    perplexity = load("perplexity", module_type="metric")
+    original_song_perplexity = perplexity(predictions=full_original_song_per_line, model_id='gpt2')
+    parody_song_perplexity = perplexity(predictions=full_parody_song_per_line, model_id='gpt2')
+
+    return original_song_perplexity['mean_perplexity'], parody_song_perplexity['mean_perplexity']
+
+def calculate_overlap(original_song_paragraph, parody_song_paragraph):
+    #the overlap between the original song and the parodie song is calculated by counting per line how many words are similar
+    nb_overlap_words = 0
+    nb_total_words = 0
+    for i in range(len(original_song_paragraph)):
+        for j in range(len(original_song_paragraph[i])):
+            original_line = original_song_paragraph[i][j]
+            parody_line = parody_song_paragraph[i][j]
+            original_words = original_line.split(' ')
+            parody_words = parody_line.split(' ')
+            overlap = len([word for word in original_words if word in parody_words])
+            nb_overlap_words += overlap
+            nb_total_words += len(parody_words)
+    
+    return nb_overlap_words/nb_total_words
 
 
-
-
+def calculate_repetition_score(song):
+    #The repetition score is calculated by counting the number of unique words used in the song
+    unique_words = set()
+    nb_total_words = 0
+    for i in range(len(song)):
+        for j in range(len(song[i])):
+            line = song[i][j]
+            words = line.split(' ')
+            unique_words.update(words)
+            nb_total_words += len(words)
+    return len(unique_words)/nb_total_words
 
 if __name__ == "__main__":
     # Ask the user for the original song file path (We expect the song to be in json format)
@@ -115,8 +158,10 @@ if __name__ == "__main__":
     mean_deviation_pos_tag_similarity = sum([abs(similarity - avg_pos_tag_similarity) for similarity in pos_tag_similarities]) / len(pos_tag_similarities)
 
     # check the perplexity
+    original_song_perplexity, parody_song_perplexity = calculate_perplexity(original_song_in_paragraphs, parody_song_in_paragraphs)
 
     # check the overlap with the original song
+    overlap = calculate_overlap(original_song_in_paragraphs, parody_song_in_paragraphs)
 
     # check the repetition score, how many unique words are used
 
