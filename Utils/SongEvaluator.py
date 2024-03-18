@@ -1,0 +1,127 @@
+import json
+from SongUtils import divide_song_into_paragraphs, get_pos_tags_of_line, similarity_of_pos_tags_sequences, get_syllable_count_of_sentence, _get_rhyming_lines
+
+#The following function will check if the original and parodie song have the same number of paragraphs and lines and will return the paragraphs and lines that both the original and the parodie song have. 
+def count_same_nb_lines_and_return_same_paragraphs(original_song_paragraps, parody_song_in_paragraphs):
+    min_paragraph_len = min(len(original_song_paragraps), len(parody_song_in_paragraphs))
+    original_song_nb_paragraphs = len(original_song_paragraps)
+    parody_song_nb_paragraphs = len(parody_song_in_paragraphs)
+    original_song_nb_lines = 0
+    parody_song_nb_lines = 0
+    new_original_song_paragraphs = []
+    new_parody_song_paragraphs = []
+    for i in range(min_paragraph_len):
+        original_song_nb_lines += len(original_song_paragraps[i][1])
+        parody_song_nb_lines += len(parody_song_in_paragraphs[i][1])
+        min_len_lines = min(len(original_song_paragraps[i][1]), len(parody_song_in_paragraphs[i][1]))
+        new_original_song_paragraphs.append(original_song_paragraps[i][1][:min_len_lines])
+        new_parody_song_paragraphs.append(parody_song_in_paragraphs[i][1][:min_len_lines])
+
+    return original_song_nb_paragraphs, parody_song_nb_paragraphs, original_song_nb_lines, parody_song_nb_lines, new_original_song_paragraphs, new_parody_song_paragraphs
+        
+    
+
+def count_syllable_difference_per_line(original_song_paragraph, parody_song_paragraph):
+    syllable_count_differences = []
+    for i in range(len(original_song_paragraph)):
+        for j in range(len(original_song_paragraph[i])):
+            original_line = original_song_paragraph[i][j]
+            parody_line = parody_song_paragraph[i][j]
+            original_syllable_count = get_syllable_count_of_sentence(original_line)
+            parody_syllable_count = get_syllable_count_of_sentence(parody_line)
+            syllable_count_differences.append(abs(original_syllable_count - parody_syllable_count))
+    return syllable_count_differences
+
+def count_nb_line_pairs_match_rhyme_scheme(original_song_paragraph, parody_song_paragraph, rhyme_type):
+    ##Assumes that the given paragraphs have the same number of lines
+    matching_rhyme_pairs = 0
+    for i in range(len(original_song_paragraph)):
+        original_rhyming_lines = _get_rhyming_lines(original_song_paragraph[i], rhyme_type)
+        parody_rhyming_lines = _get_rhyming_lines(parody_song_paragraph[i], rhyme_type)
+        for j in range(len(original_rhyming_lines)):
+            if original_rhyming_lines[j] == parody_rhyming_lines[j]:
+                matching_rhyme_pairs += 1
+    return matching_rhyme_pairs
+    
+
+
+def calculate_pos_tag_similarity(original_song_paragraph, parody_song_paragraph):
+    pos_tag_similarities = []
+    for i in range(len(original_song_paragraph)):
+        for j in range(len(original_song_paragraph[i])):
+            original_line = original_song_paragraph[i][j]
+            parody_line = parody_song_paragraph[i][j]
+            original_pos_tags = get_pos_tags_of_line(original_line)
+            parody_pos_tags = get_pos_tags_of_line(parody_line)
+            similarity = similarity_of_pos_tags_sequences(original_pos_tags, parody_pos_tags)
+            pos_tag_similarities.append(similarity)
+    return pos_tag_similarities
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    # Ask the user for the original song file path (We expect the song to be in json format)
+    song_file_path = input("Enter the path to the original song file in json format: ")
+    # Ask the user for the path to the parody song file (We expect the song to be in json format)
+    parody_file_path = input("Enter the path to the parodie song file in json format: ")
+
+    
+    original_song_file = None
+    parody_song_file = None
+    # Read the original song file
+    with open(song_file_path, "r") as f:
+        original_song_file = json.load(f)
+    # Read the parodie song file
+    with open(parody_file_path, "r") as f:
+        parody_song_file = json.load(f)
+    
+
+    original_song = original_song_file['lyrics']
+    parody_song = parody_song_file['lyrics']
+
+    # Split in paragraphs
+    original_song_in_paragraphs = divide_song_into_paragraphs(original_song)
+    parody_song_in_paragraphs = divide_song_into_paragraphs(parody_song)
+
+    # Count the number of paragraphs and lines in each song and return the paragraphs and lines that both the original and the parodie song both have 
+    result = count_same_nb_lines_and_return_same_paragraphs(original_song_in_paragraphs, parody_song_in_paragraphs)
+    original_song_nb_paragraphs = result[0]
+    parody_song_nb_paragraphs = result[1]
+    original_song_nb_lines = result[2]
+    parody_song_nb_lines = result[3]
+    original_song_in_paragraphs = result[4]
+    parody_song_in_paragraphs = result[5]
+
+    print("Number of paragraphs in original song:", original_song_nb_paragraphs, "Number of paragraphs in parodie song:", parody_song_nb_paragraphs)
+    print("Number of lines in original song:", original_song_nb_lines, "Number of lines in parodie song:", parody_song_nb_lines)
+
+    # check the difference in syllables
+    syllable_count_differences = count_syllable_difference_per_line(original_song_in_paragraphs, parody_song_in_paragraphs)
+    nb_lines_correct_syllable_count = len([count for count in syllable_count_differences if count == 0])
+    avg_syllable_count_difference = sum(syllable_count_differences) / len(syllable_count_differences)
+    mean_deviation_syllable_count = sum([abs(count - avg_syllable_count_difference) for count in syllable_count_differences]) / len(syllable_count_differences)
+
+    # check the rhyming 
+    nb_matching_rhyme_pairs = count_nb_line_pairs_match_rhyme_scheme(original_song_in_paragraphs, parody_song_in_paragraphs, 'perfect')
+
+    # check the pos tags similarity
+    pos_tag_similarities = calculate_pos_tag_similarity(original_song_in_paragraphs, parody_song_in_paragraphs)
+    nb_correct_pos_similarities = len([similarity for similarity in pos_tag_similarities if similarity == 1])
+    avg_pos_tag_similarity = sum(pos_tag_similarities) / len(pos_tag_similarities)
+    mean_deviation_pos_tag_similarity = sum([abs(similarity - avg_pos_tag_similarity) for similarity in pos_tag_similarities]) / len(pos_tag_similarities)
+
+    # check the perplexity
+
+    # check the overlap with the original song
+
+    # check the repetition score, how many unique words are used
+
+
+
+    
+
+
