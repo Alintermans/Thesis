@@ -16,6 +16,12 @@ class PosConstraintLBL(Constraint):
         self.good_token_multiplier = 0.6
         self.margin_of_similarity_with_new_token = 0.1
     
+    def set_hyperparameters(self, good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1):
+        self.good_beamscore_multiplier = good_beamscore_multiplier
+        self.pos_similarity_limit_to_boost = pos_similarity_limit_to_boost
+        self.good_token_multiplier = good_token_multiplier
+        self.margin_of_similarity_with_new_token = margin_of_similarity_with_new_token
+    
 
     def set_expected_pos_tags(self, expected_pos_tags):
         self.expected_pos_tags = expected_pos_tags
