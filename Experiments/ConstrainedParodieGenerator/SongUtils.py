@@ -6,7 +6,7 @@ import json
 from datetime import date, datetime
 
 ################################################## Global Parameters ################################################
-#nltk.download('punkt')
+nltk.download('punkt')
 nltk.download('cmudict')
 nltk.download('averaged_perceptron_tagger')
 nltk.download('universal_tagset')
