@@ -19,7 +19,17 @@ class RhymingConstraintLBL(Constraint):
         load_rhyming_dicts()
         ## Hyperparameters
         self.max_possible_syllable_count = 3
-        
+        self.good_beamscore_multiplier_same_rhyme_type = 0.95
+        self.good_beamscore_multiplier_assonant = 0.9
+        self.continue_good_rhyme_multiplier = 0.99
+        self.good_rhyming_token_multiplier = 0.9
+    
+    def set_hyperparameters(self, max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_beamscore_multiplier_assonant=0.9, continue_good_rhyme_multiplier=0.99, good_rhyming_token_multiplier=0.9):
+        self.max_possible_syllable_count = max_possible_syllable_count
+        self.good_beamscore_multiplier_same_rhyme_type = good_beamscore_multiplier_same_rhyme_type
+        self.good_beamscore_multiplier_assonant = good_beamscore_multiplier_assonant
+        self.continue_good_rhyme_multiplier = continue_good_rhyme_multiplier
+        self.good_rhyming_token_multiplier = good_rhyming_token_multiplier
     
     def get_rhyming_lines(self, lines):
         return _get_rhyming_lines(lines, self.rhyme_type)
@@ -78,7 +88,7 @@ class RhymingConstraintLBL(Constraint):
 
             if _do_two_words_rhyme(last_word, self.rhyming_word, self.rhyme_type):
                 
-                next_score = next_score - next_score*0.95
+                next_score = next_score - next_score*self.good_beamscore_multiplier_same_rhyme_type
                 return next_score
             
             ## Because the syllable constraints stops the generation when the syllable count is reached,it can happpen sometimes that last consonants are not generated, as no extra syllable is added when adding consonants
@@ -86,7 +96,7 @@ class RhymingConstraintLBL(Constraint):
 
             if _do_two_words_rhyme(last_word, self.rhyming_word, "assonant"):
                 
-                next_score = next_score - next_score*0.9
+                next_score = next_score - next_score*self.good_beamscore_multiplier_assonant
                 
                 return next_score
         return next_score
@@ -141,7 +151,7 @@ class RhymingConstraintLBL(Constraint):
                     if not started_with_rhyming_word:
                         scores[i] = abs(scores[i]) * float('-inf')
                         started_with_rhyming_word = True
-                    scores[i][next_token] = score + 0.99*abs(score)
+                    scores[i][next_token] = score + self.continue_good_rhyme_multiplier*abs(score)
 
 
                     
@@ -156,7 +166,7 @@ class RhymingConstraintLBL(Constraint):
             
             
             
-            #Get the top k best tokens
+            #Sort the rhyming words by their score
             scores_rhyme_word = [scores[i][word['tokens'][0]] for word in rhyming_words_with_syllables_left]
             ordered_rhyming_words = [x for _, x in sorted(zip(scores_rhyme_word, rhyming_words_with_syllables_left), key=lambda pair: pair[0], reverse=True)]
             
@@ -172,7 +182,7 @@ class RhymingConstraintLBL(Constraint):
                 #print('first token: ', first_token, ' score: ', score + 1*abs(score))
                 
                 if score != float('-inf'):
-                    scores[i][first_token] = score + 0.9*abs(score)
+                    scores[i][first_token] = score + self.good_rhyming_token_multiplier*abs(score)
                     
         return scores
     

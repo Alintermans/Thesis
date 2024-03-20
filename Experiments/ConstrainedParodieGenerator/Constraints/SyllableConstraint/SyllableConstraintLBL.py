@@ -13,6 +13,13 @@ class SyllableConstraintLBL(Constraint):
         self.new_line_tokens = tokenizer.encode('\n')
         if self.start_token is not None and self.start_token in self.new_line_tokens:
             self.new_line_tokens.remove(self.start_token)
+        #Hyperparameters
+        self.good_beamscore_multiplier = 0.1 
+        self.bad_beamscore_multiplier = 10
+    
+    def set_hyperparameters(self, good_beamscore_multiplier=0.1, bad_beamscore_multiplier=10):
+        self.good_beamscore_multiplier = good_beamscore_multiplier
+        self.bad_beamscore_multiplier = bad_beamscore_multiplier
     
     def set_new_syllable_amount(self, new_syllable_amount):
         self.new_syllable_amount = new_syllable_amount
@@ -36,10 +43,10 @@ class SyllableConstraintLBL(Constraint):
         
 
         if result > self.new_syllable_amount or (result == self.new_syllable_amount and get_syllable_count_of_sentence(current_token_text) == 0):
-            next_score = next_score + next_score*(10) * ( current_length ** length_penalty)
+            next_score = next_score + next_score*self.bad_beamscore_multiplier* ( current_length ** length_penalty)
             #next_score = float('-inf')
         elif result == self.new_syllable_amount:
-            next_score = next_score - next_score*0.1 * ( current_length ** length_penalty)
+            next_score = next_score - next_score*self.good_beamscore_multiplier* ( current_length ** length_penalty)
         #print(candidate_text,' count: ' ,result, ' score: ', next_score)
         return next_score
     

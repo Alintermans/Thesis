@@ -10,6 +10,11 @@ class PosConstraintLBL(Constraint):
         self.start_token = start_token
         self.expected_pos_tags = None
         self.top_k_words_to_consider = top_k_words_to_consider
+        #hyperparameters
+        self.good_beamscore_multiplier = 0.1
+        self.pos_similarity_limit_to_boost = 0.5
+        self.good_token_multiplier = 0.6
+        self.margin_of_similarity_with_new_token = 0.1
     
 
     def set_expected_pos_tags(self, expected_pos_tags):
@@ -35,8 +40,8 @@ class PosConstraintLBL(Constraint):
         min_length = min(len(pos_tags), len(self.expected_pos_tags))
         similarity = similarity_of_pos_tags_sequences(pos_tags[:min_length], self.expected_pos_tags[:min_length])
         print('similarity: ', similarity, 'pos_tags: ', pos_tags, 'expected_pos_tags: ', self.expected_pos_tags)
-        if similarity > 0.5:
-            return next_score - next_score*(similarity)*0.1 * ( cur_len ** length_penalty)
+        if similarity > self.pos_similarity_limit_to_boost:
+            return next_score - next_score*(similarity)*self.good_beamscore_multiplier * ( cur_len ** length_penalty)
 
         
         return next_score
@@ -69,9 +74,9 @@ class PosConstraintLBL(Constraint):
                 similarity_with_new_token = similarity_of_pos_tags_sequences(pos_tags[:min_length], self.expected_pos_tags[:min_length])
                 if pos_tags is not None:
                     
-                    if similarity_with_new_token > similarity_of_last_line + 0.1:
+                    if similarity_with_new_token > similarity_of_last_line + self.margin_of_similarity_with_new_token:
                         #print('similarity_with_new_token: ', similarity_with_new_token, 'similarity_of_last_line: ', similarity_of_last_line)
-                        scores[i][token] = scores[i][token] - scores[i][token]*0.6*(similarity_with_new_token - similarity_of_last_line)
+                        scores[i][token] = scores[i][token] - scores[i][token]*self.good_token_multiplier*(similarity_with_new_token - similarity_of_last_line)
                     
             
 
