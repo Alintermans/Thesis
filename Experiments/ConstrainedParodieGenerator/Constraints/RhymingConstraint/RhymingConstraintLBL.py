@@ -17,6 +17,9 @@ class RhymingConstraintLBL(Constraint):
         self.top_k_rhyme_words = top_k_rhyme_words
         self.rhyme_type = rhyme_type
         load_rhyming_dicts()
+        ## Hyperparameters
+        self.max_possible_syllable_count = 3
+        
     
     def get_rhyming_lines(self, lines):
         return _get_rhyming_lines(lines, self.rhyme_type)
@@ -38,8 +41,8 @@ class RhymingConstraintLBL(Constraint):
                 self.rhyming_words.remove(word)
         self.rhyming_words_tokens, self.max_syllable_count = rhyming_words_to_tokens_and_syllable_count(self.tokenizer, self.rhyming_words, start_token=self.start_token)
 
-        if self.max_syllable_count > 3:
-            self.max_syllable_count = 3
+        if self.max_syllable_count > self.max_possible_syllable_count:
+            self.max_syllable_count = self.max_possible_syllable_count
     
     def set_required_syllable_count(self, required_syllable_count):
         self.required_syllable_count = required_syllable_count

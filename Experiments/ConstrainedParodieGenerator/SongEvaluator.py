@@ -1,6 +1,9 @@
 import json
-from SongUtils import divide_song_into_paragraphs, get_pos_tags_of_line, similarity_of_pos_tags_sequences, get_syllable_count_of_sentence, _get_rhyming_lines
+import datetime
+import os
+from SongUtils import divide_song_into_paragraphs, get_pos_tags_of_line, similarity_of_pos_tags_sequences, get_syllable_count_of_sentence, _get_rhyming_lines,load_rhyming_dicts
 from evaluate import load
+
 
 
 #The following function will check if the original and parodie song have the same number of paragraphs and lines and will return the paragraphs and lines that both the original and the parodie song have. 
@@ -37,13 +40,16 @@ def count_syllable_difference_per_line(original_song_paragraph, parody_song_para
 def count_nb_line_pairs_match_rhyme_scheme(original_song_paragraph, parody_song_paragraph, rhyme_type):
     ##Assumes that the given paragraphs have the same number of lines
     matching_rhyme_pairs = 0
+    expected_rhyming_pairs = 0
     for i in range(len(original_song_paragraph)):
         original_rhyming_lines = _get_rhyming_lines(original_song_paragraph[i], rhyme_type)
         parody_rhyming_lines = _get_rhyming_lines(parody_song_paragraph[i], rhyme_type)
         for j in range(len(original_rhyming_lines)):
-            if original_rhyming_lines[j] == parody_rhyming_lines[j]:
-                matching_rhyme_pairs += 1
-    return matching_rhyme_pairs
+            if original_rhyming_lines[j] is not None:
+                expected_rhyming_pairs += 1
+                if original_rhyming_lines[j] == parody_rhyming_lines[j]:
+                    matching_rhyme_pairs += 1
+    return matching_rhyme_pairs, expected_rhyming_pairs
     
 
 
@@ -72,8 +78,8 @@ def calculate_perplexity(original_song_paragraph, parody_song_paragraph):
             full_parody_song_per_line.append(parody_line)
     
     perplexity = load("perplexity", module_type="metric")
-    original_song_perplexity = perplexity(predictions=full_original_song_per_line, model_id='gpt2')
-    parody_song_perplexity = perplexity(predictions=full_parody_song_per_line, model_id='gpt2')
+    original_song_perplexity = perplexity.compute(predictions=full_original_song_per_line, model_id='gpt2')
+    parody_song_perplexity = perplexity.compute(predictions=full_parody_song_per_line, model_id='gpt2')
 
     return original_song_perplexity['mean_perplexity'], parody_song_perplexity['mean_perplexity']
 
@@ -106,13 +112,8 @@ def calculate_repetition_score(song):
             nb_total_words += len(words)
     return len(unique_words)/nb_total_words
 
-if __name__ == "__main__":
-    # Ask the user for the original song file path (We expect the song to be in json format)
-    song_file_path = input("Enter the path to the original song file in json format: ")
-    # Ask the user for the path to the parody song file (We expect the song to be in json format)
-    parody_file_path = input("Enter the path to the parodie song file in json format: ")
 
-    
+def evaluate(original_song_file_path, parody_file_path, rhyme_type='perfect'):
     original_song_file = None
     parody_song_file = None
     # Read the original song file
@@ -124,7 +125,7 @@ if __name__ == "__main__":
     
 
     original_song = original_song_file['lyrics']
-    parody_song = parody_song_file['lyrics']
+    parody_song = parody_song_file['parodie']
 
     # Split in paragraphs
     original_song_in_paragraphs = divide_song_into_paragraphs(original_song)
@@ -139,6 +140,7 @@ if __name__ == "__main__":
     original_song_in_paragraphs = result[4]
     parody_song_in_paragraphs = result[5]
 
+
     print("Number of paragraphs in original song:", original_song_nb_paragraphs, "Number of paragraphs in parodie song:", parody_song_nb_paragraphs)
     print("Number of lines in original song:", original_song_nb_lines, "Number of lines in parodie song:", parody_song_nb_lines)
 
@@ -149,7 +151,7 @@ if __name__ == "__main__":
     mean_deviation_syllable_count = sum([abs(count - avg_syllable_count_difference) for count in syllable_count_differences]) / len(syllable_count_differences)
 
     # check the rhyming 
-    nb_matching_rhyme_pairs = count_nb_line_pairs_match_rhyme_scheme(original_song_in_paragraphs, parody_song_in_paragraphs, 'perfect')
+    nb_matching_rhyme_pairs, nb_expected_rhyming_pairs = count_nb_line_pairs_match_rhyme_scheme(original_song_in_paragraphs, parody_song_in_paragraphs, rhyme_type)
 
     # check the pos tags similarity
     pos_tag_similarities = calculate_pos_tag_similarity(original_song_in_paragraphs, parody_song_in_paragraphs)
@@ -164,6 +166,68 @@ if __name__ == "__main__":
     overlap = calculate_overlap(original_song_in_paragraphs, parody_song_in_paragraphs)
 
     # check the repetition score, how many unique words are used
+    original_song_repetition_score = calculate_repetition_score(original_song_in_paragraphs)
+    parody_song_repetition_score = calculate_repetition_score(parody_song_in_paragraphs)
+
+    # store the results in a json file
+    results = {
+        "original_song_name": original_song_file['title'],
+        "parody_song_name": parody_song_file['original_song_title'],
+        "original_song_file_path": song_file_path,
+        "parody_song_file_path": parody_file_path,
+        "original_song_nb_paragraphs": original_song_nb_paragraphs,
+        "parody_song_nb_paragraphs": parody_song_nb_paragraphs,
+        "original_song_nb_lines": original_song_nb_lines,
+        "parody_song_nb_lines": parody_song_nb_lines,
+        "nb_lines_correct_syllable_count": nb_lines_correct_syllable_count,
+        "avg_syllable_count_difference": avg_syllable_count_difference,
+        "mean_deviation_syllable_count": mean_deviation_syllable_count,
+        "nb_matching_rhyme_pairs": nb_matching_rhyme_pairs,
+        "nb_expected_rhyming_pairs": nb_expected_rhyming_pairs,
+        "nb_correct_pos_similarities": nb_correct_pos_similarities,
+        "avg_pos_tag_similarity": avg_pos_tag_similarity,
+        "mean_deviation_pos_tag_similarity": mean_deviation_pos_tag_similarity,
+        "original_song_perplexity": original_song_perplexity,
+        "parody_song_perplexity": parody_song_perplexity,
+        "overlap": overlap,
+        "original_song_repetition_score": original_song_repetition_score,
+        "parody_song_repetition_score": parody_song_repetition_score
+
+    }
+    current_date = datetime.datetime.now()
+    current_time = current_date.strftime("%Y-%m-%d_%H-%M-%S")
+    language_model_name = parody_song_file['language_model_name']
+    constrained_used = parody_song_file['constraints_used']
+    directory = "Experiments/ConstrainedParodieGenerator/EvaluationResults"
+    directory = directory + "/" + language_model_name.replace(' ', '_') + "/" + constrained_used.replace(' ', '_')
+    file_name = parody_song_file['original_song_title'] + "_evaluation_results_" + current_time + ".json"
+    file_path = directory + "/" + file_name
+
+    #check if dir exists
+    
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    with open(file_path, 'w') as f:
+        json.dump(results, f, indent=4)
+
+    
+
+
+
+if __name__ == "__main__":
+    # # Ask the user for the original song file path (We expect the song to be in json format)
+    # song_file_path = input("Enter the path to the original song file in json format: ")
+    # # Ask the user for the path to the parody song file (We expect the song to be in json format)
+    # parody_file_path = input("Enter the path to the parodie song file in json format: ")
+
+    song_file_path = 'Songs/json/Taylor_Swift-Is_It_Over_Now_(Small_Version).json'
+    parody_file_path = 'Experiments/ConstrainedParodieGenerator/GeneratedParodies/GPT2/SyllableConstraintLBL/json/Is It Over Now (Small Version)_parodie_23-02-2024_09h-33m-37s.json'
+    
+    load_rhyming_dicts()
+    evaluate(song_file_path, parody_file_path)
+
+
 
 
 

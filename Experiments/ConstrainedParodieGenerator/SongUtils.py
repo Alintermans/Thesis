@@ -94,10 +94,10 @@ def write_song(folder_path, **kwargs):
     original_song_title = original_song['title']
     original_song_artist = original_song['artist']
     
-    file_name_json = original_song_title + "_parodie_" + date_today + "_" + time + ".json"
+    file_name_json = original_song_title.replace(' ', '_') + "_parodie_" + date_today + "_" + time + ".json"
     file_path_json = folder_path + LM + "/" + constrained_used_dir + "/json/" + file_name_json
 
-    file_name_txt = original_song_title + "_parodie_" + date_today + "_" + time + ".txt"
+    file_name_txt = original_song_title.replace(' ', '_') + "_parodie_" + date_today + "_" + time + ".txt"
     file_path_txt = folder_path + LM + "/" + constrained_used_dir + "/text/" + file_name_txt
     
     with open(file_path_txt, 'w') as file:
@@ -367,6 +367,9 @@ def get_pronounciation_of_unknown_word(word):
     import re
     url = "http://www.speech.cs.cmu.edu/cgi-bin/tools/logios/lextool2.pl"
 
+    #filter word for special characters
+    word = re.sub(r'[^A-Za-z]', '', word)
+
     word = word.upper()
     word_bytes=BytesIO(word.encode('utf-8'))
 
@@ -390,7 +393,6 @@ def get_pronounciation_of_unknown_word(word):
     for i in range(len(pron)):
         if pron[i] in phonemic_vowels:
             pron[i] = pron[i] + "1"
-    
     return pron
     
 
