@@ -5,6 +5,17 @@ from Constraint import ConstraintList
 from BeamSearchScorerConstrained import BeamSearchScorerConstrained
 from LanguageModels.GPT2 import GPT2
 from LanguageModels.Gemma2BIt import Gemma2BIt
+from LanguageModels.Gemma2B import Gemma2B
+from LanguageModels.Gemma7B import Gemma7B
+from LanguageModels.Gemma7BIt import Gemma7BIt
+from LanguageModels.Llama2_7B import Llama2_7B
+from LanguageModels.Llama2_7BChat import Llama2_7BChat
+from LanguageModels.Llama2_70B import Llama2_70B
+from LanguageModels.Llama2_70BChat import Llama2_70BChat
+from LanguageModels.Mistral7BV01 import Mistral7BV01
+from LanguageModels.Mistral7BItV02 import Mistral7BItV02
+from LanguageModels.Mistral8x7BV01 import Mistral8x7BV01
+from LanguageModels.Mistral8x7BItV01 import Mistral8x7BItV01
 from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens, get_final_word_of_line,get_pos_tags_of_line
 
 from transformers import (
@@ -20,42 +31,73 @@ from transformers import (
                 )
 import torch
 
+########## Global Variables ##########
+lm = None
+tokenizer = None
+model = None
+start_token = None
+num_beams = None
+syllable_constraint = None
+rhyming_constraint = None
+pos_constraint = None
+constraints = None
+stopping_criteria = None
+logits_processor = None
+
+AVAILABLE_LMS = {'GPT2': GPT2, 'Gemma2BIt': Gemma2BIt, 'Gemma2B': Gemma2B, 'Gemma7B': Gemma7B, 'Gemma7BIt': Gemma7BIt, 'Llama2_7B': Llama2_7B, 'Llama2_7BChat': Llama2_7BChat, 'Llama2_70B': Llama2_70B, 'Llama2_70BChat': Llama2_70BChat, 'Mistral7BV01': Mistral7BV01, 'Mistral7BItV02': Mistral7BItV02, 'Mistral8x7BV01': Mistral8x7BV01, 'Mistral8x7BItV01': Mistral8x7BItV01}
 
 ########## LM ##########
-lm = GPT2()
-#lm = Gemma2BIt()
-tokenizer = lm.get_tokenizer()
-model = lm.get_model()
-start_token = lm.get_start_token()
+def set_language_model(lm_name):
+    global lm
+    if lm_name in AVAILABLE_LMS:
+        lm = AVAILABLE_LMS[lm_name]()
+    else:
+        raise Exception('Language Model not found')
+    global tokenizer
+    global model
+    global start_token
+    tokenizer = lm.get_tokenizer()
+    model = lm.get_model()
+    start_token = lm.get_start_token()
 
-######### Settings ##########
-set_seed(42)
-num_beams = 2
+def set_num_beams(num=2):
+    global num_beams
+    num_beams = num
 
 
 ######### Constraints ##########
-syllable_constraint = SyllableConstraintLBL(tokenizer, start_token=start_token)
+def set_constraints(rhyme_type="assonant", top_k_rhyme_words=10, top_k_words_to_consider=200):
+    global syllable_constraint
+    global rhyming_constraint
+    global pos_constraint
+    global constraints
+    global stopping_criteria
+    global logits_processor
+    syllable_constraint = SyllableConstraintLBL(tokenizer, start_token=start_token)
 
-rhyming_constraint = RhymingConstraintLBL(tokenizer, start_token=start_token, top_k_rhyme_words=10, rhyme_type="assonant")
+    rhyming_constraint = RhymingConstraintLBL(tokenizer, start_token=start_token, top_k_rhyme_words=10, rhyme_type="assonant")
 
-pos_constraint = PosConstraintLBL(tokenizer, start_token=start_token, top_k_words_to_consider=200)
+    pos_constraint = PosConstraintLBL(tokenizer, start_token=start_token, top_k_words_to_consider=200)
 
-forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '\\', '/', '_', '——', ' — ', '..' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?', '\n', '\n\n', '  ', '...']
-forbidden_tokens = forbidden_charachters_to_tokens(tokenizer, forbidden_charachters)
-forbidden_tokens_logit_processor = NoBadWordsLogitsProcessor(forbidden_tokens, eos_token_id=tokenizer.eos_token_id)
+    forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '\\', '/', '_', '——', ' — ', '..' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?', '\n', '\n\n', '  ', '...']
+    forbidden_tokens = forbidden_charachters_to_tokens(tokenizer, forbidden_charachters)
+    forbidden_tokens_logit_processor = NoBadWordsLogitsProcessor(forbidden_tokens, eos_token_id=tokenizer.eos_token_id)
 
-no_ngram_logits_processor = NoRepeatNGramLogitsProcessor(2)
+    no_ngram_logits_processor = NoRepeatNGramLogitsProcessor(2)
+    ## Combine Constraints
+    constraints = ConstraintList([pos_constraint, rhyming_constraint, syllable_constraint])
+
+    stopping_criteria_list = constraints.get_stopping_criteria_list() + []
+    stopping_criteria = StoppingCriteriaList(stopping_criteria_list)
+
+    logits_processor_list = constraints.get_logits_processor_list() + [no_ngram_logits_processor, forbidden_tokens_logit_processor]
+    logits_processor = LogitsProcessorList(logits_processor_list)
 
 
 
-## Combine Constraints
-constraints = ConstraintList([pos_constraint, rhyming_constraint, syllable_constraint])
 
-stopping_criteria_list = constraints.get_stopping_criteria_list() + []
-stopping_criteria = StoppingCriteriaList(stopping_criteria_list)
 
-logits_processor_list = constraints.get_logits_processor_list() + [no_ngram_logits_processor, forbidden_tokens_logit_processor]
-logits_processor = LogitsProcessorList(logits_processor_list)
+
 
 
 ######## Generate Line ########
@@ -221,6 +263,18 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
 
 
 if(__name__ == '__main__'):
+    ###### SetUp ######
+    set_language_model('GPT2')
+    set_seed(42)
+    set_num_beams(2)
+    set_constraints(rhyme_type="assonant", top_k_rhyme_words=10, top_k_words_to_consider=200)
+
+    ######### Hyperparameters ##########
+    syllable_constraint.set_hyperparameters(good_beamscore_multiplier=0.1, bad_beamscore_multiplier=10)
+    rhyming_constraint.set_hyperparameters(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_beamscore_multiplier_assonant=0.9, continue_good_rhyme_multiplier=0.99, good_rhyming_token_multiplier=0.9)
+    pos_constraint.set_hyperparameters(good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1)
+
+    ###### Generate Parodie ######
     song_file_path = 'Songs/json/Taylor_Swift-It_Is_Over_Now_(Very_Small).json'
     song_file_path = 'Songs/json/Coldplay-Viva_La_Vida.json'
 
@@ -228,11 +282,6 @@ if(__name__ == '__main__'):
     context = "The following parodie will be about that pineaple shouldn't be on pizza\n"
 
     generate_parodie(song_file_path, system_prompt, context, do_sample=True, top_k=100, top_p=0.95, temperature=0.7)
-    #print(generate_line("In a world where nobody wins\n", new_syllable_amount=9, do_sample=False, top_k=100, top_p=0.95, temperature=0.7, rhyming_word='wins', pos_tags=get_pos_tags_of_line("In a world where nobody wins")))
-    # input_text = "Write me a poem about Machine Learning."
-    # input_ids = lm.tokenizer(input_text, return_tensors="pt")
-
-    # outputs = lm.model.generate(**input_ids, num_beams=2, do_sample=True, top_k=50, top_p=0.95, temperature=0.7, max_length=1000, pad_token_id=lm.tokenizer.eos_token_id, return_dict_in_generate=True)
-    # print(lm.tokenizer.decode(outputs[0]))
+    
     
 
