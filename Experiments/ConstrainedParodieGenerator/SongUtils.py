@@ -148,7 +148,7 @@ def get_final_word_of_line(line):
     words = nltk.word_tokenize(line, language='english', preserve_line=False)
     
     #remove all punctuation marks and symbols that don't belong to a word
-    not_to_end_with = ["'",".", ",", "!", "?", ";", ":", "-", "'", "\"", "(", ")", "[", "]", "{", "}",'``' , '&', '#', '*', '$', '£', '`', '+', '\n', '_']
+    not_to_end_with = ["’","'",".", ",", "!", "?", ";", ":", "-", "'", "\"", "(", ")", "[", "]", "{", "}",'``' , '&', '#', '*', '$', '£', '`', '+', '\n', '_']
     for word in words:
         if word in not_to_end_with:
             words.remove(word)
@@ -879,12 +879,13 @@ if __name__ == "__main__":
     #test_syllable_counter_functions()
     #print("All tests passed")
     #create_rhyming_dicts()
-    load_rhyming_dicts()
+    #load_rhyming_dicts()
 
     # pron_1 = get_pronounciation_of_word("world")
     # pron_2 = get_pronounciation_of_word("word")
 
     # print(do_two_end_phon_seq_near_rhyme(pron_1, pron_2))
     #print(get_near_rhyming_words("ought"))
-    print(get_pos_tags_of_line("It is "))
+    #print(get_pos_tags_of_line("It is "))
+    print(get_final_word_of_line("A pineapple shouldn’"))
     
