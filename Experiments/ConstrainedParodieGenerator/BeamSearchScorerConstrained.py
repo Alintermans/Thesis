@@ -108,16 +108,11 @@ class BeamSearchScorerConstrained(BeamSearchScorer):
                     else:
                         beam_index = None
 
-                    # skip the corner case where the very first generated token is eos_token
-                    if decoder_prompt_len == input_ids.shape[-1]:
-                        continue
-                    
-
                     self._beam_hyps[batch_group_idx].add(
                         input_ids[batch_beam_idx].clone(),
                         next_score.item(),
                         beam_indices=beam_index,
-                        decoder_prompt_len=decoder_prompt_len,
+                        generated_len=cur_len - decoder_prompt_len,
                     )
                 else:
                     # add next predicted token since it is not eos_token
