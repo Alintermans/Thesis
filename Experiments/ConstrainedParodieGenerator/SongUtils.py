@@ -4,12 +4,20 @@ import torch
 import os 
 import json
 from datetime import date, datetime
+import platform
 
 ################################################## Global Parameters ################################################
-nltk.download('punkt')
-nltk.download('cmudict')
-nltk.download('averaged_perceptron_tagger')
-nltk.download('universal_tagset')
+if platform.system() == 'Linux':
+    folder_path = "/data/leuven/361/vsc36141"
+    nltk.download('punkt', download_dir=folder_path)
+    nltk.download('cmudict', download_dir=folder_path)
+    nltk.download('averaged_perceptron_tagger', download_dir=folder_path)
+    nltk.download('universal_tagset', download_dir=folder_path)
+else:
+    nltk.download('punkt')
+    nltk.download('cmudict')
+    nltk.download('averaged_perceptron_tagger')
+    nltk.download('universal_tagset')
 d = cmudict.dict()
 
 ################################################## Language Model Functions ##################################################
@@ -47,7 +55,11 @@ def divide_song_into_paragraphs(song):
         else:
             current_paragraph.append(line)
     paragraphs.append((current_paragraph_name, current_paragraph))
-    return paragraphs
+    result = []
+    for paragraph in paragraphs:
+        if not paragraph[0].startswith( "[ERROR]"):
+            result.append(paragraph)
+    return result
 
 def read_song(file_path):
     song = ""
