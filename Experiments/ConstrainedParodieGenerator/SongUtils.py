@@ -9,6 +9,7 @@ import platform
 ################################################## Global Parameters ################################################
 if platform.system() == 'Linux':
     folder_path = "/data/leuven/361/vsc36141"
+    nltk.data.path.append(folder_path)
     nltk.download('punkt', download_dir=folder_path)
     nltk.download('cmudict', download_dir=folder_path)
     nltk.download('averaged_perceptron_tagger', download_dir=folder_path)
