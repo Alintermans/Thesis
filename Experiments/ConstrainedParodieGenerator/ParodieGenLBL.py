@@ -336,11 +336,10 @@ if(__name__ == '__main__'):
     #         for good_beamscore_multiplier_syllable in good_beamscore_multipliers_syllable:
     #             for bad_beamscore_multiplier_syllable in bad_beamscore_multipliers_syllable:
     #                 syllable_constraint.set_hyperparameters(good_beamscore_multiplier=good_beamscore_multiplier_syllable, bad_beamscore_multiplier=bad_beamscore_multiplier_syllable)
+    #                 chosen_hyper_parameters['SyllableConstraintLBL']['good_beamscore_multiplier'] = good_beamscore_multiplier_syllable
+    #                 chosen_hyper_parameters['SyllableConstraintLBL']['bad_beamscore_multiplier'] = bad_beamscore_multiplier_syllable
     #                 original_song, parody = generate_parodie(song_file_path, system_prompt, context, do_sample=do_sample, top_k=100, top_p=0.95, temperature=0.7, chosen_hyper_parameters=chosen_hyper_parameters, num_beams=num_beam, seed=42)
-    #                 _,_,_,_, original_song, parody = count_same_nb_lines_and_return_same_paragraphs(original_song, parody)
-    #                 count_syllable_difference_per_line(original_song, parody)
-    #                 chosen_hyper_parameters[SyllableConstraintLBL]['good_beamscore_multiplier'] = good_beamscore_multiplier_syllable
-    #                 chosen_hyper_parameters[SyllableConstraintLBL]['bad_beamscore_multiplier'] = bad_beamscore_multiplier_syllable
+
 
     
 
