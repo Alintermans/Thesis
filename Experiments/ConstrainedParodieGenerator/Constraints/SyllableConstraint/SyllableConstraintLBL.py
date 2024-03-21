@@ -16,6 +16,14 @@ class SyllableConstraintLBL(Constraint):
         #Hyperparameters
         self.good_beamscore_multiplier = 0.1 
         self.bad_beamscore_multiplier = 10
+
+        self.disable_constraint = False
+    
+    def disable(self):
+        self.disable_constraint = True
+    
+    def enable(self):
+        self.disable_constraint = False
     
     def set_hyperparameters(self, good_beamscore_multiplier=0.1, bad_beamscore_multiplier=10):
         self.good_beamscore_multiplier = good_beamscore_multiplier
@@ -28,6 +36,9 @@ class SyllableConstraintLBL(Constraint):
         self.syllable_amount_prompt = syllable_amount_prompt
     
     def apply_beam_constraint(self, next_token, next_score, input_ids, cur_len, length_penalty):
+        if self.disable_constraint:
+            return next_score
+
         if self.new_syllable_amount is None:
             raise Exception('Syllable amount not set')
         # if self.syllable_amount_prompt is None:
@@ -51,6 +62,9 @@ class SyllableConstraintLBL(Constraint):
         return next_score
     
     def stopping_criteria(self, input_ids: torch.LongTensor, score: torch.FloatTensor, **kwargs) -> bool:
+        if self.disable_constraint:
+            return False
+
         if self.new_syllable_amount is None:
             raise Exception('Syllable amount not set')
         # if self.syllable_amount_prompt is None:
@@ -66,6 +80,9 @@ class SyllableConstraintLBL(Constraint):
         return False
     
     def logits_processor(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
+        if self.disable_constraint:
+            return scores
+
         if self.new_syllable_amount is None:
             raise Exception('Syllable amount not set')
         

@@ -17,6 +17,8 @@ from LanguageModels.Mistral7BItV02 import Mistral7BItV02
 from LanguageModels.Mistral8x7BV01 import Mistral8x7BV01
 from LanguageModels.Mistral8x7BItV01 import Mistral8x7BItV01
 from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens, get_final_word_of_line,get_pos_tags_of_line
+from SongEvaluator import count_same_nb_lines_and_return_same_paragraphs, count_syllable_difference_per_line, count_nb_line_pairs_match_rhyme_scheme, calculate_pos_tag_similarity
+import os
 
 from transformers import (
                 set_seed, 
@@ -66,7 +68,7 @@ def set_num_beams(num=2):
 
 
 ######### Constraints ##########
-def set_constraints(rhyme_type="assonant", top_k_rhyme_words=10, top_k_words_to_consider=200):
+def set_constraints(rhyme_type="assonant", top_k_rhyme_words=10, top_k_words_to_consider_for_pos=200):
     global syllable_constraint
     global rhyming_constraint
     global pos_constraint
@@ -75,9 +77,9 @@ def set_constraints(rhyme_type="assonant", top_k_rhyme_words=10, top_k_words_to_
     global logits_processor
     syllable_constraint = SyllableConstraintLBL(tokenizer, start_token=start_token)
 
-    rhyming_constraint = RhymingConstraintLBL(tokenizer, start_token=start_token, top_k_rhyme_words=10, rhyme_type="assonant")
+    rhyming_constraint = RhymingConstraintLBL(tokenizer, start_token=start_token, top_k_rhyme_words=top_k_rhyme_words, rhyme_type=rhyme_type)
 
-    pos_constraint = PosConstraintLBL(tokenizer, start_token=start_token, top_k_words_to_consider=200)
+    pos_constraint = PosConstraintLBL(tokenizer, start_token=start_token, top_k_words_to_consider=top_k_words_to_consider_for_pos)
 
     forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '\\', '/', '_', '——', ' — ', '..' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?', '\n', '\n\n', '  ', '...']
     forbidden_tokens = forbidden_charachters_to_tokens(tokenizer, forbidden_charachters)
@@ -147,7 +149,7 @@ def generate_line(prompt, **kwargs):
         logits_warper = LogitsProcessorList(
              [  
                 TemperatureLogitsWarper(temperature),
-                TopKLogitsWarper(top_k),
+                #TopKLogitsWarper(top_k),
                 TopPLogitsWarper(top_p),
                 
              ]
@@ -244,7 +246,7 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
 
     decoding_method = "Beam Search"
     if (kwargs.get('do_sample') is not None or kwargs.get('do_sample') == True):
-        decoding_method = "Sampling Beam Search" + " | top_k: " + str(kwargs['top_k']) + " | top_p: " + str(kwargs['top_p']) + " | temperature: " + str(kwargs['temperature'])
+        decoding_method = "Sampling Beam Search" + " | top_p: " + str(kwargs['top_p']) + " | temperature: " + str(kwargs['temperature'])
 
 
 
@@ -254,11 +256,17 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
                 parodie = parodie, context = context, 
                 system_prompt = system_prompt, 
                 prompt = prompt, 
-                constraints_used = "SyllableConstraintLBL",
+                constraints_used = "SyllableConstraintLBL, RhymingConstraintLBL, PosConstraintLBL",
+                chosen_hyper_parameters = kwargs['chosen_hyper_parameters'],
+                num_beams = kwargs['num_beams'],
+                seed = kwargs['seed'],
                 language_model_name = lm.get_name(),
                 state = state,
                 way_of_generation = "Line by Line",
                 decoding_method = decoding_method)
+
+    parodie_in_paragraphs = divide_song_into_paragraphs(parodie)
+    return song_in_paragraphs, parodie_in_paragraphs
 
 
 
@@ -267,21 +275,80 @@ if(__name__ == '__main__'):
     set_language_model('GPT2')
     set_seed(42)
     set_num_beams(2)
-    set_constraints(rhyme_type="assonant", top_k_rhyme_words=10, top_k_words_to_consider=200)
+    set_constraints(rhyme_type="assonant", top_k_rhyme_words=10, top_k_words_to_consider_for_pos=200)
+
+    ########## Ranges For Hyperparameters To Test ##########
+    ## General
+    num_possible_beams = [2, 3, 4, 5, 6, 7, 8, 9, 10, 15]
+    do_samples = [True, False]
+
+    ## Syllable Constraint
+    good_beamscore_multipliers_syllable = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
+    bad_beamscore_multipliers_syllable = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+    ## Rhyming Constraint
+    rhyme_types = ['assonant', 'perfect', 'near']
+    top_k_rhyme_words = [10, 50, 100, 200, 500]
+    good_beamscore_multipliers_rhyme = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
+    good_beamscore_multipliers_assonant = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
+    continue_good_rhyme_multipliers = [0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99]
+    good_rhyming_token_multipliers = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
+    max_possible_syllable_counts = [1,2,3,4]
+
+    ## POS Constraint
+    top_k_words_to_consider_for_pos = [100,200, 500,1000,2000,5000]
+    good_beamscore_multipliers_pos = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
+    pos_similarity_limit_to_boosts = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
+    good_token_multipliers = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
+    margin_of_similarity_with_new_tokens = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
+
 
     ######### Hyperparameters ##########
     syllable_constraint.set_hyperparameters(good_beamscore_multiplier=0.1, bad_beamscore_multiplier=10)
     rhyming_constraint.set_hyperparameters(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_beamscore_multiplier_assonant=0.9, continue_good_rhyme_multiplier=0.99, good_rhyming_token_multiplier=0.9)
     pos_constraint.set_hyperparameters(good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1)
+    chosen_hyper_parameters = {
+        'SyllableConstraintLBL': {'good_beamscore_multiplier': 0.1, 'bad_beamscore_multiplier': 10},
+       'RhymingConstraintLBL': {'max_possible_syllable_count': 3, 'good_beamscore_multiplier_same_rhyme_type': 0.95, 'good_beam_score_multiplier_assonant': 0.9, 'continue_good_rhyme_multiplier': 0.99, 'good_rhyming_token_multiplier': 0.9},
+        'PosConstraintLBL': {'good_beamscore_multiplier': 0.1, 'pos_similarity_limit_to_boost': 0.5, 'good_token_multiplier': 0.6, 'margin_of_similarity_with_new_token': 0.1},
+        'rhyme_type': 'assonant',
+        'top_k_rhyme_words': 10,
+       'top_k_words_to_consider_for_pos': 200
+    }
 
-    ###### Generate Parodie ######
-    song_file_path = 'Songs/json/Taylor_Swift-It_Is_Over_Now_(Very_Small).json'
+    song_directory = 'Songs/json/'
+    # song_file_path = 'Songs/json/Taylor_Swift-It_Is_Over_Now_(Very_Small).json'
     song_file_path = 'Songs/json/Coldplay-Viva_La_Vida.json'
 
     system_prompt = "I'm a parody genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\n"
     context = "The following parodie will be about that pineaple shouldn't be on pizza\n"
 
-    generate_parodie(song_file_path, system_prompt, context, do_sample=True, top_k=100, top_p=0.95, temperature=0.7)
+    songs = os.listdir(song_directory)
+    # for song in songs:
+    #     song_file_path = song_directory + song
+
+
+    ##Test syllable constraints
+    # rhyming_constraint.disable()
+    # for num_beam in num_beams:
+    #     set_num_beams(num_beam)
+    #     for do_sample in do_samples:
+    #         for good_beamscore_multiplier_syllable in good_beamscore_multipliers_syllable:
+    #             for bad_beamscore_multiplier_syllable in bad_beamscore_multipliers_syllable:
+    #                 syllable_constraint.set_hyperparameters(good_beamscore_multiplier=good_beamscore_multiplier_syllable, bad_beamscore_multiplier=bad_beamscore_multiplier_syllable)
+    #                 original_song, parody = generate_parodie(song_file_path, system_prompt, context, do_sample=do_sample, top_k=100, top_p=0.95, temperature=0.7, chosen_hyper_parameters=chosen_hyper_parameters, num_beams=num_beam, seed=42)
+    #                 _,_,_,_, original_song, parody = count_same_nb_lines_and_return_same_paragraphs(original_song, parody)
+    #                 count_syllable_difference_per_line(original_song, parody)
+    #                 chosen_hyper_parameters[SyllableConstraintLBL]['good_beamscore_multiplier'] = good_beamscore_multiplier_syllable
+    #                 chosen_hyper_parameters[SyllableConstraintLBL]['bad_beamscore_multiplier'] = bad_beamscore_multiplier_syllable
+
+    
+
+    
+
+    
+
+    generate_parodie(song_file_path, system_prompt, context, do_sample=True, top_k=100, top_p=0.95, temperature=0.7, chosen_hyper_parameters=chosen_hyper_parameters, num_beams=2, seed=42)
     
     
 

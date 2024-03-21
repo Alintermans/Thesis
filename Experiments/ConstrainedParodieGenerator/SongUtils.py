@@ -80,6 +80,9 @@ def write_song(folder_path, **kwargs):
     state = kwargs['state']
     way_of_generation = kwargs['way_of_generation']
     decoding_method = kwargs['decoding_method']
+    chosen_hyper_parameters = kwargs['chosen_hyper_parameters']
+    num_beams = kwargs['num_beams']
+    seed = kwargs['seed']
 
     date_today = date.today().strftime("%d-%m-%Y")
     time = datetime.now().strftime("%Hh-%Mm-%Ss")
@@ -123,6 +126,9 @@ def write_song(folder_path, **kwargs):
         "context": context,
         "prompt": prompt,
         "constraints_used": constraints_used,
+        "chosen_hyper_parameters": chosen_hyper_parameters,
+        "num_beams": num_beams,
+        "seed": seed,
         "way_of_generation": way_of_generation,
         "decoding_method": decoding_method,
         "state": state,

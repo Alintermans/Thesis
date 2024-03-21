@@ -23,6 +23,14 @@ class RhymingConstraintLBL(Constraint):
         self.good_beamscore_multiplier_assonant = 0.9
         self.continue_good_rhyme_multiplier = 0.99
         self.good_rhyming_token_multiplier = 0.9
+
+        self.disable_constraint = False
+    
+    def disable(self):
+        self.disable_constraint = True
+    
+    def enable(self):
+        self.disable_constraint = False
     
     def set_hyperparameters(self, max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_beamscore_multiplier_assonant=0.9, continue_good_rhyme_multiplier=0.99, good_rhyming_token_multiplier=0.9):
         self.max_possible_syllable_count = max_possible_syllable_count
@@ -70,6 +78,9 @@ class RhymingConstraintLBL(Constraint):
 
     
     def apply_beam_constraint(self, next_token, next_score, input_ids, cur_len, length_penalty):
+        if self.disable_constraint:
+            return next_score
+
         if self.rhyming_word is None:
             return next_score
         
@@ -110,6 +121,9 @@ class RhymingConstraintLBL(Constraint):
         return False
     
     def logits_processor(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
+        if self.disable_constraint:
+            return scores
+
         if self.rhyming_word is None:
             return scores
         if self.required_syllable_count is None:
@@ -187,9 +201,11 @@ class RhymingConstraintLBL(Constraint):
         return scores
     
     def is_beam_constraint_active(self):
+
         return True
     
     def is_stopping_criteria_active(self):
+        
         return False
     
     def is_logits_processor_active(self):

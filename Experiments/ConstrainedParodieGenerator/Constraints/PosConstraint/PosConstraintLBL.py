@@ -15,6 +15,14 @@ class PosConstraintLBL(Constraint):
         self.pos_similarity_limit_to_boost = 0.5
         self.good_token_multiplier = 0.6
         self.margin_of_similarity_with_new_token = 0.1
+
+        self.disable_constraint = False
+    
+    def disable(self):
+        self.disable_constraint = True
+    
+    def enable(self):
+        self.disable_constraint = False
     
     def set_hyperparameters(self, good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1):
         self.good_beamscore_multiplier = good_beamscore_multiplier
@@ -29,6 +37,8 @@ class PosConstraintLBL(Constraint):
 
     
     def apply_beam_constraint(self, next_token, next_score, input_ids, cur_len, length_penalty):
+        if self.disable_constraint:
+            return next_score
         
         previous_text = self.tokenizer.decode(input_ids, skip_special_tokens=True)
         current_token = self.tokenizer.decode(next_token, skip_special_tokens=True)
@@ -61,7 +71,8 @@ class PosConstraintLBL(Constraint):
         return False
     
     def logits_processor(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
-        
+        if self.disable_constraint:
+            return scores
 
 
         for i in range(len(input_ids)):
@@ -80,7 +91,7 @@ class PosConstraintLBL(Constraint):
                 similarity_with_new_token = similarity_of_pos_tags_sequences(pos_tags[:min_length], self.expected_pos_tags[:min_length])
                 if pos_tags is not None:
                     
-                    if similarity_with_new_token > similarity_of_last_line + self.margin_of_similarity_with_new_token:
+                    if similarity_with_new_token > min(similarity_of_last_line + self.margin_of_similarity_with_new_token, 0.99) or similarity_with_new_token == 1.0 :
                         #print('similarity_with_new_token: ', similarity_with_new_token, 'similarity_of_last_line: ', similarity_of_last_line)
                         scores[i][token] = scores[i][token] - scores[i][token]*self.good_token_multiplier*(similarity_with_new_token - similarity_of_last_line)
                     
