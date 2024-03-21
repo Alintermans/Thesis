@@ -256,7 +256,7 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
                 parodie = parodie, context = context, 
                 system_prompt = system_prompt, 
                 prompt = prompt, 
-                constraints_used = "SyllableConstraintLBL, RhymingConstraintLBL, PosConstraintLBL",
+                constraints_used = kwargs['constrained_used'],
                 chosen_hyper_parameters = kwargs['chosen_hyper_parameters'],
                 num_beams = kwargs['num_beams'],
                 seed = kwargs['seed'],
@@ -327,9 +327,10 @@ if(__name__ == '__main__'):
     # for song in songs:
     #     song_file_path = song_directory + song
 
-
+    constrained_used = "All"
     ##Test syllable constraints
     # rhyming_constraint.disable()
+    # pos_constraint.disable()
     # for num_beam in num_beams:
     #     set_num_beams(num_beam)
     #     for do_sample in do_samples:
@@ -338,6 +339,7 @@ if(__name__ == '__main__'):
     #                 syllable_constraint.set_hyperparameters(good_beamscore_multiplier=good_beamscore_multiplier_syllable, bad_beamscore_multiplier=bad_beamscore_multiplier_syllable)
     #                 chosen_hyper_parameters['SyllableConstraintLBL']['good_beamscore_multiplier'] = good_beamscore_multiplier_syllable
     #                 chosen_hyper_parameters['SyllableConstraintLBL']['bad_beamscore_multiplier'] = bad_beamscore_multiplier_syllable
+    #                 constrained_used = "Syllable"
     #                 original_song, parody = generate_parodie(song_file_path, system_prompt, context, do_sample=do_sample, top_k=100, top_p=0.95, temperature=0.7, chosen_hyper_parameters=chosen_hyper_parameters, num_beams=num_beam, seed=42)
 
 
@@ -347,7 +349,7 @@ if(__name__ == '__main__'):
 
     
 
-    generate_parodie(song_file_path, system_prompt, context, do_sample=True, top_k=100, top_p=0.95, temperature=0.7, chosen_hyper_parameters=chosen_hyper_parameters, num_beams=2, seed=42)
+    generate_parodie(song_file_path, system_prompt, context, do_sample=True, top_k=100, top_p=0.95, temperature=0.7, chosen_hyper_parameters=chosen_hyper_parameters, num_beams=2, seed=42, constrained_used=constrained_used)
     
     
 
