@@ -4,8 +4,8 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 class Gemma7B(LM):
     def __init__(self):
         super().__init__()
-        self.tokenizer = AutoTokenizer.from_pretrained("google/gemma-7b")
-        self.model = AutoModelForCausalLM.from_pretrained("google/gemma-7b")
+        self.tokenizer = AutoTokenizer.from_pretrained("google/gemma-7b",  token= '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')
+        self.model = AutoModelForCausalLM.from_pretrained("google/gemma-7b",  token= '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')
         self.name = 'Gemma 7B'
         return None
     
