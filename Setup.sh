@@ -1,5 +1,8 @@
 #!/bin/bash
 # Create and activate a new Python virtual environment
+
+cd $VSC_SCRATCH
+
 python3.8 -m venv myenv
 source myenv/bin/activate
 
