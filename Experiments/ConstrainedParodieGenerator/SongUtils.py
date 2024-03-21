@@ -148,7 +148,7 @@ def get_final_word_of_line(line):
     words = nltk.word_tokenize(line, language='english', preserve_line=False)
     
     #remove all punctuation marks and symbols that don't belong to a word
-    not_to_end_with = [".", ",", "!", "?", ";", ":", "-", "'", "\"", "(", ")", "[", "]", "{", "}",'``' , '&', '#', '*', '$', '£', '`', '+', '\n', '_']
+    not_to_end_with = ["'",".", ",", "!", "?", ";", ":", "-", "'", "\"", "(", ")", "[", "]", "{", "}",'``' , '&', '#', '*', '$', '£', '`', '+', '\n', '_']
     for word in words:
         if word in not_to_end_with:
             words.remove(word)
