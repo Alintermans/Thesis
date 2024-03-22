@@ -13,11 +13,15 @@ class SyllableConstraintLBL(Constraint):
         self.new_line_tokens = tokenizer.encode('\n')
         if self.start_token is not None and self.start_token in self.new_line_tokens:
             self.new_line_tokens.remove(self.start_token)
+        self.original_prompt = None
         #Hyperparameters
         self.good_beamscore_multiplier = 0.1 
         self.bad_beamscore_multiplier = 10
 
         self.disable_constraint = False
+    
+    def set_original_prompt(self, original_prompt):
+        self.original_prompt = original_prompt
     
     def disable(self):
         self.disable_constraint = True
@@ -47,7 +51,7 @@ class SyllableConstraintLBL(Constraint):
         current_token_text = self.tokenizer.decode(next_token)
         candidate_text = previous_text + current_token_text
 
-        last_line = candidate_text.split('\n')[-1]
+        last_line = candidate_text[len(self.original_prompt):]
         result = get_syllable_count_of_sentence(last_line)
         
         current_length = input_ids.shape[-1] + 1
@@ -70,8 +74,8 @@ class SyllableConstraintLBL(Constraint):
         # if self.syllable_amount_prompt is None:
         #     raise Exception('Syllable amount prompt not set')
         for input in input_ids:
-            sentence = self.tokenizer.decode(input, skip_special_tokens=True)
-            last_line = sentence.split('\n')[-1]
+            sentences = self.tokenizer.decode(input, skip_special_tokens=True)
+            last_line = sentences[len(self.original_prompt):]
             sum = get_syllable_count_of_sentence(last_line)
             if sum >=self.new_syllable_amount:
                 #print('sum: ',sum, 'sentence: ', sentence)
@@ -96,8 +100,8 @@ class SyllableConstraintLBL(Constraint):
 
         for i in range(len(input_ids)):
             input = input_ids[i]
-            sentence = self.tokenizer.decode(input, skip_special_tokens=True)
-            last_line = sentence.split('\n')[-1]
+            sentences = self.tokenizer.decode(input, skip_special_tokens=True)
+            last_line = sentences[len(self.original_prompt):]
             sum = get_syllable_count_of_sentence(last_line)
             if sum < self.new_syllable_amount:
                 scores[i][self.tokenizer.eos_token_id] = float('-inf')

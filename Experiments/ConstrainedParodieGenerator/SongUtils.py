@@ -145,13 +145,32 @@ def write_song(folder_path, **kwargs):
 
 
 def get_final_word_of_line(line):
-    words = nltk.word_tokenize(line, language='english', preserve_line=False)
+    line = line.replace("’", "'")
+    words = line.split(" ")
+    if words == []:
+        return ""
     
+    if words[-1] == "":
+        words = words[:-1]
+    
+
+
+        
     #remove all punctuation marks and symbols that don't belong to a word
-    not_to_end_with = ["’","'",".", ",", "!", "?", ";", ":", "-", "'", "\"", "(", ")", "[", "]", "{", "}",'``' , '&', '#', '*', '$', '£', '`', '+', '\n', '_']
-    for word in words:
-        if word in not_to_end_with:
-            words.remove(word)
+    not_to_end_with = ["’","'",".", ",", "!", "?", ";", ":", "-", "'", "\"", "(", ")", "[", "]", "{", "}",'``' , '&', '#', '*', '$', '£', '`', '+', '\n', '_', ""]
+    while words[-1] in not_to_end_with:
+        words = words[:-1]
+        if words == []:
+            return ""
+    print(words)
+    #remove punctutation marks that are at the end of the word
+    while words[-1][-1] in not_to_end_with:
+        words[-1] = words[-1][:-1]
+        if words[-1] == "":
+            words = words[:-1]
+            if words == []:
+                return ""
+
     return words[-1]
 
     
@@ -887,5 +906,5 @@ if __name__ == "__main__":
     # print(do_two_end_phon_seq_near_rhyme(pron_1, pron_2))
     #print(get_near_rhyming_words("ought"))
     #print(get_pos_tags_of_line("It is "))
-    print(get_final_word_of_line("A pineapple shouldn’"))
+    print(get_final_word_of_line(" hey I’ll  ."))
     
