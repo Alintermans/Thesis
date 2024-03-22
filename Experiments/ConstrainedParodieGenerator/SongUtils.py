@@ -162,7 +162,6 @@ def get_final_word_of_line(line):
         words = words[:-1]
         if words == []:
             return ""
-    print(words)
     #remove punctutation marks that are at the end of the word
     while words[-1][-1] in not_to_end_with:
         words[-1] = words[-1][:-1]
