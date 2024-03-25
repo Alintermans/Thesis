@@ -35,6 +35,9 @@ def forbidden_charachters_to_tokens(tokenizer, forbidden_charachters):
                 tokens = tokens[1:]
         result.append(tokens)
     return result
+
+def does_string_contain_newline(string):
+    return "\n" in string
         
 ################################################ TEXT HELPER FUNCTIONS ################################################
 
@@ -905,5 +908,5 @@ if __name__ == "__main__":
     # print(do_two_end_phon_seq_near_rhyme(pron_1, pron_2))
     #print(get_near_rhyming_words("ought"))
     #print(get_pos_tags_of_line("It is "))
-    print(get_final_word_of_line(" hey I’ll  ."))
+    print(does_string_contain_newline("I'm a test sentence I'm a test sentence"))
     
