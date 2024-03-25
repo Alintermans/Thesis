@@ -1,5 +1,6 @@
 from LM import LM
 from transformers import AutoTokenizer, AutoModelForCausalLM
+imort torch
 
 class Llama2_7BChat(LM):
     def __init__(self):
