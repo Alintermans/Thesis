@@ -246,6 +246,7 @@ def count_syllables_hard(word):
     return count
 
 def get_syllable_count_of_sentence(sentence):
+    sentence = sentence.replace("’", "'")
     words = tokenize_sentence(sentence)
     result = sum(count_syllables(word) for word in words)
     return result
@@ -908,5 +909,5 @@ if __name__ == "__main__":
     # print(do_two_end_phon_seq_near_rhyme(pron_1, pron_2))
     #print(get_near_rhyming_words("ought"))
     #print(get_pos_tags_of_line("It is "))
-    print(does_string_contain_newline("I'm a test sentence I'm a test sentence"))
+    print(get_syllable_count_of_sentence("Pineapple shouldn’t"))
     
