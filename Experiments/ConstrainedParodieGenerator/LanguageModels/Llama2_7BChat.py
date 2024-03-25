@@ -1,5 +1,5 @@
 from LM import LM
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 import torch
 
 class Llama2_7BChat(LM):
