@@ -148,12 +148,12 @@ def get_final_word_of_line(line):
     line = line.replace("’", "'")
     words = line.split(" ")
     if words == []:
-        return ""
+        return None
     
     if words[-1] == "":
         words = words[:-1]
         if words == []:
-            return ""
+            return None
 
         
     #remove all punctuation marks and symbols that don't belong to a word
@@ -161,14 +161,14 @@ def get_final_word_of_line(line):
     while words[-1] in not_to_end_with:
         words = words[:-1]
         if words == []:
-            return ""
+            return None
     #remove punctutation marks that are at the end of the word
     while words[-1][-1] in not_to_end_with:
         words[-1] = words[-1][:-1]
         if words[-1] == "":
             words = words[:-1]
             if words == []:
-                return ""
+                return None
 
     return words[-1]
 
