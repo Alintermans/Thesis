@@ -57,7 +57,8 @@ class SyllableConstraintLBL(Constraint):
         current_length = input_ids.shape[-1] + 1
         
         if does_string_contain_newline(last_line):
-            next_score = float('-inf')
+            next_score = next_score + next_score*self.bad_beamscore_multiplier* ( current_length ** length_penalty)
+            
 
         if result > self.new_syllable_amount or (result == self.new_syllable_amount and get_syllable_count_of_sentence(current_token_text) == 0):
             next_score = next_score + next_score*self.bad_beamscore_multiplier* ( current_length ** length_penalty)
