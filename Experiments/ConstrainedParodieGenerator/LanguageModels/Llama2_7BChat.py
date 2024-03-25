@@ -32,6 +32,9 @@ class Llama2_7BChat(LM):
         self.name = 'Llama 2 7B Chat'
         return None
     
+    def special_new_line_tokens(self):
+        return [13]
+
     def get_tokenizer(self):
         return self.tokenizer
     

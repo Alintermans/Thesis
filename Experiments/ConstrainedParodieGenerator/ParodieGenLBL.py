@@ -77,6 +77,7 @@ def set_constraints(rhyme_type="assonant", top_k_rhyme_words=10, top_k_words_to_
     global stopping_criteria
     global logits_processor
     syllable_constraint = SyllableConstraintLBL(tokenizer, start_token=start_token)
+    syllable_constraint.set_special_new_line_tokens(lm.special_new_line_tokens())
 
     rhyming_constraint = RhymingConstraintLBL(tokenizer, start_token=start_token, top_k_rhyme_words=top_k_rhyme_words, rhyme_type=rhyme_type)
 
@@ -105,7 +106,7 @@ def set_constraints(rhyme_type="assonant", top_k_rhyme_words=10, top_k_words_to_
 
 ######## Generate Line ########
 def generate_line(prompt, **kwargs):
-    input_ids = tokenizer.encode(prompt, return_tensors="pt")
+    input_ids = tokenizer.encode(prompt, return_tensors="pt")   
     input_ids = input_ids.to(model.device)
     batch_size = input_ids.shape[0]
     input_ids = input_ids.repeat_interleave(num_beams, dim=0)
@@ -188,7 +189,6 @@ def generate_line(prompt, **kwargs):
             use_cache=True,
 
         )
-    
     return tokenizer.decode(outputs[0], skip_special_tokens=True)[len(prompt):]
 
 
@@ -353,7 +353,7 @@ if(__name__ == '__main__'):
     
 
     
-
+    
     
 
     generate_parodie(song_file_path, system_prompt, context, do_sample=True, top_k=100, top_p=0.95, temperature=0.7, chosen_hyper_parameters=chosen_hyper_parameters, num_beams=2, seed=42, constrained_used=constrained_used)

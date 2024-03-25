@@ -10,6 +10,7 @@ class SyllableConstraintLBL(Constraint):
         self.syllable_amount_prompt = None
         self.tokenizer = tokenizer
         self.start_token = start_token
+        self.special_new_line_tokens = []
         self.new_line_tokens = tokenizer.encode('\n')
         if self.start_token is not None and self.start_token in self.new_line_tokens:
             self.new_line_tokens.remove(self.start_token)
@@ -19,6 +20,9 @@ class SyllableConstraintLBL(Constraint):
         self.bad_beamscore_multiplier = 10
 
         self.disable_constraint = False
+
+    def set_special_new_line_tokens(self, special_new_line_tokens):
+        self.special_new_line_tokens += special_new_line_tokens
     
     def set_original_prompt(self, original_prompt):
         self.original_prompt = original_prompt
@@ -106,6 +110,8 @@ class SyllableConstraintLBL(Constraint):
             sentences = self.tokenizer.decode(input, skip_special_tokens=True)
             last_line = sentences[len(self.original_prompt):]
             sum = get_syllable_count_of_sentence(last_line)
+            for token in self.special_new_line_tokens:
+                scores[i][token] = float('-inf')
             if sum < self.new_syllable_amount:
                 scores[i][self.tokenizer.eos_token_id] = float('-inf')
             else:

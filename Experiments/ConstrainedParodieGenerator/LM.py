@@ -17,6 +17,9 @@ class LM(ABC):
             self.model.to('cuda')
         return None
     
+    def special_new_line_tokens(self):
+        return []
+    
     @abstractmethod
     def get_tokenizer(self):
         raise NotImplementedError("tokenizer not implemented yet")
