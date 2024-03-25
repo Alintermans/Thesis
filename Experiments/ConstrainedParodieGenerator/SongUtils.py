@@ -152,8 +152,8 @@ def get_final_word_of_line(line):
     
     if words[-1] == "":
         words = words[:-1]
-    
-
+        if words == []:
+            return ""
 
         
     #remove all punctuation marks and symbols that don't belong to a word
