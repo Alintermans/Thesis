@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import inspect
+import torch
 
 class LM(ABC):
 
@@ -10,6 +11,11 @@ class LM(ABC):
     
     def get_start_token(self):
         return self.tokenizer.encode('')[0] if (len(self.tokenizer.encode(''))>0)  else None
+    
+    def set_to_gpu_if_possible(self):
+        if self.model is not None and torch.cuda.is_available():
+            self.model.to('cuda')
+        return None
     
     @abstractmethod
     def get_tokenizer(self):

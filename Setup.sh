@@ -9,8 +9,8 @@ export HF_HOME="/scratch/leuven/361/vsc36141/HF/"
 mkdir syllable_test
 cd syllable_test
 
-python3.8 -m venv myenv
-source myenv/bin/activate
+python3.10 -m venv ThesisEnv
+source ThesisEnv/bin/activate
 
 # Install Python libraries
 #pip install --upgrade https://github.com/Alintermans/transformers/tree/main
