@@ -18,7 +18,7 @@ class SyllableConstraintLBL(Constraint):
         #Hyperparameters
         self.good_beamscore_multiplier = 0.1 
         self.bad_beamscore_multiplier = 10
-
+        self.top_k_tokens_to_consider = 30
         self.disable_constraint = False
 
     def set_special_new_line_tokens(self, special_new_line_tokens):
@@ -60,15 +60,15 @@ class SyllableConstraintLBL(Constraint):
         
         current_length = input_ids.shape[-1] + 1
         
-        if does_string_contain_newline(last_line):
-            next_score = next_score + next_score*self.bad_beamscore_multiplier* ( current_length ** length_penalty)
+        # if does_string_contain_newline(last_line):
+        #     next_score = next_score + next_score*self.bad_beamscore_multiplier* ( current_length ** length_penalty)
             
 
         if result > self.new_syllable_amount or (result == self.new_syllable_amount and get_syllable_count_of_sentence(current_token_text) == 0):
-            next_score = next_score + next_score*self.bad_beamscore_multiplier* ( current_length ** length_penalty)
+            next_score = next_score + next_score*self.bad_beamscore_multiplier
             #next_score = float('-inf')
         elif result == self.new_syllable_amount:
-            next_score = next_score - next_score*self.good_beamscore_multiplier* ( current_length ** length_penalty)
+            next_score = next_score - next_score*self.good_beamscore_multiplier
         #print(candidate_text,' count: ' ,result, ' score: ', next_score)
         return next_score
     
@@ -80,13 +80,23 @@ class SyllableConstraintLBL(Constraint):
             raise Exception('Syllable amount not set')
         # if self.syllable_amount_prompt is None:
         #     raise Exception('Syllable amount prompt not set')
+        result = []
+
         for input in input_ids:
             sentences = self.tokenizer.decode(input, skip_special_tokens=True)
             last_line = sentences[len(self.original_prompt):]
             sum = get_syllable_count_of_sentence(last_line)
             if sum >=self.new_syllable_amount:
-                #print('sum: ',sum, 'sentence: ', sentence)
-                return True
+                print('sum: ',sum, 'sentence: ', sentences[len(self.original_prompt):])
+                result.append(True)
+            else:
+                result.append(False)
+        
+        if (len([x for x in result if x]) == len(result)):
+            return True
+        
+
+
 
         return False
     
@@ -110,13 +120,31 @@ class SyllableConstraintLBL(Constraint):
             sentences = self.tokenizer.decode(input, skip_special_tokens=True)
             last_line = sentences[len(self.original_prompt):]
             sum = get_syllable_count_of_sentence(last_line)
-            for token in self.special_new_line_tokens:
-                scores[i][token] = float('-inf')
+
             if sum < self.new_syllable_amount:
-                scores[i][self.tokenizer.eos_token_id] = float('-inf')
+                
+
+                _, best_tokens = scores[i].topk(self.top_k_tokens_to_consider)
+
+                for token in best_tokens:
+                    word = self.tokenizer.decode(token, skip_special_tokens=True)
+                    syllable_count = get_syllable_count_of_sentence(word)
+                    if syllable_count + sum > self.new_syllable_amount:
+                        scores[i][token] = torch.finfo(scores.dtype).min
+                    
+                _, best_tokens = scores[i].topk(self.top_k_tokens_to_consider)
+                for token in self.special_new_line_tokens:
+                    scores[i][token] = torch.finfo(scores.dtype).min
+                scores[i][self.tokenizer.eos_token_id] = torch.finfo(scores.dtype).min
             else:
-                scores[i] = abs(scores[i]) * float('-inf')
-                scores[i][self.tokenizer.eos_token_id] = 0
+                scores[i] = torch.finfo(scores.dtype).min
+                scores[i][self.tokenizer.eos_token_id] = torch.finfo(scores.dtype).max
+
+            
+
+            
+                
+            
                 
 
 
