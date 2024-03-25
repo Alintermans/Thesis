@@ -163,7 +163,7 @@ class RhymingConstraintLBL(Constraint):
                     next_token = rhyming_word['tokens'][current_token_index + 1]
                     score = prev_scores[next_token]
                     if not started_with_rhyming_word:
-                        scores[i] = abs(scores[i]) * float('-inf')
+                        scores[i] = abs(scores[i]) * torch.finfo(scores.dtype).min
                         started_with_rhyming_word = True
                     scores[i][next_token] = score + self.continue_good_rhyme_multiplier*abs(score)
 
@@ -195,7 +195,7 @@ class RhymingConstraintLBL(Constraint):
                 
                 #print('first token: ', first_token, ' score: ', score + 1*abs(score))
                 
-                if score != float('-inf'):
+                if score != torch.finfo(scores.dtype).min:
                     scores[i][first_token] = score + self.good_rhyming_token_multiplier*abs(score)
                     
         return scores
