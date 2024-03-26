@@ -4,25 +4,30 @@ import os
 from SongUtils import divide_song_into_paragraphs, get_pos_tags_of_line, similarity_of_pos_tags_sequences, get_syllable_count_of_sentence, _get_rhyming_lines,load_rhyming_dicts
 from evaluate import load
 
-
+def get_nb_lines_in_paragraphs(paragraphs):
+    nb_lines = 0
+    for paragraph in paragraphs:
+        nb_lines += len(paragraph[1])
+    return nb_lines
 
 #The following function will check if the original and parodie song have the same number of paragraphs and lines and will return the paragraphs and lines that both the original and the parodie song have. 
 def count_same_nb_lines_and_return_same_paragraphs(original_song_paragraps, parody_song_in_paragraphs):
     min_paragraph_len = min(len(original_song_paragraps), len(parody_song_in_paragraphs))
     original_song_nb_paragraphs = len(original_song_paragraps)
     parody_song_nb_paragraphs = len(parody_song_in_paragraphs)
-    original_song_nb_lines = 0
-    parody_song_nb_lines = 0
+    original_song_nb_lines = get_nb_lines_in_paragraphs(original_song_paragraps)
+    parody_song_nb_lines = get_nb_lines_in_paragraphs(parody_song_in_paragraphs)
+    correct_nb_paragraphs = 0
     new_original_song_paragraphs = []
     new_parody_song_paragraphs = []
     for i in range(min_paragraph_len):
-        original_song_nb_lines += len(original_song_paragraps[i][1])
-        parody_song_nb_lines += len(parody_song_in_paragraphs[i][1])
         min_len_lines = min(len(original_song_paragraps[i][1]), len(parody_song_in_paragraphs[i][1]))
         new_original_song_paragraphs.append(original_song_paragraps[i][1][:min_len_lines])
         new_parody_song_paragraphs.append(parody_song_in_paragraphs[i][1][:min_len_lines])
+        if len(original_song_paragraps[i][1]) == len(parody_song_in_paragraphs[i][1]):
+            correct_nb_paragraphs += 1
 
-    return original_song_nb_paragraphs, parody_song_nb_paragraphs, original_song_nb_lines, parody_song_nb_lines, new_original_song_paragraphs, new_parody_song_paragraphs
+    return original_song_nb_paragraphs, parody_song_nb_paragraphs, original_song_nb_lines, parody_song_nb_lines, new_original_song_paragraphs, new_parody_song_paragraphs, correct_nb_paragraphs
         
     
 
@@ -139,6 +144,7 @@ def evaluate(original_song_file_path, parody_file_path, rhyme_type='perfect'):
     parody_song_nb_lines = result[3]
     original_song_in_paragraphs = result[4]
     parody_song_in_paragraphs = result[5]
+    correct_nb_paragraphs = result[6]
 
 
     print("Number of paragraphs in original song:", original_song_nb_paragraphs, "Number of paragraphs in parodie song:", parody_song_nb_paragraphs)
@@ -177,6 +183,7 @@ def evaluate(original_song_file_path, parody_file_path, rhyme_type='perfect'):
         "parody_song_file_path": parody_file_path,
         "original_song_nb_paragraphs": original_song_nb_paragraphs,
         "parody_song_nb_paragraphs": parody_song_nb_paragraphs,
+        "correct_nb_paragraphs": correct_nb_paragraphs,
         "original_song_nb_lines": original_song_nb_lines,
         "parody_song_nb_lines": parody_song_nb_lines,
         "nb_lines_correct_syllable_count": nb_lines_correct_syllable_count,
@@ -222,7 +229,7 @@ if __name__ == "__main__":
     # parody_file_path = input("Enter the path to the parodie song file in json format: ")
 
     song_file_path = 'Songs/json/Taylor_Swift-Is_It_Over_Now.json'
-    parody_file_path = 'Experiments/Experiments_presentation_3/JSON/BARD/Bard_No_PE-Taylor_Swift-Is_it_over_now.json'
+    parody_file_path = 'Experiments/Experiments_presentation_3/JSON/Llama 70b/Llama_70b_With_PE-Taylor_Swift-Is_It_Over_Now.json'
     
     load_rhyming_dicts()
     evaluate(song_file_path, parody_file_path)

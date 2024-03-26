@@ -1,0 +1,23 @@
+{
+    "original_song_name": "Is It Over Now",
+    "parody_song_name": "Is It Over Now",
+    "original_song_file_path": "Songs/json/Taylor_Swift-Is_It_Over_Now.json",
+    "parody_song_file_path": "Experiments/Experiments_presentation_3/JSON/BARD/Bard_With_PE-Taylor_Swift-Is_It_Over_Now.json",
+    "original_song_nb_paragraphs": 12,
+    "parody_song_nb_paragraphs": 12,
+    "original_song_nb_lines": 59,
+    "parody_song_nb_lines": 59,
+    "nb_lines_correct_syllable_count": 24,
+    "avg_syllable_count_difference": 1.6779661016949152,
+    "mean_deviation_syllable_count": 1.5949439816144793,
+    "nb_matching_rhyme_pairs": 7,
+    "nb_expected_rhyming_pairs": 12,
+    "nb_correct_pos_similarities": 22,
+    "avg_pos_tag_similarity": 0.862403416118197,
+    "mean_deviation_pos_tag_similarity": 0.12446815639800955,
+    "original_song_perplexity": 238.8626901578095,
+    "parody_song_perplexity": 353.52875874406203,
+    "overlap": 0.5736961451247166,
+    "original_song_repetition_score": 0.4105011933174224,
+    "parody_song_repetition_score": 0.3832199546485261
+}
