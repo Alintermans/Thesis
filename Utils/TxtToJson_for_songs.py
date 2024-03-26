@@ -33,7 +33,7 @@ def convert_lyrics(filename_txt, artisy, title, original_link):
         }
         json_filename = f"{artist_stripped}-{title_stripped}.json"
         with open(f"{JSON_FOLDER_PATH}/{json_filename}", 'w') as json_file:
-            json.dump(json_data, json_file)
+            json.dump(json_data, json_file, indent=4)
 
         print(f"Exported {artist} - {title} to {text_filename} and {json_filename}")
 
