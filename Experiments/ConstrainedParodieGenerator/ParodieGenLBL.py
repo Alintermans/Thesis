@@ -136,6 +136,7 @@ def generate_line(prompt, **kwargs):
         num_beams=num_beams,
         device=model.device,
         constraints = constraints,
+        length_penalty=10.0,
     )
 
     ## Generate
@@ -171,7 +172,7 @@ def generate_line(prompt, **kwargs):
             output_attentions=False,
             output_hidden_states=False,
             use_cache=True,
-            
+            renormalize_logits=True
         )
     else:
         outputs = model.beam_search(
@@ -187,7 +188,7 @@ def generate_line(prompt, **kwargs):
             output_attentions=False,
             output_hidden_states=False,
             use_cache=True,
-
+            renormalize_logits=True 
         )
     return tokenizer.decode(outputs[0], skip_special_tokens=True)[len(prompt):]
 
@@ -305,7 +306,7 @@ if(__name__ == '__main__'):
 
 
     ######### Hyperparameters ##########
-    syllable_constraint.set_hyperparameters(good_beamscore_multiplier=0.1, bad_beamscore_multiplier=10)
+    syllable_constraint.set_hyperparameters(good_beamscore_multiplier=0.5, bad_beamscore_multiplier=10)
     rhyming_constraint.set_hyperparameters(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_beamscore_multiplier_assonant=0.9, continue_good_rhyme_multiplier=0.99, good_rhyming_token_multiplier=0.9)
     pos_constraint.set_hyperparameters(good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1)
     chosen_hyper_parameters = {
@@ -351,9 +352,10 @@ if(__name__ == '__main__'):
 
 
     
+    # rhyming_constraint.disable()
+    # pos_constraint.disable()
+    
 
-    
-    
     
 
     generate_parodie(song_file_path, system_prompt, context, do_sample=True, top_k=100, top_p=0.95, temperature=0.7, chosen_hyper_parameters=chosen_hyper_parameters, num_beams=2, seed=42, constrained_used=constrained_used)

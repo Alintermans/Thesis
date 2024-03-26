@@ -57,7 +57,8 @@ class PosConstraintLBL(Constraint):
         similarity = similarity_of_pos_tags_sequences(pos_tags[:min_length], self.expected_pos_tags[:min_length])
         #print('similarity: ', similarity, 'pos_tags: ', pos_tags, 'expected_pos_tags: ', self.expected_pos_tags)
         if similarity > self.pos_similarity_limit_to_boost:
-            return next_score - next_score*(similarity)*self.good_beamscore_multiplier * ( cur_len ** length_penalty)
+            #return next_score - next_score*(similarity)*self.good_beamscore_multiplier * ( cur_len ** length_penalty)
+            return next_score - next_score*(similarity)*self.good_beamscore_multiplier 
 
         
         return next_score
