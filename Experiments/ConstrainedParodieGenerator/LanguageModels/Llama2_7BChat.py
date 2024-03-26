@@ -24,7 +24,8 @@ class Llama2_7BChat(LM):
             self.tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token= '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')
             self.model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", 
             token= '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',
-            quantization_config=bnb_config
+            quantization_config=bnb_config,
+            device_map = 'auto'
             )
         else:
             self.tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", token= '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')
