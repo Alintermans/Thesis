@@ -1,0 +1,39 @@
+{
+    "original_song_title": "Is It Over Now (Small Version)",
+    "original_song_artist": "Taylor Swift",
+    "language_model_name": "GPT2",
+    "system_prompt": "I'm a parody genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\n",
+    "context": "The following parodie will be about that pineaple shouldn't be on pizza\n",
+    "prompt": "I'm a parody genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\nThe following parodie will be about that pineaple shouldn't be on pizza\nORIGINAL SONG : \n\n[Verse 1]\nOnce the flight had flown (Uh-huh)\nWith the wilt of the rose (Uh-huh)\nI slept all alone (Uh-huh)\nYou still wouldn't go\n\n[Pre-Chorus]\nLet's fast forward to three hundred takeout coffees later\nI see your profile and your smile on unsuspecting waiters\nYou dream of my mouth before it called you a lying traitor\nYou search in every maiden's bed for somethin' greater, baby\n\n[Chorus]\nWas it over when she laid down on your couch?\nWas it over when he unbuttoned my blouse?\n\"Come here,\" I whispered in your ear\nIn your dream as you pass\u0435d out, baby\nWas it over then? And is it over now?\n\n\n\nAlready generated PARODIE: \n\n",
+    "constraints_used": "All",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.5,
+            "bad_beamscore_multiplier": 10
+        },
+        "RhymingConstraintLBL": {
+            "max_possible_syllable_count": 3,
+            "good_beamscore_multiplier_same_rhyme_type": 0.95,
+            "good_beam_score_multiplier_assonant": 0.9,
+            "continue_good_rhyme_multiplier": 0.99,
+            "good_rhyming_token_multiplier": 0.9
+        },
+        "PosConstraintLBL": {
+            "good_beamscore_multiplier": 0.1,
+            "pos_similarity_limit_to_boost": 0.5,
+            "good_token_multiplier": 0.6,
+            "margin_of_similarity_with_new_token": 0.1
+        },
+        "rhyme_type": "assonant",
+        "top_k_rhyme_words": 10,
+        "top_k_words_to_consider_for_pos": 200
+    },
+    "num_beams": 2,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.95 | temperature: 0.7",
+    "state": "Finished Correctly",
+    "date": "27-03-2024",
+    "time": "09h-15m-55s",
+    "parodie": "[Verse 1]\n when I told you I was a\n of a woman who waseda\n I didn't know howington\n It's been so long since\n\n[Pre-Chorus]\n is she a whore or a slut or anything like that I\n He's a bitch and I'm not a boy but I am a realign\nIt's just a matter of time before she's gone and heseltine\n You're not the one who's gonna kill me but if you do I'll fuck you\n\n[Chorus]\n said I'd have to kill you but you're a girl and\n [Choruses 1-3]: I don't want tomlinson\n (I can't hold my breath for a long\n like this ) I want you to fuck me and\ningrify me to the point where italian\n\n"
+}
