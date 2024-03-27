@@ -310,7 +310,7 @@ if(__name__ == '__main__'):
     rhyming_constraint.set_hyperparameters(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_beamscore_multiplier_assonant=0.9, continue_good_rhyme_multiplier=0.99, good_rhyming_token_multiplier=0.9)
     pos_constraint.set_hyperparameters(good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1)
     chosen_hyper_parameters = {
-        'SyllableConstraintLBL': {'good_beamscore_multiplier': 0.1, 'bad_beamscore_multiplier': 10},
+        'SyllableConstraintLBL': {'good_beamscore_multiplier': 0.5, 'bad_beamscore_multiplier': 10},
        'RhymingConstraintLBL': {'max_possible_syllable_count': 3, 'good_beamscore_multiplier_same_rhyme_type': 0.95, 'good_beam_score_multiplier_assonant': 0.9, 'continue_good_rhyme_multiplier': 0.99, 'good_rhyming_token_multiplier': 0.9},
         'PosConstraintLBL': {'good_beamscore_multiplier': 0.1, 'pos_similarity_limit_to_boost': 0.5, 'good_token_multiplier': 0.6, 'margin_of_similarity_with_new_token': 0.1},
         'rhyme_type': 'assonant',
@@ -320,7 +320,8 @@ if(__name__ == '__main__'):
 
     song_directory = 'Songs/json/'
     # song_file_path = 'Songs/json/Taylor_Swift-It_Is_Over_Now_(Very_Small).json'
-    song_file_path = 'Songs/json/Coldplay-Viva_La_Vida.json'
+    #song_file_path = 'Songs/json/Coldplay-Viva_La_Vida.json'
+    song_file_path = 'Songs/json/Taylor_Swift-Is_It_Over_Now_(Small_Version).json'
 
     system_prompt = "I'm a parody genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\n"
     context = "The following parodie will be about that pineaple shouldn't be on pizza\n"

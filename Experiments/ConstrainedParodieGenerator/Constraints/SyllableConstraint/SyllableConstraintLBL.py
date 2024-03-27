@@ -137,8 +137,8 @@ class SyllableConstraintLBL(Constraint):
                     scores[i][token] = torch.finfo(scores.dtype).min
                 scores[i][self.tokenizer.eos_token_id] = torch.finfo(scores.dtype).min
             else:
-                scores[i] = torch.finfo(scores.dtype).min
-                scores[i][self.tokenizer.eos_token_id] = torch.finfo(scores.dtype).max
+                scores[i] = abs(scores[i])*torch.finfo(scores.dtype).min
+                scores[i][self.tokenizer.eos_token_id] = 0
 
             
 
