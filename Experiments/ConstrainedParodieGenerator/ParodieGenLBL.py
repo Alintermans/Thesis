@@ -237,6 +237,7 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
                 ##Generate new line
                 new_line = generate_line(prompt + parodie, new_syllable_amount=syllable_amount, rhyming_word=rhyming_word, pos_tags=pos_tags, **kwargs)
                 rhyming_constraint.add_rhyming_words_to_ignore(rhyming_word)
+                print("Contraints are satisfied: ", constraints.are_constraints_satisfied(new_line))
                 parodie += new_line + "\n"
                 print(line, " | ",new_line)
             parodie += "\n"
@@ -303,16 +304,16 @@ if(__name__ == '__main__'):
     pos_similarity_limit_to_boosts = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
     good_token_multipliers = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
     margin_of_similarity_with_new_tokens = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
-
+    limilt_of_pos_similarity_to_satisfy_constraint = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
 
     ######### Hyperparameters ##########
     syllable_constraint.set_hyperparameters(good_beamscore_multiplier=0.5, bad_beamscore_multiplier=10)
     rhyming_constraint.set_hyperparameters(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_beamscore_multiplier_assonant=0.9, continue_good_rhyme_multiplier=0.99, good_rhyming_token_multiplier=0.9)
-    pos_constraint.set_hyperparameters(good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1)
+    pos_constraint.set_hyperparameters(good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1, limilt_of_pos_similarity_to_satisfy_constraint=0.5)
     chosen_hyper_parameters = {
         'SyllableConstraintLBL': {'good_beamscore_multiplier': 0.5, 'bad_beamscore_multiplier': 10},
        'RhymingConstraintLBL': {'max_possible_syllable_count': 3, 'good_beamscore_multiplier_same_rhyme_type': 0.95, 'good_beam_score_multiplier_assonant': 0.9, 'continue_good_rhyme_multiplier': 0.99, 'good_rhyming_token_multiplier': 0.9},
-        'PosConstraintLBL': {'good_beamscore_multiplier': 0.1, 'pos_similarity_limit_to_boost': 0.5, 'good_token_multiplier': 0.6, 'margin_of_similarity_with_new_token': 0.1},
+        'PosConstraintLBL': {'good_beamscore_multiplier': 0.1, 'pos_similarity_limit_to_boost': 0.5, 'good_token_multiplier': 0.6, 'margin_of_similarity_with_new_token': 0.1, 'limilt_of_pos_similarity_to_satisfy_constraint': 0.5},
         'rhyme_type': 'assonant',
         'top_k_rhyme_words': 10,
        'top_k_words_to_consider_for_pos': 200
@@ -354,7 +355,7 @@ if(__name__ == '__main__'):
 
     
     rhyming_constraint.disable()
-    pos_constraint.disable()
+    #pos_constraint.disable()
     
 
     

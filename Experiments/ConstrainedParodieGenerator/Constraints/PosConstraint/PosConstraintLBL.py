@@ -55,7 +55,7 @@ class PosConstraintLBL(Constraint):
             raise Exception('Expected pos tags not set')
 
         min_length = min(len(pos_tags), len(self.expected_pos_tags))
-        similarity = similarity_of_pos_tags_sequences(pos_tags[:min_length], self.expected_pos_tags[:min_length])
+        similarity = similarity_of_pos_tags_sequences(pos_tags, self.expected_pos_tags[:min_length])
         #print('similarity: ', similarity, 'pos_tags: ', pos_tags, 'expected_pos_tags: ', self.expected_pos_tags)
         if similarity > self.pos_similarity_limit_to_boost:
             #return next_score - next_score*(similarity)*self.good_beamscore_multiplier * ( cur_len ** length_penalty)
@@ -85,12 +85,13 @@ class PosConstraintLBL(Constraint):
             _, best_tokens = scores[i].topk(self.top_k_words_to_consider)
             for token in best_tokens:
                 pos_tags_last_line = get_pos_tags_of_line(last_line)
+                #The min length is only ysed for the expected pos tags, because the last line may be shorter than the expected pos tags but dtw can handle multiple lengths, but to esnure a valid score when the full line is being generted, the min length is used to cap the length of the expected pos tags, but when the full length is reached both are compared as is
                 min_length = min(len(pos_tags_last_line), len(self.expected_pos_tags))
-                similarity_of_last_line = similarity_of_pos_tags_sequences(pos_tags_last_line[:min_length], self.expected_pos_tags[:min_length])
+                similarity_of_last_line = similarity_of_pos_tags_sequences(pos_tags_last_line, self.expected_pos_tags[:min_length])
                 candidate_text = last_line + self.tokenizer.decode(token, skip_special_tokens=True)
                 pos_tags = get_pos_tags_of_line(candidate_text)
                 min_length = min(len(pos_tags), len(self.expected_pos_tags))
-                similarity_with_new_token = similarity_of_pos_tags_sequences(pos_tags[:min_length], self.expected_pos_tags[:min_length])
+                similarity_with_new_token = similarity_of_pos_tags_sequences(pos_tags, self.expected_pos_tags[:min_length])
                 if pos_tags is not None:
                     
                     if similarity_with_new_token > min(similarity_of_last_line + self.margin_of_similarity_with_new_token, 0.99) or similarity_with_new_token == 1.0 :
@@ -112,6 +113,7 @@ class PosConstraintLBL(Constraint):
             return False
         pos_similarity = similarity_of_pos_tags_sequences(pos_tags_generated_text, self.expected_pos_tags)
         if pos_similarity > self.limilt_of_pos_similarity_to_satisfy_constraint:
+            print('pos_similarity: ', pos_similarity)
             return True
         return False
         
