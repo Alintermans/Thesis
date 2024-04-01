@@ -113,7 +113,7 @@ class PosConstraintLBL(Constraint):
             return False
         pos_similarity = similarity_of_pos_tags_sequences(pos_tags_generated_text, self.expected_pos_tags)
         if pos_similarity > self.limilt_of_pos_similarity_to_satisfy_constraint:
-            print('pos_similarity: ', pos_similarity)
+            #print('pos_similarity: ', pos_similarity)
             return True
         return False
         
