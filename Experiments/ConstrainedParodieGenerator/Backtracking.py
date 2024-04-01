@@ -81,6 +81,6 @@ class BacktrackingLogitsProcessor(LogitsProcessor):
             for sequence in self.sequences_to_ignore:
                 #print("input: ", input, "sequence: ", sequence)
                 if torch.equal(input, sequence[:len(input)]) and len(input) < len(sequence):
-                    scores[i][len(input)] = torch.finfo(scores.dtype).min
+                    scores[i][sequence[len(input)]] = torch.finfo(scores.dtype).min
         
         return scores
