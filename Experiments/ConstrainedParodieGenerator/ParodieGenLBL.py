@@ -335,7 +335,7 @@ if(__name__ == '__main__'):
     limilt_of_pos_similarity_to_satisfy_constraint = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
 
     ######### Hyperparameters ##########
-    syllable_constraint.set_hyperparameters(good_beamscore_multiplier=0.5, bad_beamscore_multiplier=10)
+    syllable_constraint.set_hyperparameters(good_beamscore_multiplier=0.5, bad_beamscore_multiplier=5)
     rhyming_constraint.set_hyperparameters(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_beamscore_multiplier_assonant=0.9, continue_good_rhyme_multiplier=0.99, good_rhyming_token_multiplier=0.9)
     pos_constraint.set_hyperparameters(good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1, limilt_of_pos_similarity_to_satisfy_constraint=0.5)
     chosen_hyper_parameters = {
