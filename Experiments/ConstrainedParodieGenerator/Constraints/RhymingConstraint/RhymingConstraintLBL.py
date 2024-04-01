@@ -1,5 +1,5 @@
 from Constraint import Constraint
-from SongUtils import  rhyming_words_to_tokens_and_syllable_count, load_rhyming_dicts, get_syllable_count_of_sentence, _get_rhyming_words, _get_rhyming_lines, _do_two_words_rhyme
+from SongUtils import  rhyming_words_to_tokens_and_syllable_count, load_rhyming_dicts, get_syllable_count_of_sentence, _get_rhyming_words, _get_rhyming_lines, _do_two_words_rhyme, get_final_word_of_line
 import torch
 ################################################ CONSTRAINT CLASS ################################################
 
@@ -199,6 +199,16 @@ class RhymingConstraintLBL(Constraint):
                     scores[i][first_token] = score + self.good_rhyming_token_multiplier*abs(score)
                     
         return scores
+    
+    def is_constrained_satisfied(self, generated_text):
+        if self.rhyming_word is None or self.disable_constraint:
+            return True
+        
+        last_word = get_final_word_of_line(generated_text)
+        if last_word is None:
+            return False
+        return _do_two_words_rhyme(last_word, self.rhyming_word, self.rhyme_type)
+        
     
     def is_beam_constraint_active(self):
 

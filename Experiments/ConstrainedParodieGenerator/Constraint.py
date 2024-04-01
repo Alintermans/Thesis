@@ -24,6 +24,11 @@ class Constraint(ABC):
             return scores
     
     @abstractmethod
+    def is_constrained_satisfied(self, generated_text):
+        raise NotImplementedError("is_constrained_satisfied not implemented")
+        return True
+    
+    @abstractmethod
     def is_beam_constraint_active(self):
         raise NotImplementedError("is_beam_constraint_active not implemented")
     
@@ -63,6 +68,12 @@ class ConstraintList:
             if constraint.is_logits_processor_active():
                 logits_processor_list.append(ConstraintLogitsProcessor(constraint))
         return logits_processor_list
+    
+    def are_constraints_satisfied(self, generated_text):
+        for constraint in self.constraints:
+            if not constraint.is_constrained_satisfied(generated_text):
+                return False
+        return True
     
     def __iter__(self):
         return iter(self.constraints)

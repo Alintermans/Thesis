@@ -161,6 +161,17 @@ class SyllableConstraintLBL(Constraint):
 
 
         return scores
+
+
+    def is_constrained_satisfied(self, generated_text):
+        if self.new_syllable_amount is None:
+            raise Exception('Syllable amount not set')
+        if self.disable_constraint:
+            return True
+        sum = get_syllable_count_of_sentence(generated_text)
+        if sum == self.new_syllable_amount:
+            return True
+        return False
     
     def is_beam_constraint_active(self):
         return True

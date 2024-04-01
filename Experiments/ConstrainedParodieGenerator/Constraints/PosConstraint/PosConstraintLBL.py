@@ -15,7 +15,7 @@ class PosConstraintLBL(Constraint):
         self.pos_similarity_limit_to_boost = 0.5
         self.good_token_multiplier = 0.6
         self.margin_of_similarity_with_new_token = 0.1
-
+        self.limilt_of_pos_similarity_to_satisfy_constraint = 0.5
         self.disable_constraint = False
     
     def disable(self):
@@ -24,11 +24,12 @@ class PosConstraintLBL(Constraint):
     def enable(self):
         self.disable_constraint = False
     
-    def set_hyperparameters(self, good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1):
+    def set_hyperparameters(self, good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1, limilt_of_pos_similarity_to_satisfy_constraint=0.5):
         self.good_beamscore_multiplier = good_beamscore_multiplier
         self.pos_similarity_limit_to_boost = pos_similarity_limit_to_boost
         self.good_token_multiplier = good_token_multiplier
         self.margin_of_similarity_with_new_token = margin_of_similarity_with_new_token
+        self.limilt_of_pos_similarity_to_satisfy_constraint = limilt_of_pos_similarity_to_satisfy_constraint
     
 
     def set_expected_pos_tags(self, expected_pos_tags):
@@ -101,6 +102,19 @@ class PosConstraintLBL(Constraint):
             
                     
         return scores
+    
+
+    def is_constrained_satisfied(self, generated_text):
+        if self.disable_constraint:
+            return True
+        pos_tags_generated_text = get_pos_tags_of_line(generated_text)
+        if pos_tags_generated_text is None:
+            return False
+        pos_similarity = similarity_of_pos_tags_sequences(pos_tags_generated_text, self.expected_pos_tags)
+        if pos_similarity > self.limilt_of_pos_similarity_to_satisfy_constraint:
+            return True
+        return False
+        
     
     def is_beam_constraint_active(self):
         return True
