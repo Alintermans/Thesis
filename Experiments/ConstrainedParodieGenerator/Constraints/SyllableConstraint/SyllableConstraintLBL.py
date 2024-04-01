@@ -105,10 +105,10 @@ class SyllableConstraintLBL(Constraint):
             else:
                 result.append(False)
         #print(result)
-        if (len([x for x in result if x]) == len(result)):
-            return True
-        # if len([x for x in result if x]) >0:
+        # if (len([x for x in result if x]) == len(result)):
         #     return True
+        if len([x for x in result if x]) >0:
+            return True
         
 
 

@@ -3,6 +3,7 @@ from Constraints.RhymingConstraint.RhymingConstraintLBL import RhymingConstraint
 from Constraints.PosConstraint.PosConstraintLBL import PosConstraintLBL
 from Constraint import ConstraintList
 from BeamSearchScorerConstrained import BeamSearchScorerConstrained
+from Backtracking import Backtracking, BacktrackingLogitsProcessor
 from LanguageModels.GPT2 import GPT2
 from LanguageModels.Gemma2BIt import Gemma2BIt
 from LanguageModels.Gemma2B import Gemma2B
@@ -45,6 +46,9 @@ pos_constraint = None
 constraints = None
 stopping_criteria = None
 logits_processor = None
+logits_processor_list = None
+eos_token_id = None
+pad_token_id = None
 
 AVAILABLE_LMS = {'GPT2': GPT2, 'Gemma2BIt': Gemma2BIt, 'Gemma2B': Gemma2B, 'Gemma7B': Gemma7B, 'Gemma7BIt': Gemma7BIt, 'Llama2_7B': Llama2_7B, 'Llama2_7BChat': Llama2_7BChat, 'Llama2_70B': Llama2_70B, 'Llama2_70BChat': Llama2_70BChat, 'Mistral7BV01': Mistral7BV01, 'Mistral7BItV02': Mistral7BItV02, 'Mistral8x7BV01': Mistral8x7BV01, 'Mistral8x7BItV01': Mistral8x7BItV01}
 
@@ -62,6 +66,12 @@ def set_language_model(lm_name):
     model = lm.get_model()
     start_token = lm.get_start_token()
     model.bfloat16()
+    global eos_token_id
+    global pad_token_id
+    eos_token_id = tokenizer.eos_token_id
+    pad_token_id = tokenizer.pad_token_id
+    if pad_token_id is None:
+        pad_token_id = tokenizer.eos_token_id
 
 def set_num_beams(num=2):
     global num_beams
@@ -76,6 +86,7 @@ def set_constraints(rhyme_type="assonant", top_k_rhyme_words=10, top_k_words_to_
     global constraints
     global stopping_criteria
     global logits_processor
+    global logits_processor_list
     syllable_constraint = SyllableConstraintLBL(tokenizer, start_token=start_token)
     syllable_constraint.set_special_new_line_tokens(lm.special_new_line_tokens())
 
@@ -100,97 +111,113 @@ def set_constraints(rhyme_type="assonant", top_k_rhyme_words=10, top_k_words_to_
 
 
 
-
-
-
-
-######## Generate Line ########
-def generate_line(prompt, **kwargs):
-    input_ids = tokenizer.encode(prompt, return_tensors="pt")   
+def prepare_inputs(input_ids): 
     input_ids = input_ids.to(model.device)
     batch_size = input_ids.shape[0]
     input_ids = input_ids.repeat_interleave(num_beams, dim=0)
-    eos_token_id = tokenizer.eos_token_id
-    pad_token_id = tokenizer.pad_token_id
-    if pad_token_id is None:
-        pad_token_id = tokenizer.eos_token_id
-
     attention_mask = None
     if lm.accepts_attention_mask():
         attention_mask = model._prepare_attention_mask_for_generation(
             input_ids, pad_token_id, eos_token_id
         )
+    return input_ids, batch_size, attention_mask
+
+
+
+######## Generate Line ########
+def generate_line(prompt, **kwargs):
+    original_prompt_length = len(prompt)
+
+    ## Encode inputs
+    input_ids = tokenizer.encode(prompt, return_tensors="pt")   
+    original_input_length = input_ids.shape[-1]
+    
+
+    ## Prepare backtracking
+    backtracking_logits_processor = BacktrackingLogitsProcessor(original_input_length)
+    backtracking = Backtracking(original_input_length, constraints, backtracking_logits_processor)
     
     ## Constraints
     syllable_constraint.set_new_syllable_amount(kwargs['new_syllable_amount'])
+
     rhyming_constraint.set_rhyming_word(kwargs['rhyming_word'])
     rhyming_constraint.set_required_syllable_count(kwargs['new_syllable_amount'])
 
     pos_constraint.set_expected_pos_tags(kwargs['pos_tags'])
-    
-
-    ## Beam Search
-    beam_scorer = BeamSearchScorerConstrained(
-        batch_size= batch_size,
-        max_length=1000,
-        num_beams=num_beams,
-        device=model.device,
-        constraints = constraints,
-        length_penalty=10.0,
-    )
 
     ## Generate
-    if (kwargs.get('do_sample') is not None and kwargs.get('do_sample') == True):
-        if kwargs.get('top_k') is None:
-            raise Exception('top_k not set')
-        if kwargs.get('top_p') is None:
-            raise Exception('top_p not set')
+    while backtracking.continue_loop():
+        ## Prepare inputs
+        prepared_input_ids, batch_size, attention_mask = prepare_inputs(input_ids)
+        ## Beam Search
+        beam_scorer = BeamSearchScorerConstrained(
+            batch_size= batch_size,
+            max_length=1000,
+            num_beams=num_beams,
+            device=model.device,
+            constraints = constraints,
+            length_penalty=10.0,
+        )
 
-        top_k = kwargs['top_k']
-        top_p = kwargs['top_p']
-        temperature = kwargs['temperature']
-        logits_warper = LogitsProcessorList(
-             [  
-                TemperatureLogitsWarper(temperature),
-                #TopKLogitsWarper(top_k),
-                TopPLogitsWarper(top_p),
-                
-             ]
-        )
+        ## Genearate
+        if (kwargs.get('do_sample') is not None and kwargs.get('do_sample') == True):
+            if kwargs.get('top_k') is None:
+                raise Exception('top_k not set')
+            if kwargs.get('top_p') is None:
+                raise Exception('top_p not set')
+
+            top_k = kwargs['top_k']
+            top_p = kwargs['top_p']
+            temperature = kwargs['temperature']
+            logits_warper = LogitsProcessorList(
+                [  
+                    TemperatureLogitsWarper(temperature),
+                    #TopKLogitsWarper(top_k),
+                    TopPLogitsWarper(top_p),
+                    
+                ]
+            )
+            
+            outputs = model.beam_sample(
+                prepared_input_ids,
+                beam_scorer=beam_scorer,
+                stopping_criteria=stopping_criteria,
+                logits_processor=LogitsProcessorList([backtracking_logits_processor] +  logits_processor_list),
+                logits_warper=logits_warper,
+                pad_token_id=pad_token_id,
+                eos_token_id=eos_token_id,
+                output_scores = True,
+                return_dict_in_generate=False,
+                attention_mask=attention_mask,
+                output_attentions=False,
+                output_hidden_states=False,
+                use_cache=True,
+                renormalize_logits=True
+            )
+        else:
+            outputs = model.beam_search(
+                prepared_input_ids,
+                beam_scorer=beam_scorer,
+                stopping_criteria=stopping_criteria,
+                logits_processor= LogitsProcessorList([backtracking_logits_processor] +  logits_processor_list),
+                pad_token_id=pad_token_id,
+                eos_token_id=eos_token_id,
+                output_scores = True,
+                return_dict_in_generate=False,
+                attention_mask=attention_mask,
+                output_attentions=False,
+                output_hidden_states=False,
+                use_cache=True,
+                renormalize_logits=True 
+            )
         
-        outputs = model.beam_sample(
-            input_ids,
-            beam_scorer=beam_scorer,
-            stopping_criteria=stopping_criteria,
-            logits_processor=logits_processor,
-            logits_warper=logits_warper,
-            pad_token_id=pad_token_id,
-            eos_token_id=eos_token_id,
-            output_scores = True,
-            return_dict_in_generate=False,
-            attention_mask=attention_mask,
-            output_attentions=False,
-            output_hidden_states=False,
-            use_cache=True,
-            renormalize_logits=True
-        )
-    else:
-        outputs = model.beam_search(
-            input_ids,
-            beam_scorer=beam_scorer,
-            stopping_criteria=stopping_criteria,
-            logits_processor=logits_processor,
-            pad_token_id=pad_token_id,
-            eos_token_id=eos_token_id,
-            output_scores = True,
-            return_dict_in_generate=False,
-            attention_mask=attention_mask,
-            output_attentions=False,
-            output_hidden_states=False,
-            use_cache=True,
-            renormalize_logits=True 
-        )
-    return tokenizer.decode(outputs[0], skip_special_tokens=True)[len(prompt):]
+        ## Decode and validate result
+        decoded_result = tokenizer.decode(outputs[0], skip_special_tokens=True)[original_prompt_length:]
+        backtracking.validate_result(decoded_result, outputs)
+        input_ids = backtracking.get_updated_input_ids()
+
+    result = backtracking.get_result()
+    return result
 
 
 
@@ -236,13 +263,14 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
 
                 ##Generate new line
                 new_line = generate_line(prompt + parodie, new_syllable_amount=syllable_amount, rhyming_word=rhyming_word, pos_tags=pos_tags, **kwargs)
-                rhyming_constraint.add_rhyming_words_to_ignore(rhyming_word)
+                new_rhyme_word = get_final_word_of_line(new_line)
+                rhyming_constraint.add_rhyming_words_to_ignore(new_rhyme_word)
                 print("Contraints are satisfied: ", constraints.are_constraints_satisfied(new_line))
                 parodie += new_line + "\n"
                 print(line, " | ",new_line)
             parodie += "\n"
     except Exception as e:
-        #raise Exception(e)
+        raise Exception(e)
         print("Error has occured ", e)
         state = "Error has occured " + str(e) + "\n" + "Not finished correctly"
         parodie += "\n\n" + "[ERROR]: Not finished correctly" + "\n\n"
@@ -354,7 +382,7 @@ if(__name__ == '__main__'):
 
 
     
-    rhyming_constraint.disable()
+    #rhyming_constraint.disable()
     #pos_constraint.disable()
     
 

@@ -70,10 +70,14 @@ class ConstraintList:
         return logits_processor_list
     
     def are_constraints_satisfied(self, generated_text):
+        nb_constraints_satisfied = 0
+        result = True
         for constraint in self.constraints:
             if not constraint.is_constrained_satisfied(generated_text):
-                return False
-        return True
+                result = False
+            else:   
+                nb_constraints_satisfied += 1
+        return result, nb_constraints_satisfied
     
     def __iter__(self):
         return iter(self.constraints)
