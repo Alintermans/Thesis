@@ -229,7 +229,7 @@ if __name__ == "__main__":
     # parody_file_path = input("Enter the path to the parodie song file in json format: ")
 
     song_file_path = 'Songs/json/Taylor_Swift-Is_It_Over_Now_(Small_Version).json'
-    parody_file_path = 'Experiments/ConstrainedParodieGenerator/GeneratedParodies/GPT2/SyllableConstraintLBL/json/Is It Over Now (Small Version)_parodie_23-02-2024_09h-33m-37s.json'
+    parody_file_path = 'Experiments/ConstrainedParodieGenerator/GeneratedParodies/GPT2/All/json/Is_It_Over_Now_(Small_Version)_parodie_27-03-2024_09h-15m-55s.json'
     
     load_rhyming_dicts()
     evaluate(song_file_path, parody_file_path)

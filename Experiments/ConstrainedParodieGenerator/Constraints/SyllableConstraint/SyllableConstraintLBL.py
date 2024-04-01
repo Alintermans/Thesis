@@ -20,6 +20,8 @@ class SyllableConstraintLBL(Constraint):
         self.bad_beamscore_multiplier = 10
         self.top_k_tokens_to_consider = 30
         self.disable_constraint = False
+        self.eos_string = self.tokenizer.decode(self.tokenizer.eos_token_id)
+        #print(self.eos_string)
 
     def set_special_new_line_tokens(self, special_new_line_tokens):
         self.special_new_line_tokens += special_new_line_tokens
@@ -51,25 +53,34 @@ class SyllableConstraintLBL(Constraint):
             raise Exception('Syllable amount not set')
         # if self.syllable_amount_prompt is None:
         #     raise Exception('Syllable amount prompt not set')
-        previous_text = self.tokenizer.decode(input_ids)
+        next_token_tensor = torch.tensor([next_token.item()], device = next_token.device)
+        candidate_text = self.tokenizer.decode(torch.cat([input_ids, next_token_tensor], dim=0))
         current_token_text = self.tokenizer.decode(next_token)
-        candidate_text = previous_text + current_token_text
+        # candidate_text = previous_text + current_token_text
 
         last_line = candidate_text[len(self.original_prompt):]
+        if last_line.endswith(self.eos_string):
+            #print('eos token')
+            last_line = last_line.replace(self.eos_string, '')
+
         result = get_syllable_count_of_sentence(last_line)
         
         current_length = input_ids.shape[-1] + 1
         
         # if does_string_contain_newline(last_line):
         #     next_score = next_score + next_score*self.bad_beamscore_multiplier* ( current_length ** length_penalty)
-            
 
+        if next_score != next_score:
+            next_score = torch.tensor(0.0, device=next_score.device)
+        
         if result > self.new_syllable_amount or (result == self.new_syllable_amount and get_syllable_count_of_sentence(current_token_text) == 0):
+            
             next_score = next_score + next_score*self.bad_beamscore_multiplier
             #next_score = float('-inf')
         elif result == self.new_syllable_amount:
             next_score = next_score - next_score*self.good_beamscore_multiplier
-        #print(candidate_text,' count: ' ,result, ' score: ', next_score)
+            #print("next score=", next_score)
+        #print(candidate_text[len(self.original_prompt):],' count: ' ,result, ' score: ', next_score)
         return next_score
     
     def stopping_criteria(self, input_ids: torch.LongTensor, score: torch.FloatTensor, **kwargs) -> bool:
@@ -85,15 +96,19 @@ class SyllableConstraintLBL(Constraint):
         for input in input_ids:
             sentences = self.tokenizer.decode(input, skip_special_tokens=True)
             last_line = sentences[len(self.original_prompt):]
+            if last_line.endswith(self.eos_string):
+                last_line = last_line.replace(self.eos_string, '')
             sum = get_syllable_count_of_sentence(last_line)
             if sum >=self.new_syllable_amount:
-                print('sum: ',sum, 'sentence: ', sentences[len(self.original_prompt):])
+                #print('sum: ',sum, 'sentence: ', sentences[len(self.original_prompt):])
                 result.append(True)
             else:
                 result.append(False)
-        
+        #print(result)
         if (len([x for x in result if x]) == len(result)):
             return True
+        # if len([x for x in result if x]) >0:
+        #     return True
         
 
 
@@ -119,35 +134,30 @@ class SyllableConstraintLBL(Constraint):
             input = input_ids[i]
             sentences = self.tokenizer.decode(input, skip_special_tokens=True)
             last_line = sentences[len(self.original_prompt):]
+            if last_line.endswith(self.eos_string):
+                last_line = last_line.replace(self.eos_string, '')
             sum = get_syllable_count_of_sentence(last_line)
-
+            scores[i][self.tokenizer.bos_token_id] = torch.finfo(scores.dtype).min
             if sum < self.new_syllable_amount:
                 
 
                 _, best_tokens = scores[i].topk(self.top_k_tokens_to_consider)
 
                 for token in best_tokens:
-                    word = self.tokenizer.decode(token, skip_special_tokens=True)
-                    syllable_count = get_syllable_count_of_sentence(word)
-                    if syllable_count + sum > self.new_syllable_amount:
+                    next_token_tensor = torch.tensor([token], device = scores[i].device)
+                    candidate_text = self.tokenizer.decode(torch.cat([input, next_token_tensor], dim=0))
+                    syllable_count = get_syllable_count_of_sentence(candidate_text[len(self.original_prompt):])
+                    if syllable_count > self.new_syllable_amount:
                         scores[i][token] = torch.finfo(scores.dtype).min
                     
-                _, best_tokens = scores[i].topk(self.top_k_tokens_to_consider)
+                
                 for token in self.special_new_line_tokens:
                     scores[i][token] = torch.finfo(scores.dtype).min
                 scores[i][self.tokenizer.eos_token_id] = torch.finfo(scores.dtype).min
             else:
+                eos_score = scores[i][self.tokenizer.eos_token_id]
                 scores[i] = abs(scores[i])*torch.finfo(scores.dtype).min
-                scores[i][self.tokenizer.eos_token_id] = 0
-
-            
-
-            
-                
-            
-                
-
-
+                scores[i][self.tokenizer.eos_token_id] = eos_score
 
 
         return scores

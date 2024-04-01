@@ -661,6 +661,9 @@ def _do_two_words_rhyme(word1, word2, rhyme_type = "perfect"):
         return False
 
 def _get_rhyming_words(word, rhyme_type = "perfect"):
+    if word == "":
+        return []
+
     if rhyme_type == "perfect":
         return get_perfect_rhyming_words(word)
     elif rhyme_type == "assonant":

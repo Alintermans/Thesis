@@ -353,8 +353,8 @@ if(__name__ == '__main__'):
 
 
     
-    # rhyming_constraint.disable()
-    # pos_constraint.disable()
+    rhyming_constraint.disable()
+    pos_constraint.disable()
     
 
     
