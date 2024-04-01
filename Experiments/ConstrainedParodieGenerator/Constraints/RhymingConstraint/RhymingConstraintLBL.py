@@ -207,7 +207,10 @@ class RhymingConstraintLBL(Constraint):
         last_word = get_final_word_of_line(generated_text)
         if last_word is None:
             return False
-        return _do_two_words_rhyme(last_word, self.rhyming_word, self.rhyme_type)
+        
+        result = _do_two_words_rhyme(last_word, self.rhyming_word, self.rhyme_type)
+        print('last word: ', last_word, ' rhyming word: ', self.rhyming_word, ' rhyme type: ', self.rhyme_type, ' result: ', result)
+        return result
         
     
     def is_beam_constraint_active(self):
