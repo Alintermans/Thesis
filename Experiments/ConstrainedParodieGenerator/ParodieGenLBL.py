@@ -304,6 +304,7 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
 if(__name__ == '__main__'):
     ###### SetUp ######
     set_language_model('GPT2')
+    #set_language_model('Llama2_7BChat')
     set_seed(42)
     set_num_beams(2)
     set_constraints(rhyme_type="assonant", top_k_rhyme_words=10, top_k_words_to_consider_for_pos=200)
