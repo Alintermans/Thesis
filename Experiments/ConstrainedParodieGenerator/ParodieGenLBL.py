@@ -2,6 +2,7 @@ from Constraints.SyllableConstraint.SyllableConstraintLBL import SyllableConstra
 from Constraints.RhymingConstraint.RhymingConstraintLBL import RhymingConstraintLBL
 from Constraints.PosConstraint.PosConstraintLBL import PosConstraintLBL
 from Constraint import ConstraintList
+from PostProcessor import PostProcessor
 from BeamSearchScorerConstrained import BeamSearchScorerConstrained
 from Backtracking import Backtracking, BacktrackingLogitsProcessor
 from LanguageModels.GPT2 import GPT2
@@ -49,6 +50,7 @@ logits_processor = None
 logits_processor_list = None
 eos_token_id = None
 pad_token_id = None
+post_processor = None
 
 AVAILABLE_LMS = {'GPT2': GPT2, 'Gemma2BIt': Gemma2BIt, 'Gemma2B': Gemma2B, 'Gemma7B': Gemma7B, 'Gemma7BIt': Gemma7BIt, 'Llama2_7B': Llama2_7B, 'Llama2_7BChat': Llama2_7BChat, 'Llama2_70B': Llama2_70B, 'Llama2_70BChat': Llama2_70BChat, 'Mistral7BV01': Mistral7BV01, 'Mistral7BItV02': Mistral7BItV02, 'Mistral8x7BV01': Mistral8x7BV01, 'Mistral8x7BItV01': Mistral8x7BItV01}
 
@@ -87,6 +89,7 @@ def set_constraints(rhyme_type="assonant", top_k_rhyme_words=10, top_k_words_to_
     global stopping_criteria
     global logits_processor
     global logits_processor_list
+    global post_processor
     syllable_constraint = SyllableConstraintLBL(tokenizer, start_token=start_token)
     syllable_constraint.set_special_new_line_tokens(lm.special_new_line_tokens())
 
@@ -106,8 +109,11 @@ def set_constraints(rhyme_type="assonant", top_k_rhyme_words=10, top_k_words_to_
     stopping_criteria = StoppingCriteriaList(stopping_criteria_list)
 
     logits_processor_list = constraints.get_logits_processor_list() + [no_ngram_logits_processor, forbidden_tokens_logit_processor]
-    logits_processor = LogitsProcessorList(logits_processor_list)
+    
 
+    ## Initialize Post Processor
+    post_processor = PostProcessor()
+    logits_processor_list.append(post_processor.get_logits_processor())
 
 
 
@@ -213,7 +219,6 @@ def generate_line(prompt, **kwargs):
             )
         
         ## Decode and validate result
-        print(outputs['sequences'].shape)
         decoded_results = [tokenizer.decode(sequence, skip_special_tokens=True)[original_prompt_length:] for sequence in outputs['sequences']]
         backtracking.validate_result(decoded_results, outputs['sequences'], outputs['sequences_scores'])
         input_ids = backtracking.get_updated_input_ids()
