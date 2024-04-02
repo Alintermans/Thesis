@@ -187,10 +187,10 @@ def generate_line(prompt, **kwargs):
                 pad_token_id=pad_token_id,
                 eos_token_id=eos_token_id,
                 output_scores = True,
-                return_dict_in_generate=False,
+                return_dict_in_generate=True,
                 attention_mask=attention_mask,
                 output_attentions=False,
-                output_hidden_states=False,
+                output_hidden_states=True,
                 use_cache=True,
                 renormalize_logits=True
             )
@@ -203,7 +203,7 @@ def generate_line(prompt, **kwargs):
                 pad_token_id=pad_token_id,
                 eos_token_id=eos_token_id,
                 output_scores = True,
-                return_dict_in_generate=False,
+                return_dict_in_generate=True,
                 attention_mask=attention_mask,
                 output_attentions=False,
                 output_hidden_states=False,
@@ -212,8 +212,9 @@ def generate_line(prompt, **kwargs):
             )
         
         ## Decode and validate result
-        decoded_result = tokenizer.decode(outputs[0], skip_special_tokens=True)[original_prompt_length:]
-        backtracking.validate_result(decoded_result, outputs)
+        print(outputs['sequences'].shape)
+        decoded_result = tokenizer.decode(outputs['sequences'][0], skip_special_tokens=True)[original_prompt_length:]
+        backtracking.validate_result(decoded_result, outputs['sequences'], outputs['sequences_scores'][0].item())
         input_ids = backtracking.get_updated_input_ids()
 
     result = backtracking.get_result()

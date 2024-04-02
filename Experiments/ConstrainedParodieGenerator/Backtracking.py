@@ -9,6 +9,7 @@ class Backtracking:
         self.latest_input_ids = None
         self.best_result = None
         self.highest_nb_constraints_satisfied = 0
+        self.best_score = None
         self.retries = [5,5,5]
         self.retry_points = [0.75, 0.5, 0.25]
         self.backtracking_logits_processor = backtracking_logits_processor
@@ -35,14 +36,14 @@ class Backtracking:
 
 
 
-    def validate_result(self, decoded_result, output_ids):
+    def validate_result(self, decoded_result, output_ids, score):
         constraints_satisfied, nb_satisfied_constraints = self.constraints.are_constraints_satisfied(decoded_result)
         self.best_result = decoded_result
         if constraints_satisfied:
             self.does_loop_continue = False
             return True
         
-        if nb_satisfied_constraints > self.highest_nb_constraints_satisfied:
+        if (nb_satisfied_constraints > self.highest_nb_constraints_satisfied and self.best_score is None) or (nb_satisfied_constraints > self.highest_nb_constraints_satisfied and score > self.best_score):
             self.highest_nb_constraints_satisfied = nb_satisfied_constraints
             self.best_result = decoded_result
         print(decoded_result)
@@ -81,6 +82,6 @@ class BacktrackingLogitsProcessor(LogitsProcessor):
             for sequence in self.sequences_to_ignore:
                 #print("input: ", input, "sequence: ", sequence)
                 if torch.equal(input, sequence[:len(input)]) and len(input) < len(sequence):
-                    scores[i][sequence[len(input)]] = torch.finfo(scores.dtype).min
+                    scores[i][sequence[len(input)].item()] = torch.finfo(scores.dtype).min
         
         return scores
