@@ -36,10 +36,30 @@ class Backtracking:
 
 
 
-    def validate_result(self, decoded_result, output_ids, score):
+    def validate_result(self, decoded_results, output_ids, scores):
+        index = 0
+        best_nb_constraints_satisfied = 0
+        best_index_not_satisfied = 0
+        for i in range(len(decoded_results)):
+            decoded_result = decoded_results[i]
+            constraints_satisfied, nb_satisfied_constraints = self.constraints.are_constraints_satisfied(decoded_result)
+            if constraints_satisfied:
+                index = i
+                break
+            if nb_satisfied_constraints > best_nb_constraints_satisfied:
+                best_nb_constraints_satisfied = nb_satisfied_constraints
+                best_index_not_satisfied = i
+        
+        if best_nb_constraints_satisfied > 0:
+            index = best_index_not_satisfied
+        
+        decoded_result = decoded_results[index]
         constraints_satisfied, nb_satisfied_constraints = self.constraints.are_constraints_satisfied(decoded_result)
-        self.best_result = decoded_result
+        score = scores[index].item()
+        print(score)
+        
         if constraints_satisfied:
+            self.best_result = decoded_result
             self.does_loop_continue = False
             return True
         
@@ -47,7 +67,7 @@ class Backtracking:
             self.highest_nb_constraints_satisfied = nb_satisfied_constraints
             self.best_result = decoded_result
         print(decoded_result)
-        new_line_token_length = output_ids[0].shape[-1] - self.original_input_length
+        new_line_token_length = output_ids[index].shape[-1] - self.original_input_length
         print("new_line_token_length: ", new_line_token_length)
         
         nb_tokens_to_remove = self.calculate_nb_tokens_to_remove(new_line_token_length)
@@ -57,7 +77,7 @@ class Backtracking:
             return False
         
         self.latest_input_ids = output_ids[:, :-nb_tokens_to_remove].clone()
-        self.backtracking_logits_processor.add_output_sequence_to_ignore(output_ids[0])
+        self.backtracking_logits_processor.add_output_sequence_to_ignore(output_ids[index])
 
 
     def get_updated_input_ids(self):
