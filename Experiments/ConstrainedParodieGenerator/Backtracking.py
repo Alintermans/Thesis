@@ -56,7 +56,6 @@ class Backtracking:
         decoded_result = decoded_results[index]
         constraints_satisfied, nb_satisfied_constraints = self.constraints.are_constraints_satisfied(decoded_result)
         score = scores[index].item()
-        print(score)
         
         if constraints_satisfied:
             self.best_result = decoded_result
