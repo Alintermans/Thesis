@@ -19,6 +19,7 @@ class BeamSearchScorerConstrained(BeamSearchScorer):
         num_beam_groups: Optional[int] = 1,
         max_length: Optional[int] = None,
         constraints = [],
+        post_processor = None
     ):
 
         super().__init__(
@@ -33,6 +34,7 @@ class BeamSearchScorerConstrained(BeamSearchScorer):
         )
 
         self.constraints = constraints
+        self.post_processor = post_processor
     
 
     def process(
@@ -94,7 +96,8 @@ class BeamSearchScorerConstrained(BeamSearchScorer):
                 ################## apply constraints
                 for constraint in self.constraints:
                     next_score = constraint.apply_beam_constraint(next_token, next_score, input_ids[batch_beam_idx], cur_len, self.length_penalty)
-                
+                ################## apply post processing
+                next_score = self.post_processor.apply_beam_post_processing(next_token, next_score, input_ids[batch_beam_idx], cur_len, self.length_penalty)
 
                 # add to generated hypotheses if end of sentence
                 if (eos_token_id is not None) and (next_token.item() in eos_token_id):

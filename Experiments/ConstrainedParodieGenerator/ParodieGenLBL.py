@@ -164,6 +164,7 @@ def generate_line(prompt, **kwargs):
             constraints = constraints,
             num_beam_hyps_to_keep=num_beams,
             length_penalty=10.0,
+            post_processor=post_processor
         )
 
         ## Genearate
