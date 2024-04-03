@@ -75,7 +75,7 @@ class Backtracking:
             self.does_loop_continue = False
             return False
         
-        self.latest_input_ids = output_ids[:, :-nb_tokens_to_remove].clone()
+        self.latest_input_ids = output_ids[index:index+1, :-nb_tokens_to_remove].clone()
         self.backtracking_logits_processor.add_output_sequence_to_ignore(output_ids[index])
 
 

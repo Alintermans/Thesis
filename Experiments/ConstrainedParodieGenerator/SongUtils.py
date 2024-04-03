@@ -473,7 +473,7 @@ def get_perfect_rhyme_ending_from_pron(pron):
         return ("")
     vowel = pron[index][:-1]
     last_consonants = pron[i+1:] if i+1 < len(pron) else []
-    return tuple([vowel] + last_consonants)
+    return [tuple([vowel] + last_consonants)]
 
 def get_assonant_rhyme_ending_from_pron(pron):
     index = -1
@@ -484,7 +484,7 @@ def get_assonant_rhyme_ending_from_pron(pron):
     if index == -1:
         return ""
     vowel = pron[index][:-1]
-    return vowel
+    return [vowel]
 
 def do_two_end_phon_seq_near_rhyme(phon_seq1, phon_seq2):
     #The following sequence is adopted from the code from weirdAI on github by Riedl M. (https://github.com/markriedl/weirdai/blob/master/weird_ai.ipynb)
@@ -571,7 +571,12 @@ def do_two_words_rhyme_perfectly(word1, word2):
         word2_pron = get_pronounciation_of_unknown_word(word2)
         word2_rhyming = get_perfect_rhyme_ending_from_pron(word2_pron)
     
-    return word1_rhyming == word2_rhyming
+    for ending1 in word1_rhyming:
+        for ending2 in word2_rhyming:
+            if ending1 == ending2:
+                return True
+    
+    return False
 
 def do_two_words_rhyme_assonantly(word1, word2):
     word1_rhyming = None
@@ -587,8 +592,13 @@ def do_two_words_rhyme_assonantly(word1, word2):
     except KeyError:
         word2_pron = get_pronounciation_of_unknown_word(word2)
         word2_rhyming = get_assonant_rhyme_ending_from_pron(word2_pron)
-
-    return word1_rhyming == word2_rhyming
+    
+    for ending1 in word1_rhyming:
+        for ending2 in word2_rhyming:
+            if ending1 == ending2:
+                return True
+    
+    return False
 
 def do_two_lines_rhyme(sentence1, sentence2, rhyme_type = "perfect"):
     words1 = tokenize_sentence(sentence1)
@@ -904,7 +914,7 @@ if __name__ == "__main__":
     #test_syllable_counter_functions()
     #print("All tests passed")
     #create_rhyming_dicts()
-    #load_rhyming_dicts()
+    load_rhyming_dicts()
 
     # pron_1 = get_pronounciation_of_word("world")
     # pron_2 = get_pronounciation_of_word("word")
@@ -912,5 +922,8 @@ if __name__ == "__main__":
     # print(do_two_end_phon_seq_near_rhyme(pron_1, pron_2))
     #print(get_near_rhyming_words("ought"))
     #print(get_pos_tags_of_line("It is "))
-    print(get_syllable_count_of_sentence("Pineapple shouldn’t"))
+    #print(get_syllable_count_of_sentence("You still wouldn't go"))
+    
+    # print(_do_two_words_rhyme("dream", "ims", "assonant"))
+    # print(ASSONANT_RHYMES_DICT["wouldn't"])
     
