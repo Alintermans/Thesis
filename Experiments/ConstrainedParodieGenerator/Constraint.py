@@ -4,6 +4,11 @@ import torch
 
 class Constraint(ABC):
     #Abstract class for constraints
+
+    @abstractmethod
+    def get_name(self):
+        raise NotImplementedError("is_constrained_satisfied not implemented")
+        return ""
     
     #Returns a score for the next token, given the current token, the current score and the current input_ids within the beam search, the next score is the cumulated neg log likelihood of the beam search
     def apply_beam_constraint(self, nexttoken, next_score, input_ids, cur_len, length_penalty):
@@ -11,6 +16,7 @@ class Constraint(ABC):
             raise NotImplementedError("apply_beam_constraint not implemented")
         else:
             return next_score
+    
     
     
     def stopping_criteria(self, input_ids: torch.LongTensor, score: torch.FloatTensor, **kwargs) -> bool:
@@ -27,6 +33,8 @@ class Constraint(ABC):
     def is_constrained_satisfied(self, generated_text):
         raise NotImplementedError("is_constrained_satisfied not implemented")
         return True
+    
+    
     
     @abstractmethod
     def is_beam_constraint_active(self):

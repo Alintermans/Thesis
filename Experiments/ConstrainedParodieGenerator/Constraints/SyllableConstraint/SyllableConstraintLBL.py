@@ -22,6 +22,9 @@ class SyllableConstraintLBL(Constraint):
         self.disable_constraint = False
         self.eos_string = self.tokenizer.decode(self.tokenizer.eos_token_id)
         #print(self.eos_string)
+    
+    def get_name(self):
+        return 'SyllableConstraintLBL'
 
     def set_special_new_line_tokens(self, special_new_line_tokens):
         self.special_new_line_tokens += special_new_line_tokens

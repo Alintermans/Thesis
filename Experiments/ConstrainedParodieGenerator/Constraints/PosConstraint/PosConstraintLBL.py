@@ -18,6 +18,9 @@ class PosConstraintLBL(Constraint):
         self.limilt_of_pos_similarity_to_satisfy_constraint = 0.5
         self.disable_constraint = False
     
+    def get_name(self):
+        return 'PosConstraintLBL'
+    
     def disable(self):
         self.disable_constraint = True
     

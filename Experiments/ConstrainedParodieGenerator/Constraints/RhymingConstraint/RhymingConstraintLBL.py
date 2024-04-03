@@ -26,6 +26,10 @@ class RhymingConstraintLBL(Constraint):
 
         self.disable_constraint = False
     
+
+    def get_name(self):
+        return 'RhymingConstraintLBL'
+    
     def disable(self):
         self.disable_constraint = True
     
