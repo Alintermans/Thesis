@@ -10,7 +10,7 @@ class PosConstraintLBL(Constraint):
         self.start_token = start_token
         self.expected_pos_tags = None
         self.disable_constraint = False
-        
+
         #hyperparameters
         self.top_k_words_to_consider = None
         self.good_beamscore_multiplier = None
@@ -41,14 +41,26 @@ class PosConstraintLBL(Constraint):
     def enable(self):
         self.disable_constraint = False
     
-    def set_hyperparameters(self, good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1, limit_of_pos_similarity_to_satisfy_constraint=0.5, top_k_words_to_consider=100):
-        self.good_beamscore_multiplier = good_beamscore_multiplier
-        self.pos_similarity_limit_to_boost = pos_similarity_limit_to_boost
-        self.good_token_multiplier = good_token_multiplier
-        self.margin_of_similarity_with_new_token = margin_of_similarity_with_new_token
-        self.limit_of_pos_similarity_to_satisfy_constraint = limit_of_pos_similarity_to_satisfy_constraint
-        self.top_k_words_to_consider = top_k_words_to_consider
+    @staticmethod
+    def hyperparameters_config(good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1, limit_of_pos_similarity_to_satisfy_constraint=0.5, top_k_words_to_consider=100):
+        return {
+            'good_beamscore_multiplier': good_beamscore_multiplier,
+            'pos_similarity_limit_to_boost': pos_similarity_limit_to_boost,
+            'good_token_multiplier': good_token_multiplier,
+            'margin_of_similarity_with_new_token': margin_of_similarity_with_new_token,
+            'limit_of_pos_similarity_to_satisfy_constraint': limit_of_pos_similarity_to_satisfy_constraint,
+            'top_k_words_to_consider': top_k_words_to_consider
+        }
+        
     
+    def set_hyperparameters(self, config):
+        self.good_beamscore_multiplier = config['good_beamscore_multiplier']
+        self.pos_similarity_limit_to_boost = config['pos_similarity_limit_to_boost']
+        self.good_token_multiplier = config['good_token_multiplier']
+        self.margin_of_similarity_with_new_token = config['margin_of_similarity_with_new_token']
+        self.limit_of_pos_similarity_to_satisfy_constraint = config['limit_of_pos_similarity_to_satisfy_constraint']
+        self.top_k_words_to_consider = config['top_k_words_to_consider']
+
 
     def set_expected_pos_tags(self, expected_pos_tags):
         self.expected_pos_tags = expected_pos_tags

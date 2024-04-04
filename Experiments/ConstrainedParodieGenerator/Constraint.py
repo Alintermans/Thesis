@@ -14,6 +14,15 @@ class Constraint(ABC):
     def get_hyperparameters_in_dict(self):
         raise NotImplementedError("get_name not implemented")
         return {}
+
+    @abstractmethod
+    def set_hyperparameters(self, **kwargs):
+        raise NotImplementedError("set_hyperparameters not implemented")
+    
+    
+    @staticmethod
+    def hyperparameters_config(**kwargs):
+        raise NotImplementedError("hyperparameters_config not implemented")
     
     #Returns a score for the next token, given the current token, the current score and the current input_ids within the beam search, the next score is the cumulated neg log likelihood of the beam search
     def apply_beam_constraint(self, nexttoken, next_score, input_ids, cur_len, length_penalty):
@@ -22,7 +31,7 @@ class Constraint(ABC):
         else:
             return next_score
     
-    
+
     
     def stopping_criteria(self, input_ids: torch.LongTensor, score: torch.FloatTensor, **kwargs) -> bool:
         raise NotImplementedError("stopping_criteria not implemented")

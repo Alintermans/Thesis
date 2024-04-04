@@ -171,20 +171,15 @@ def generate_line(prompt, **kwargs):
 
         ## Genearate
         if (kwargs.get('do_sample') is not None and kwargs.get('do_sample') == True):
-            if kwargs.get('top_k') is None:
-                raise Exception('top_k not set')
             if kwargs.get('top_p') is None:
                 raise Exception('top_p not set')
 
-            top_k = kwargs['top_k']
             top_p = kwargs['top_p']
             temperature = kwargs['temperature']
             logits_warper = LogitsProcessorList(
                 [  
                     TemperatureLogitsWarper(temperature),
-                    #TopKLogitsWarper(top_k),
-                    TopPLogitsWarper(top_p),
-                    #post_processor.get_logits_processor()
+                    TopPLogitsWarper(top_p)
                     
                 ]
             )
@@ -237,6 +232,34 @@ def generate_line(prompt, **kwargs):
 
 
 def generate_parodie(song_file_path, system_prompt, context, **kwargs):
+    ## Setup 
+    set_language_model(kwargs['language_model'])
+    set_seed(kwargs['seed'])
+    set_num_beams(kwargs['num_beams'])
+
+    ## Config constraints
+    set_constraints()
+    if kwargs.get('syllable_constrained') is None or kwargs['syllable_constrained'] == False:
+        syllable_constraint.disable()
+    else:
+        syllable_constraint.enable()
+        syllable_constraint.set_hyperparameters(kwargs['syllable_constraint_hyperparameters'])
+    
+    if kwargs.get('rhyming_constrained') is None or kwargs['rhyming_constrained'] == False:
+        rhyming_constraint.disable()
+    else:
+        rhyming_constraint.enable()
+        rhyming_constraint.set_hyperparameters(kwargs['rhyming_constraint_hyperparameters'])
+    
+    if kwargs.get('pos_constrained') is None or kwargs['pos_constrained'] == False:
+        pos_constraint.disable()
+    else:
+        pos_constraint.enable()
+        pos_constraint.set_hyperparameters(kwargs['pos_constraint_hyperparameters'])
+    
+
+    
+
     song = read_song(song_file_path) #expects a json file, where the lyrics is stored in the key 'lyrics'
     song_in_paragraphs = divide_song_into_paragraphs(song)
 
@@ -246,8 +269,6 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
     state = "Finished Correctly"
 
     if (kwargs.get('do_sample') is not None and kwargs.get('do_sample') == True):
-        if kwargs.get('top_k') is None:
-            kwargs['top_k'] = 50
         if kwargs.get('top_p') is None:
             kwargs['top_p'] = 0.95
         if kwargs.get('temperature') is None:
@@ -290,6 +311,17 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
     if (kwargs.get('do_sample') is not None or kwargs.get('do_sample') == True):
         decoding_method = "Sampling Beam Search" + " | top_p: " + str(kwargs['top_p']) + " | temperature: " + str(kwargs['temperature'])
 
+    constraints_used = "" 
+    chosen_hyper_parameters = {}
+    if kwargs.get('syllable_constrained') is not None and kwargs['syllable_constrained'] == True:
+        constraints_used += "Syllable Constraint | "
+        chosen_hyper_parameters.update(syllable_constraint.get_hyperparameters_in_dict())
+    if kwargs.get('rhyming_constrained') is not None and kwargs['rhyming_constrained'] == True:
+        constraints_used += "Rhyming Constraint | "
+        chosen_hyper_parameters.update(rhyming_constraint.get_hyperparameters_in_dict())
+    if kwargs.get('pos_constrained') is not None and kwargs['pos_constrained'] == True:
+        constraints_used += "POS Constraint | "
+        chosen_hyper_parameters.update(pos_constraint.get_hyperparameters_in_dict())
 
 
     print("Parodie: ", parodie)
@@ -298,8 +330,8 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
                 parodie = parodie, context = context, 
                 system_prompt = system_prompt, 
                 prompt = prompt, 
-                constraints_used = kwargs['constrained_used'],
-                chosen_hyper_parameters = kwargs['chosen_hyper_parameters'],
+                constraints_used = constraints_used,
+                chosen_hyper_parameters =chosen_hyper_parameters,
                 num_beams = kwargs['num_beams'],
                 seed = kwargs['seed'],
                 language_model_name = lm.get_name(),
@@ -313,27 +345,9 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
 
 
 if(__name__ == '__main__'):
-    ###### SetUp ######
-    set_language_model('GPT2')
-    #set_language_model('Llama2_7BChat')
-    set_seed(42)
-    set_num_beams(2)
-    set_constraints()
-
-    
-
-    ######### Hyperparameters ##########
-    syllable_constraint.set_hyperparameters(good_beamscore_multiplier=0.5, bad_beamscore_multiplier=5, top_k_tokens_to_consider=30)
-    rhyming_constraint.set_hyperparameters(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_beamscore_multiplier_assonant=0.9, continue_good_rhyme_multiplier=0.99, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=10, rhyme_type='perfect')
-    pos_constraint.set_hyperparameters(good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1, limit_of_pos_similarity_to_satisfy_constraint=0.5, top_k_words_to_consider=200)
-    chosen_hyper_parameters = {
-        'SyllableConstraintLBL': {'good_beamscore_multiplier': 0.5, 'bad_beamscore_multiplier': 10},
-       'RhymingConstraintLBL': {'max_possible_syllable_count': 3, 'good_beamscore_multiplier_same_rhyme_type': 0.95, 'good_beam_score_multiplier_assonant': 0.9, 'continue_good_rhyme_multiplier': 0.99, 'good_rhyming_token_multiplier': 0.9},
-        'PosConstraintLBL': {'good_beamscore_multiplier': 0.1, 'pos_similarity_limit_to_boost': 0.5, 'good_token_multiplier': 0.6, 'margin_of_similarity_with_new_token': 0.1, 'limilt_of_pos_similarity_to_satisfy_constraint': 0.5},
-        'rhyme_type': 'assonant',
-        'top_k_rhyme_words': 10,
-       'top_k_words_to_consider_for_pos': 200
-    }
+    ###### Set Up ######
+    language_model = 'GPT2'
+    # language_model = 'Llama2_7B_chat'
 
     song_directory = 'Songs/json/'
     # song_file_path = 'Songs/json/Taylor_Swift-It_Is_Over_Now_(Very_Small).json'
@@ -345,13 +359,30 @@ if(__name__ == '__main__'):
 
     
 
-    constrained_used = "All"
-    
-    
+    ######### Hyperparameters ##########
+    syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.5, bad_beamscore_multiplier=5, top_k_tokens_to_consider=30)
+    rhyming_constraint_hyperparameters = RhymingConstraintLBL.hyperparameters_config(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_beamscore_multiplier_assonant=0.9, continue_good_rhyme_multiplier=0.99, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=10, rhyme_type='perfect')
+    pos_constraint_hyperparameters = PosConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1, limit_of_pos_similarity_to_satisfy_constraint=0.5, top_k_words_to_consider=200)
 
     
 
-    generate_parodie(song_file_path, system_prompt, context, do_sample=True, top_k=100, top_p=0.95, temperature=0.7, chosen_hyper_parameters=chosen_hyper_parameters, num_beams=2, seed=42, constrained_used=constrained_used)
+    generate_parodie(
+        song_file_path= song_file_path, 
+        system_prompt = system_prompt, 
+        context = context, 
+        language_model = language_model,
+        do_sample=True, 
+        top_p=0.95, 
+        temperature=0.7, 
+        num_beams=2, 
+        seed=42, 
+        syllable_constrained = True,
+        rhyming_constrained = True,
+        pos_constrained = True,
+        syllable_constraint_hyperparameters=syllable_constraint_hyperparameters,
+        rhyming_constraint_hyperparameters=rhyming_constraint_hyperparameters, 
+        pos_constraint_hyperparameters=pos_constraint_hyperparameters
+        )
     
     
 
