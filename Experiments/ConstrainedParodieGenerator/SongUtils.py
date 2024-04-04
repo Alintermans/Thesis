@@ -175,6 +175,22 @@ def get_final_word_of_line(line):
 
     return words[-1]
 
+
+def replace_content_for_prompts(system, context, parody, song, rhyming_word, pos_tags, syllable_amount, line):
+    result = [system, context]
+    for i in range(len(result)):
+        result[i] = result[i].replace("{{$SONG}}", song)
+        result[i] = result[i].replace("{{$PARODY}}", parody)
+        if rhyming_word is not None:
+            result[i] = result[i].replace("{{$RHYMING_WORD}}", rhyming_word)
+        if pos_tags is not None:
+            result[i] = result[i].replace("{{$POS_TAGS}}", ", ".join(str(element) for element in pos_tags))
+        if syllable_amount is not None:
+            result[i] = result[i].replace("{{$SYLLABLE_AMOUNT}}", str(syllable_amount))
+        result[i] = result[i].replace("{{$LINE}}", line)
+    return result[0], result[1]
+        
+
     
 
 ################################################## SYLLABLE COUNTER FUNCTIONS ##################################################

@@ -21,6 +21,10 @@ class LM(ABC):
         return []
     
     @abstractmethod
+    def prepare_prompt(self, system_prompt, context_prompt):
+        raise NotImplementedError("prepare_prompt not implemented yet")
+
+    @abstractmethod
     def get_tokenizer(self):
         raise NotImplementedError("tokenizer not implemented yet")
     

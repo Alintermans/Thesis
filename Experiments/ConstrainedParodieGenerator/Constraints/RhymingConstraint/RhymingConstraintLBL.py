@@ -175,7 +175,7 @@ class RhymingConstraintLBL(Constraint):
             syllables_left = self.required_syllable_count - syllable_count
             
             if syllables_left <= 0 or syllables_left > self.max_syllable_count:
-                return scores
+                continue
 
             #first check if the rhyming word is already initialized and the first token of one of the rhyming words is the last token of the sentence
             started_with_rhyming_word = False
@@ -207,13 +207,13 @@ class RhymingConstraintLBL(Constraint):
 
                     
             if started_with_rhyming_word:
-                return scores
+                continue
             
             
             #get the rhyming words that have the same syllable count as the syllables left
             rhyming_words_with_syllables_left = [word for word in self.rhyming_words_tokens if word['syllable_count'] == syllables_left]
             if len(rhyming_words_with_syllables_left) == 0:
-                return scores
+                continue
             
             
             

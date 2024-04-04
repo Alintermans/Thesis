@@ -182,6 +182,7 @@ class SyllableConstraintLBL(Constraint):
                 eos_score = scores[i][self.tokenizer.eos_token_id]
                 scores[i] = abs(scores[i])*torch.finfo(scores.dtype).min
                 scores[i][self.tokenizer.eos_token_id] = eos_score
+            
 
 
         return scores

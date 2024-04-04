@@ -18,7 +18,7 @@ from LanguageModels.Mistral7BV01 import Mistral7BV01
 from LanguageModels.Mistral7BItV02 import Mistral7BItV02
 from LanguageModels.Mistral8x7BV01 import Mistral8x7BV01
 from LanguageModels.Mistral8x7BItV01 import Mistral8x7BItV01
-from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens, get_final_word_of_line,get_pos_tags_of_line
+from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens, get_final_word_of_line,get_pos_tags_of_line, replace_content_for_prompts
 from SongEvaluator import count_same_nb_lines_and_return_same_paragraphs, count_syllable_difference_per_line, count_nb_line_pairs_match_rhyme_scheme, calculate_pos_tag_similarity
 import os
 
@@ -114,7 +114,7 @@ def set_constraints():
     
 
     ## Initialize Post Processor
-    post_processor = PostProcessor()
+    post_processor = PostProcessor(tokenizer)
     logits_processor_list.append(post_processor.get_logits_processor())
 
 
@@ -231,7 +231,7 @@ def generate_line(prompt, **kwargs):
 
 
 
-def generate_parodie(song_file_path, system_prompt, context, **kwargs):
+def generate_parody(song_file_path, system_prompt, context_prompt, **kwargs):
     ## Setup 
     set_language_model(kwargs['language_model'])
     set_seed(kwargs['seed'])
@@ -257,13 +257,16 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
         pos_constraint.enable()
         pos_constraint.set_hyperparameters(kwargs['pos_constraint_hyperparameters'])
     
-
-    
-
     song = read_song(song_file_path) #expects a json file, where the lyrics is stored in the key 'lyrics'
     song_in_paragraphs = divide_song_into_paragraphs(song)
 
-    prompt = system_prompt + context + "ORIGINAL SONG : \n\n" + song + "\n\nAlready generated PARODIE: \n\n"
+    if system_prompt.endswith('.txt'):
+        system_prompt = open(system_prompt, 'r').read()
+    if context_prompt.endswith('.txt'):
+        context_prompt = open(context, 'r').read()
+    
+
+    #prompt = system_prompt + context + "ORIGINAL SONG : \n\n" + song + "\n\nAlready generated PARODIE: \n\n" + parodie
     #prompt = system_prompt + context + "\n\nAlready generated PARODIE: \n\n"
     parodie = ""
     state = "Finished Correctly"
@@ -282,9 +285,10 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
             for i in range(len(paragraph[1])):
                 line = paragraph[1][i]
                 
+
                 ## Constraints Settings
                 syllable_amount = get_syllable_count_of_sentence(line)
-                syllable_constraint.set_original_prompt(prompt + parodie)
+                
                 rhyming_word = None
                 if rhyming_lines[i] is not None:
                     rhyming_line = parodie.split('\n')[rhyming_lines[i]-i-1]
@@ -292,9 +296,16 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
 
                 
                 pos_tags = get_pos_tags_of_line(line)
+                
+                ##Prepare prompt
+                prepared_system_prompt, prepared_context_prompt = replace_content_for_prompts(system_prompt, context_prompt, parodie, song, rhyming_word, pos_tags, syllable_amount, line)
+                prompt = lm.prepare_prompt(prepared_system_prompt, prepared_context_prompt)
+                #prompt = system_prompt + context_prompt + "ORIGINAL SONG : \n\n" + song + "\n\nAlready generated PARODIE: \n\n" + parodie
+                syllable_constraint.set_original_prompt(prompt)
 
                 ##Generate new line
-                new_line = generate_line(prompt + parodie, new_syllable_amount=syllable_amount, rhyming_word=rhyming_word, pos_tags=pos_tags, **kwargs)
+                
+                new_line = generate_line(prompt, new_syllable_amount=syllable_amount, rhyming_word=rhyming_word, pos_tags=pos_tags, **kwargs)
                 new_rhyme_word = get_final_word_of_line(new_line)
                 rhyming_constraint.add_rhyming_words_to_ignore(new_rhyme_word)
                 print("Contraints are satisfied: ", constraints.are_constraints_satisfied(new_line))
@@ -327,7 +338,7 @@ def generate_parodie(song_file_path, system_prompt, context, **kwargs):
     print("Parodie: ", parodie)
     write_song('Experiments/ConstrainedParodieGenerator/GeneratedParodies/', 
                 original_song_file_path = song_file_path, 
-                parodie = parodie, context = context, 
+                parodie = parodie, context = context_prompt, 
                 system_prompt = system_prompt, 
                 prompt = prompt, 
                 constraints_used = constraints_used,
@@ -354,22 +365,25 @@ if(__name__ == '__main__'):
     #song_file_path = 'Songs/json/Coldplay-Viva_La_Vida.json'
     #song_file_path = 'Songs/json/Taylor_Swift-Is_It_Over_Now_(Small_Version).json'
 
-    system_prompt = "I'm a parody genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\n"
-    context = "The following parodie will be about that pineaple shouldn't be on pizza\n"
+    # system_prompt = "I'm a parody genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\n"
+    # context_prompt = "The following parodie will be about that pineaple shouldn't be on pizza\n"
+
+    system_prompt = "I'm a parody genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song"
+    context_prompt = "The following parodie will be about that pineaple shouldn't be on pizza\nORIGINAL SONG : \n\n{{$SONG}}\n\nAlready generated PARODIE: \n\n{{$PARODY}}"
 
     
 
     ######### Hyperparameters ##########
     syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.5, bad_beamscore_multiplier=5, top_k_tokens_to_consider=30)
-    rhyming_constraint_hyperparameters = RhymingConstraintLBL.hyperparameters_config(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_beamscore_multiplier_assonant=0.9, continue_good_rhyme_multiplier=0.99, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=10, rhyme_type='assonant')
+    rhyming_constraint_hyperparameters = RhymingConstraintLBL.hyperparameters_config(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_beamscore_multiplier_assonant=0.9, continue_good_rhyme_multiplier=0.99, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=10, rhyme_type='perfect')
     pos_constraint_hyperparameters = PosConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1, limit_of_pos_similarity_to_satisfy_constraint=0.5, top_k_words_to_consider=200)
 
     
 
-    generate_parodie(
+    generate_parody(
         song_file_path= song_file_path, 
         system_prompt = system_prompt, 
-        context = context, 
+        context_prompt = context_prompt, 
         language_model = language_model,
         do_sample=True, 
         top_p=0.95, 
