@@ -15,16 +15,26 @@ class SyllableConstraintLBL(Constraint):
         if self.start_token is not None and self.start_token in self.new_line_tokens:
             self.new_line_tokens.remove(self.start_token)
         self.original_prompt = None
-        #Hyperparameters
-        self.good_beamscore_multiplier = 0.1 
-        self.bad_beamscore_multiplier = 10
-        self.top_k_tokens_to_consider = 30
         self.disable_constraint = False
         self.eos_string = self.tokenizer.decode(self.tokenizer.eos_token_id)
-        #print(self.eos_string)
+        
+        #Hyperparameters
+        self.good_beamscore_multiplier = None
+        self.bad_beamscore_multiplier = None
+        self.top_k_tokens_to_consider = None
+        
     
     def get_name(self):
         return 'SyllableConstraintLBL'
+
+    def get_hyperparameters_in_dict(self):
+        return {
+            self.get_name(): {
+                'good_beamscore_multiplier': self.good_beamscore_multiplier,
+                'bad_beamscore_multiplier': self.bad_beamscore_multiplier,
+                'top_k_tokens_to_consider': self.top_k_tokens_to_consider,
+            }
+        }
 
     def set_special_new_line_tokens(self, special_new_line_tokens):
         self.special_new_line_tokens += special_new_line_tokens
@@ -38,9 +48,10 @@ class SyllableConstraintLBL(Constraint):
     def enable(self):
         self.disable_constraint = False
     
-    def set_hyperparameters(self, good_beamscore_multiplier=0.1, bad_beamscore_multiplier=10):
+    def set_hyperparameters(self, good_beamscore_multiplier=0.1, bad_beamscore_multiplier=10, top_k_tokens_to_consider=30):
         self.good_beamscore_multiplier = good_beamscore_multiplier
         self.bad_beamscore_multiplier = bad_beamscore_multiplier
+        self.top_k_tokens_to_consider = top_k_tokens_to_consider
     
     def set_new_syllable_amount(self, new_syllable_amount):
         self.new_syllable_amount = new_syllable_amount

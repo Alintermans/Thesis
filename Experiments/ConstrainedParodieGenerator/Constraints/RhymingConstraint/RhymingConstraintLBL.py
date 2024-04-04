@@ -5,7 +5,7 @@ import torch
 
 
 class RhymingConstraintLBL(Constraint):
-    def __init__(self, tokenizer, start_token=None, top_k_rhyme_words=100, rhyme_type='perfect'):
+    def __init__(self, tokenizer, start_token=None):
         self.tokenizer = tokenizer
         self.rhyming_word = None
         self.required_syllable_count = None
@@ -14,18 +14,34 @@ class RhymingConstraintLBL(Constraint):
         self.rhyming_words_to_ignore = []
         self.max_syllable_count = None
         self.start_token = start_token
-        self.top_k_rhyme_words = top_k_rhyme_words
-        self.rhyme_type = rhyme_type
-        load_rhyming_dicts()
-        ## Hyperparameters
-        self.max_possible_syllable_count = 3
-        self.good_beamscore_multiplier_same_rhyme_type = 0.95
-        self.good_beamscore_multiplier_assonant = 0.9
-        self.continue_good_rhyme_multiplier = 0.99
-        self.good_rhyming_token_multiplier = 0.9
-
         self.disable_constraint = False
+
+        load_rhyming_dicts()
+        
+        ## Hyperparameters
+        self.max_possible_syllable_count = None
+        self.good_beamscore_multiplier_same_rhyme_type = None
+        self.good_beamscore_multiplier_assonant = None
+        self.continue_good_rhyme_multiplier = None
+        self.good_rhyming_token_multiplier = None
+        self.top_k_rhyme_words = None
+        self.rhyme_type = None
+        
+
+        
     
+    def get_hyperparameters_in_dict(self):
+        return {
+            self.get_name(): {
+                'max_possible_syllable_count': self.max_possible_syllable_count,
+                'good_beamscore_multiplier_same_rhyme_type': self.good_beamscore_multiplier_same_rhyme_type,
+                'good_beamscore_multiplier_assonant': self.good_beamscore_multiplier_assonant,
+                'continue_good_rhyme_multiplier': self.continue_good_rhyme_multiplier,
+                'good_rhyming_token_multiplier': self.good_rhyming_token_multiplier,
+                'top_k_rhyme_words': self.top_k_rhyme_words,
+                'rhyme_type': self.rhyme_type
+            }
+        }
 
     def get_name(self):
         return 'RhymingConstraintLBL'
@@ -36,12 +52,15 @@ class RhymingConstraintLBL(Constraint):
     def enable(self):
         self.disable_constraint = False
     
-    def set_hyperparameters(self, max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_beamscore_multiplier_assonant=0.9, continue_good_rhyme_multiplier=0.99, good_rhyming_token_multiplier=0.9):
+    def set_hyperparameters(self, max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_beamscore_multiplier_assonant=0.9, continue_good_rhyme_multiplier=0.99, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=100, rhyme_type='perfect'):
         self.max_possible_syllable_count = max_possible_syllable_count
         self.good_beamscore_multiplier_same_rhyme_type = good_beamscore_multiplier_same_rhyme_type
         self.good_beamscore_multiplier_assonant = good_beamscore_multiplier_assonant
         self.continue_good_rhyme_multiplier = continue_good_rhyme_multiplier
         self.good_rhyming_token_multiplier = good_rhyming_token_multiplier
+        self.top_k_rhyme_words = top_k_rhyme_words
+        self.rhyme_type = rhyme_type
+
     
     def get_rhyming_lines(self, lines):
         return _get_rhyming_lines(lines, self.rhyme_type)

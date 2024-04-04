@@ -7,8 +7,13 @@ class Constraint(ABC):
 
     @abstractmethod
     def get_name(self):
-        raise NotImplementedError("is_constrained_satisfied not implemented")
+        raise NotImplementedError("get_name not implemented")
         return ""
+    
+    @abstractmethod
+    def get_hyperparameters_in_dict(self):
+        raise NotImplementedError("get_name not implemented")
+        return {}
     
     #Returns a score for the next token, given the current token, the current score and the current input_ids within the beam search, the next score is the cumulated neg log likelihood of the beam search
     def apply_beam_constraint(self, nexttoken, next_score, input_ids, cur_len, length_penalty):
