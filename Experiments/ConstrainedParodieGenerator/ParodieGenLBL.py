@@ -350,9 +350,9 @@ if(__name__ == '__main__'):
     # language_model = 'Llama2_7B_chat'
 
     song_directory = 'Songs/json/'
-    # song_file_path = 'Songs/json/Taylor_Swift-It_Is_Over_Now_(Very_Small).json'
+    song_file_path = 'Songs/json/Taylor_Swift-It_Is_Over_Now_(Very_Small).json'
     #song_file_path = 'Songs/json/Coldplay-Viva_La_Vida.json'
-    song_file_path = 'Songs/json/Taylor_Swift-Is_It_Over_Now_(Small_Version).json'
+    #song_file_path = 'Songs/json/Taylor_Swift-Is_It_Over_Now_(Small_Version).json'
 
     system_prompt = "I'm a parody genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\n"
     context = "The following parodie will be about that pineaple shouldn't be on pizza\n"
@@ -361,7 +361,7 @@ if(__name__ == '__main__'):
 
     ######### Hyperparameters ##########
     syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.5, bad_beamscore_multiplier=5, top_k_tokens_to_consider=30)
-    rhyming_constraint_hyperparameters = RhymingConstraintLBL.hyperparameters_config(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_beamscore_multiplier_assonant=0.9, continue_good_rhyme_multiplier=0.99, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=10, rhyme_type='perfect')
+    rhyming_constraint_hyperparameters = RhymingConstraintLBL.hyperparameters_config(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_beamscore_multiplier_assonant=0.9, continue_good_rhyme_multiplier=0.99, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=10, rhyme_type='assonant')
     pos_constraint_hyperparameters = PosConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1, limit_of_pos_similarity_to_satisfy_constraint=0.5, top_k_words_to_consider=200)
 
     
