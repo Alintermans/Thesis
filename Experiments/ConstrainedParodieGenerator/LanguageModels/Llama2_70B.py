@@ -43,3 +43,6 @@ class Llama2_70B(LM):
     
     def get_name(self):
         return self.name
+    
+    def prepare_prompt(self, system_prompt, context_prompt):
+        return system_prompt + '\n' + context_prompt
