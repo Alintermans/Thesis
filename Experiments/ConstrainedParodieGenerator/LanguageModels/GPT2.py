@@ -2,10 +2,14 @@ from LM import LM
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 class GPT2(LM):
-    def __init__(self):
-        super().__init__()
-        self.tokenizer = AutoTokenizer.from_pretrained("gpt2")
-        self.model = AutoModelForCausalLM.from_pretrained("gpt2")
+    def __init__(self,  use_quantization=False, use_cuda=True):
+        super().__init__(use_quantization, use_cuda)
+        if self.use_cuda and not self.use_quantization:
+            self.tokenizer = AutoTokenizer.from_pretrained("gpt2", token= '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')
+            self.model = AutoModelForCausalLM.from_pretrained("gpt2", token= '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', device_map='auto')
+        else:
+            self.tokenizer = AutoTokenizer.from_pretrained("gpt2", token= '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')
+            self.model = AutoModelForCausalLM.from_pretrained("gpt2", token= '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')
         self.name = 'GPT2'
         return None
     

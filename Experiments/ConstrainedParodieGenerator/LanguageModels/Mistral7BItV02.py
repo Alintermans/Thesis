@@ -2,10 +2,10 @@ from LM import LM
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 class Mistral7BItV02(LM):
-    def __init__(self):
-        super().__init__()
-        self.tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2")
-        self.model = AutoModelForCausalLM.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2")
+    def __init__(self,  use_quantization=False, use_cuda=True):
+        super().__init__(use_quantization, use_cuda)
+        self.model_url = "mistralai/Mistral-7B-Instruct-v0.2"
+        self.setup_language_model()
         self.name = 'Mistral 7B Instruct v0.2'
         return None
     
