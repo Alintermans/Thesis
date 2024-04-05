@@ -262,7 +262,7 @@ def generate_parody(song_file_path, system_prompt, context_prompt, **kwargs):
     if system_prompt.endswith('.txt'):
         system_prompt = open(system_prompt, 'r').read()
     if context_prompt.endswith('.txt'):
-        context_prompt = open(context, 'r').read()
+        context_prompt = open(context_prompt, 'r').read()
     
 
     #prompt = system_prompt + context + "ORIGINAL SONG : \n\n" + song + "\n\nAlready generated PARODIE: \n\n" + parodie
@@ -367,8 +367,10 @@ if(__name__ == '__main__'):
     # system_prompt = "I'm a parody genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song\n"
     # context_prompt = "The following parodie will be about that pineaple shouldn't be on pizza\n"
 
-    system_prompt = "I'm a parody genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song"
-    context_prompt = "The following parodie will be about that pineaple shouldn't be on pizza\nORIGINAL SONG : \n\n{{$SONG}}\n\nAlready generated PARODIE: \n\n{{$PARODY}}"
+    #system_prompt = "I'm a parody genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song"
+    #context_prompt = "The following parodie will be about that pineaple shouldn't be on pizza\nORIGINAL SONG : \n\n{{$SONG}}\n\nAlready generated PARODIE: \n\n{{$PARODY}}"
+    system_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/system_prompt.txt"
+    context_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/context_prompt.txt"
 
     
 
