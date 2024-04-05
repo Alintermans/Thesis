@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from transformers import BitsAndBytesConfig
+from transformers import BitsAndBytesConfig, AutoTokenizer, AutoModelForCausalLM
 import inspect
 import torch
 
