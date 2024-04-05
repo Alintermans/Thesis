@@ -2,7 +2,3 @@ The following parodie will be about that pineaple shouldn't be on pizza
 ORIGINAL SONG : 
 
 {{$SONG}}
-
-Already generated PARODIE: 
-
-{{$PARODY}}

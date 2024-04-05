@@ -78,6 +78,7 @@ def write_song(folder_path, **kwargs):
     LM = kwargs['language_model_name']
     system_prompt = kwargs['system_prompt']
     context = kwargs['context']
+    assistant_prompt = kwargs['assistant_prompt']
     prompt = kwargs['prompt']
     parodie = kwargs['parodie']
     constraints_used = kwargs['constraints_used']
@@ -128,6 +129,7 @@ def write_song(folder_path, **kwargs):
         "language_model_name": LM,
         "system_prompt": system_prompt,
         "context": context,
+        "assistant_prompt": assistant_prompt,
         "prompt": prompt,
         "constraints_used": constraints_used,
         "chosen_hyper_parameters": chosen_hyper_parameters,
@@ -176,8 +178,8 @@ def get_final_word_of_line(line):
     return words[-1]
 
 
-def replace_content_for_prompts(system, context, parody, song, rhyming_word, pos_tags, syllable_amount, line):
-    result = [system, context]
+def replace_content_for_prompts(system, context, assistant_prompt, parody, song, rhyming_word, pos_tags, syllable_amount, line):
+    result = [system, context, assistant_prompt]
     for i in range(len(result)):
         result[i] = result[i].replace("{{$SONG}}", song)
         result[i] = result[i].replace("{{$PARODY}}", parody)
@@ -188,7 +190,7 @@ def replace_content_for_prompts(system, context, parody, song, rhyming_word, pos
         if syllable_amount is not None:
             result[i] = result[i].replace("{{$SYLLABLE_AMOUNT}}", str(syllable_amount))
         result[i] = result[i].replace("{{$LINE}}", line)
-    return result[0], result[1]
+    return result[0], result[1], result[2]
         
 
     
@@ -646,7 +648,7 @@ def get_perfect_rhyming_words(word):
         rhymes = PERF_RHYMES_DICT[word]
     except KeyError:
         word_pron = get_pronounciation_of_unknown_word(word)
-        rhymes.append(get_perfect_rhyme_ending_from_pron(word_pron))
+        rhymes = get_perfect_rhyme_ending_from_pron(word_pron)
         
     result = []
     for rhyme in rhymes:
@@ -659,7 +661,7 @@ def get_assonant_rhyming_words(word):
         rhymes = ASSONANT_RHYMES_DICT[word]
     except KeyError:
         word_pron = get_pronounciation_of_unknown_word(word)
-        rhymes.append(get_assonant_rhyme_ending_from_pron(word_pron))
+        rhymes = get_assonant_rhyme_ending_from_pron(word_pron)
         
     result = []
     for rhyme in rhymes:
@@ -689,6 +691,9 @@ def _do_two_words_rhyme(word1, word2, rhyme_type = "perfect"):
 def _get_rhyming_words(word, rhyme_type = "perfect"):
     if word == "":
         return []
+
+    word = word.lower()
+
 
     if rhyme_type == "perfect":
         return get_perfect_rhyming_words(word)
@@ -941,5 +946,5 @@ if __name__ == "__main__":
     #print(get_syllable_count_of_sentence("You still wouldn't go"))
     
     # print(_do_two_words_rhyme("dream", "ims", "assonant"))
-    # print(ASSONANT_RHYMES_DICT["wouldn't"])
+    print(get_assonant_rhyming_words("Great"))
     

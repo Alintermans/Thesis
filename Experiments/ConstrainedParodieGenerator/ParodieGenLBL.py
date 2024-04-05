@@ -230,7 +230,7 @@ def generate_line(prompt, input_ids, **kwargs):
 
 
 
-def generate_parody(song_file_path, system_prompt, context_prompt, **kwargs):
+def generate_parody(song_file_path, system_prompt, context_prompt, assistant_prompt, **kwargs):
     ## Setup 
     use_cuda = kwargs.get('use_cuda', False)
     use_quantization = kwargs.get('use_quantization', False)
@@ -265,6 +265,8 @@ def generate_parody(song_file_path, system_prompt, context_prompt, **kwargs):
         system_prompt = open(system_prompt, 'r').read()
     if context_prompt.endswith('.txt'):
         context_prompt = open(context_prompt, 'r').read()
+    if assistant_prompt.endswith('.txt'):
+        assistant_prompt = open(assistant_prompt, 'r').read()
     
 
     #prompt = system_prompt + context + "ORIGINAL SONG : \n\n" + song + "\n\nAlready generated PARODIE: \n\n" + parodie
@@ -299,8 +301,8 @@ def generate_parody(song_file_path, system_prompt, context_prompt, **kwargs):
                 pos_tags = get_pos_tags_of_line(line)
                 
                 ##Prepare prompt
-                prepared_system_prompt, prepared_context_prompt = replace_content_for_prompts(system_prompt, context_prompt, parodie, song, rhyming_word, pos_tags, syllable_amount, line)
-                prompt, tokenized_prompt = lm.prepare_prompt(prepared_system_prompt, prepared_context_prompt)
+                prepared_system_prompt, prepared_context_prompt, prepared_assistant_prompt = replace_content_for_prompts(system_prompt, context_prompt, assistant_prompt, parodie, song, rhyming_word, pos_tags, syllable_amount, line)
+                prompt, tokenized_prompt = lm.prepare_prompt(prepared_system_prompt, prepared_context_prompt, prepared_assistant_prompt)
                 #prompt = system_prompt + context_prompt + "ORIGINAL SONG : \n\n" + song + "\n\nAlready generated PARODIE: \n\n" + parodie
                 syllable_constraint.set_original_prompt(prompt)
 
@@ -339,8 +341,10 @@ def generate_parody(song_file_path, system_prompt, context_prompt, **kwargs):
     print("Parodie: ", parodie)
     write_song('Experiments/ConstrainedParodieGenerator/GeneratedParodies/', 
                 original_song_file_path = song_file_path, 
-                parodie = parodie, context = context_prompt, 
+                parodie = parodie, 
+                context = context_prompt, 
                 system_prompt = system_prompt, 
+                assistant_prompt = assistant_prompt,
                 prompt = prompt, 
                 constraints_used = constraints_used,
                 chosen_hyper_parameters =chosen_hyper_parameters,
@@ -373,6 +377,7 @@ if(__name__ == '__main__'):
     #context_prompt = "The following parodie will be about that pineaple shouldn't be on pizza\nORIGINAL SONG : \n\n{{$SONG}}\n\nAlready generated PARODIE: \n\n{{$PARODY}}"
     system_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/system_prompt.txt"
     context_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/context_prompt.txt"
+    assistant_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/assistant_prompt.txt"
 
     
 
@@ -387,6 +392,7 @@ if(__name__ == '__main__'):
         song_file_path= song_file_path, 
         system_prompt = system_prompt, 
         context_prompt = context_prompt, 
+        assistant_prompt = assistant_prompt,
         language_model = language_model,
         use_cuda=True,
         use_quantization=False,

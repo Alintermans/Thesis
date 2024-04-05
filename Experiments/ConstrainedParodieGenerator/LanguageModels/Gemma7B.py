@@ -18,9 +18,9 @@ class Gemma7B(LM):
     def get_name(self):
         return self.name
     
-    def prepare_prompt(self, system_prompt, context_prompt):
+    def prepare_prompt(self, system_prompt, context_prompt, assistant_prompt):
 
-        prompt = system_prompt + '\n' + context_prompt
+        prompt = system_prompt + '\n' + context_prompt + '\n' + assistant_prompt
         tokenized_prompt = self.tokenizer.encode(prompt, return_tensors="pt")   
         
         return prompt, tokenized_prompt

@@ -25,12 +25,12 @@ class PostProcessor:
         return self.logits_processor
     
     def logits_processor_call(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
-        for i in range(len(input_ids)):
-            input = scores[i]
-            result = [x for x in input if x != float("inf") and x != float("-inf") and x != float("nan") and x != 0.0 and x != torch.finfo(scores.dtype).min]
-            
-            if len(result) == 0:
-                scores[i][self.tokenizer.eos_token_id] = torch.finfo(scores.dtype).max
+        # for i in range(len(input_ids)):
+        #     input = scores[i]
+        #     result = [x for x in input if x != float("inf") and x != float("-inf") and x != float("nan") and x != 0.0 and x != torch.finfo(scores.dtype).min]
+
+        #     if len(result) == 0:
+        #         scores[i][self.tokenizer.eos_token_id] = torch.finfo(scores.dtype).max
 
         scores = nn.functional.log_softmax(
                 scores, dim=-1

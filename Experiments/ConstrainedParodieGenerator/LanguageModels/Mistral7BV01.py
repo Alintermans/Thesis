@@ -6,6 +6,7 @@ class Mistral7BV01(LM):
         super().__init__(use_quantization, use_cuda)
         self.model_url = "mistralai/Mistral-7B-v0.1"
         self.setup_language_model()
+        self.name = 'Mistral 7B v0.1'
         return None
     
     def get_tokenizer(self):
@@ -17,9 +18,9 @@ class Mistral7BV01(LM):
     def get_name(self):
         return self.name
     
-    def prepare_prompt(self, system_prompt, context_prompt):
+    def prepare_prompt(self, system_prompt, context_prompt, assistant_prompt):
 
-        prompt = system_prompt + '\n' + context_prompt
+        prompt = system_prompt + '\n' + context_prompt + '\n' + assistant_prompt
         tokenized_prompt = self.tokenizer.encode(prompt, return_tensors="pt")   
         
         return prompt, tokenized_prompt
