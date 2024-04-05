@@ -46,4 +46,8 @@ class Llama2_7B(LM):
         return self.name
     
     def prepare_prompt(self, system_prompt, context_prompt):
-        return system_prompt + '\n' + context_prompt
+
+        prompt = system_prompt + '\n' + context_prompt
+        tokenized_prompt = self.tokenizer.encode(prompt, return_tensors="pt")   
+        
+        return prompt, tokenized_prompt

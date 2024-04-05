@@ -45,4 +45,12 @@ class Llama2_70BChat(LM):
         return self.name
     
     def prepare_prompt(self, system_prompt, context_prompt):
-        return system_prompt + '\n' + context_prompt
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": context_prompt}
+        ]
+
+        tokenized_prompt =  self.tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=True, return_tensors="pt")
+        prompt = self.tokenizer.decode(tokenized_prompt, skip_special_tokens=True)
+
+        return prompt, tokenized_prompt

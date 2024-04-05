@@ -133,11 +133,10 @@ def prepare_inputs(input_ids):
 
 
 ######## Generate Line ########
-def generate_line(prompt, **kwargs):
+def generate_line(prompt, input_ids, **kwargs):
     original_prompt_length = len(prompt)
 
     ## Encode inputs
-    input_ids = tokenizer.encode(prompt, return_tensors="pt")   
     original_input_length = input_ids.shape[-1]
     
 
@@ -299,13 +298,13 @@ def generate_parody(song_file_path, system_prompt, context_prompt, **kwargs):
                 
                 ##Prepare prompt
                 prepared_system_prompt, prepared_context_prompt = replace_content_for_prompts(system_prompt, context_prompt, parodie, song, rhyming_word, pos_tags, syllable_amount, line)
-                prompt = lm.prepare_prompt(prepared_system_prompt, prepared_context_prompt)
+                prompt, tokenized_prompt = lm.prepare_prompt(prepared_system_prompt, prepared_context_prompt)
                 #prompt = system_prompt + context_prompt + "ORIGINAL SONG : \n\n" + song + "\n\nAlready generated PARODIE: \n\n" + parodie
                 syllable_constraint.set_original_prompt(prompt)
 
                 ##Generate new line
                 
-                new_line = generate_line(prompt, new_syllable_amount=syllable_amount, rhyming_word=rhyming_word, pos_tags=pos_tags, **kwargs)
+                new_line = generate_line(prompt, tokenized_prompt, new_syllable_amount=syllable_amount, rhyming_word=rhyming_word, pos_tags=pos_tags, **kwargs)
                 new_rhyme_word = get_final_word_of_line(new_line)
                 rhyming_constraint.add_rhyming_words_to_ignore(new_rhyme_word)
                 print("Contraints are satisfied: ", constraints.are_constraints_satisfied(new_line))
