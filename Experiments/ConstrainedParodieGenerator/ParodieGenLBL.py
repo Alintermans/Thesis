@@ -344,7 +344,7 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
                 parodie = parodie, 
                 context = context_prompt, 
                 system_prompt = system_prompt, 
-                assistant_prompt = assistant_prompt,
+                
                 prompt = prompt, 
                 constraints_used = constraints_used,
                 chosen_hyper_parameters =chosen_hyper_parameters,

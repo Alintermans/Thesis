@@ -29,7 +29,9 @@ class Llama2_7BChat(LM):
             {"role": "assistant", "content": assistant_prompt}
         ]
 
-        tokenized_prompt =  self.tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=True, return_tensors="pt")
+        tokenized_prompt =  self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, return_tensors="pt")
+        tokenized_prompt += '\n' + assistant_prompt
+        tokenized_prompt = self.tokenizer.encode(tokenized_prompt, return_tensors="pt") 
         prompt = self.tokenizer.decode(tokenized_prompt[0], skip_special_tokens=True)
 
         return prompt, tokenized_prompt
