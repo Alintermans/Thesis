@@ -57,10 +57,10 @@ post_processor = None
 AVAILABLE_LMS = {'GPT2': GPT2, 'Gemma2BIt': Gemma2BIt, 'Gemma2B': Gemma2B, 'Gemma7B': Gemma7B, 'Gemma7BIt': Gemma7BIt, 'Llama2_7B': Llama2_7B, 'Llama2_7BChat': Llama2_7BChat, 'Llama2_70B': Llama2_70B, 'Llama2_70BChat': Llama2_70BChat, 'Mistral7BV01': Mistral7BV01, 'Mistral7BItV02': Mistral7BItV02, 'Mistral8x7BV01': Mistral8x7BV01, 'Mistral8x7BItV01': Mistral8x7BItV01}
 
 ########## LM ##########
-def set_language_model(lm_name):
+def set_language_model(lm_name, use_quantization=False, use_cuda=True):
     global lm
     if lm_name in AVAILABLE_LMS:
-        lm = AVAILABLE_LMS[lm_name]()
+        lm = AVAILABLE_LMS[lm_name](use_quantization=use_quantization, use_cuda=use_cuda)
     else:
         raise Exception('Language Model not found')
     global tokenizer
@@ -232,7 +232,9 @@ def generate_line(prompt, input_ids, **kwargs):
 
 def generate_parody(song_file_path, system_prompt, context_prompt, **kwargs):
     ## Setup 
-    set_language_model(kwargs['language_model'])
+    use_cuda = kwargs.get('use_cuda', False)
+    use_quantization = kwargs.get('use_quantization', False)
+    set_language_model(kwargs['language_model'], use_quantization=use_quantization, use_cuda=use_cuda)
     set_seed(kwargs['seed'])
     set_num_beams(kwargs['num_beams'])
 
@@ -386,6 +388,8 @@ if(__name__ == '__main__'):
         system_prompt = system_prompt, 
         context_prompt = context_prompt, 
         language_model = language_model,
+        use_cuda=True,
+        use_quantization=False,
         do_sample=True, 
         top_p=0.95, 
         temperature=0.7, 
