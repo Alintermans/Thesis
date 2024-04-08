@@ -18,16 +18,19 @@ def count_same_nb_lines_and_return_same_paragraphs(original_song_paragraps, paro
     original_song_nb_lines = get_nb_lines_in_paragraphs(original_song_paragraps)
     parody_song_nb_lines = get_nb_lines_in_paragraphs(parody_song_in_paragraphs)
     correct_nb_paragraphs = 0
+    correct_nb_lines = 0
     new_original_song_paragraphs = []
     new_parody_song_paragraphs = []
     for i in range(min_paragraph_len):
         min_len_lines = min(len(original_song_paragraps[i][1]), len(parody_song_in_paragraphs[i][1]))
         new_original_song_paragraphs.append(original_song_paragraps[i][1][:min_len_lines])
         new_parody_song_paragraphs.append(parody_song_in_paragraphs[i][1][:min_len_lines])
+        correct_nb_lines += min_len_lines
         if len(original_song_paragraps[i][1]) == len(parody_song_in_paragraphs[i][1]):
             correct_nb_paragraphs += 1
 
-    return original_song_nb_paragraphs, parody_song_nb_paragraphs, original_song_nb_lines, parody_song_nb_lines, new_original_song_paragraphs, new_parody_song_paragraphs, correct_nb_paragraphs
+
+    return original_song_nb_paragraphs, parody_song_nb_paragraphs, original_song_nb_lines, parody_song_nb_lines, new_original_song_paragraphs, new_parody_song_paragraphs, correct_nb_paragraphs, correct_nb_lines
         
     
 
@@ -145,6 +148,7 @@ def evaluate(original_song_file_path, parody_file_path, rhyme_type='perfect'):
     original_song_in_paragraphs = result[4]
     parody_song_in_paragraphs = result[5]
     correct_nb_paragraphs = result[6]
+    correct_nb_lines = result[7]
 
 
     print("Number of paragraphs in original song:", original_song_nb_paragraphs, "Number of paragraphs in parodie song:", parody_song_nb_paragraphs)
@@ -184,6 +188,7 @@ def evaluate(original_song_file_path, parody_file_path, rhyme_type='perfect'):
         "original_song_nb_paragraphs": original_song_nb_paragraphs,
         "parody_song_nb_paragraphs": parody_song_nb_paragraphs,
         "correct_nb_paragraphs": correct_nb_paragraphs,
+        "correct_nb_lines": correct_nb_lines,
         "original_song_nb_lines": original_song_nb_lines,
         "parody_song_nb_lines": parody_song_nb_lines,
         "nb_lines_correct_syllable_count": nb_lines_correct_syllable_count,

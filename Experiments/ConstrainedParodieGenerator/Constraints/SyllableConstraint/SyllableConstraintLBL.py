@@ -22,6 +22,7 @@ class SyllableConstraintLBL(Constraint):
         self.good_beamscore_multiplier = None
         self.bad_beamscore_multiplier = None
         self.top_k_tokens_to_consider = None
+        self.all_beams_have_syllable_amount = None
         
     
     def get_name(self):
@@ -33,21 +34,25 @@ class SyllableConstraintLBL(Constraint):
                 'good_beamscore_multiplier': self.good_beamscore_multiplier,
                 'bad_beamscore_multiplier': self.bad_beamscore_multiplier,
                 'top_k_tokens_to_consider': self.top_k_tokens_to_consider,
+                'all_beams_have_syllable_amount': self.all_beams_have_syllable_amount
             }
         }
 
     @staticmethod
-    def hyperparameters_config(good_beamscore_multiplier=0.1, bad_beamscore_multiplier=10, top_k_tokens_to_consider=30):
+    def hyperparameters_config(good_beamscore_multiplier=0.1, bad_beamscore_multiplier=10, top_k_tokens_to_consider=30, all_beams_have_syllable_amount=False):
         return {
             'good_beamscore_multiplier': good_beamscore_multiplier,
             'bad_beamscore_multiplier': bad_beamscore_multiplier,
-            'top_k_tokens_to_consider': top_k_tokens_to_consider
+            'top_k_tokens_to_consider': top_k_tokens_to_consider,
+            'all_beams_have_syllable_amount': all_beams_have_syllable_amount
         }
 
     def set_hyperparameters(self, config):
         self.good_beamscore_multiplier = config['good_beamscore_multiplier']
         self.bad_beamscore_multiplier = config['bad_beamscore_multiplier']
         self.top_k_tokens_to_consider = config['top_k_tokens_to_consider']
+        self.all_beams_have_syllable_amount = config['all_beams_have_syllable_amount']
+
 
     def set_special_new_line_tokens(self, special_new_line_tokens):
         self.special_new_line_tokens += special_new_line_tokens
@@ -128,13 +133,14 @@ class SyllableConstraintLBL(Constraint):
                 result.append(True)
             else:
                 result.append(False)
-        #print(result)
+        
         # if (len([x for x in result if x]) == len(result)):
         #     return True
-        if len([x for x in result if x]) >0:
-            return True
-        
-
+        if self.all_beams_have_syllable_amount:
+            if len([x for x in result if x]) == len(result):
+                return True
+        elif len([x for x in result if x]) >0:
+                return True
 
 
         return False

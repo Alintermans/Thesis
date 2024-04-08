@@ -1,34 +1,100 @@
-songs = os.listdir(song_directory)
-    # for song in songs:
-    #     song_file_path = song_directory + song
+import torch
+import os
+import random
+import matplotlib.pyplot as plt
+from ParodieGenLBL import generate_parody, AVAILABLE_LMS
+from Constraints.SyllableConstraint.SyllableConstraintLBL import SyllableConstraintLBL
+from Constraints.RhymingConstraint.RhymingConstraintLBL import RhymingConstraintLBL
+from Constraints.PosConstraint.PosConstraintLBL import PosConstraintLBL
+
+
+## Constants
+GLOBAL_SEED = 42
+CONSTRAINTS = {'SyllableConstraintLBL': SyllableConstraintLBL, 'RhymingConstraintLBL': RhymingConstraintLBL, 'PosConstraintLBL': PosConstraintLBL}
+EVALUATE_FUNCTIOBS = {'SyllableConstraintLBL': calibrate, 'RhymingConstraintLBL': calibrate, 'PosConstraintLBL': calibrate}
+
+## Init parameters
+random.seed(GLOBAL_SEED)
 
 
 
-########## Ranges For Hyperparameters To Test ##########
-## General
-num_possible_beams = [2, 3, 4, 5, 6, 7, 8, 9, 10, 15]
-do_samples = [True, False]
+def calibrate(config_file_path):
+    with open(config_file_path) as f:
+        config = json.load(f)
+    language_model = config['language_model']
+    language_models = [language_model] if language_model != 'All' else AVAILABLE_LMS.keys()
+    
 
-## Syllable Constraint
-good_beamscore_multipliers_syllable = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
-bad_beamscore_multipliers_syllable = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-## Rhyming Constraint
-rhyme_types = ['assonant', 'perfect', 'near']
-top_k_rhyme_words = [10, 50, 100, 200, 500]
-good_beamscore_multipliers_rhyme = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
-good_beamscore_multipliers_assonant = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
-continue_good_rhyme_multipliers = [0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99]
-good_rhyming_token_multipliers = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
-max_possible_syllable_counts = [1,2,3,4]
 
-## POS Constraint
-top_k_words_to_consider_for_pos = [100,200, 500,1000,2000,5000]
-good_beamscore_multipliers_pos = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
-pos_similarity_limit_to_boosts = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
-good_token_multipliers = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
-margin_of_similarity_with_new_tokens = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
-limilt_of_pos_similarity_to_satisfy_constraint = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
+
+
+
+
+
+
+
+
+
+
+def divide_into_training_and_testing_sets(songs, training_ratio=0.8):
+    random.shuffle(songs)
+    num_songs = len(songs)
+    training_set = songs[:int(training_ratio*num_songs)]
+    testing_set = songs[int(training_ratio*num_songs):]
+    return training_set, testing_set
+
+
+### Evaluate
+# Plotting
+def plotting():
+    plt.figure(figsize=(10, 6))
+    plt.plot(parameter_values, performance_metrics, marker='o', linestyle='-', color='b')
+    plt.title('Algorithm Performance vs. Parameter Value')
+    plt.xlabel('Parameter Value')
+    plt.ylabel('Performance Metric')
+    plt.grid(True)
+    plt.savefig('Experiments/img.png', dpi=300)
+
+if __name__ == '__main__':
+    config_file_path = 'Experiments/ConstrainedParodieGenerator/CalibratorExperimentsConfigs/SyllableConstraintLBL.json'
+
+
+
+
+
+
+# songs = os.listdir(song_directory)
+#     # for song in songs:
+#     #     song_file_path = song_directory + song
+
+
+
+# ########## Ranges For Hyperparameters To Test ##########
+# ## General
+# num_possible_beams = [2, 3, 4, 5, 6, 7, 8, 9, 10, 15]
+# do_samples = [True, False]
+
+# ## Syllable Constraint
+# good_beamscore_multipliers_syllable = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
+# bad_beamscore_multipliers_syllable = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+# ## Rhyming Constraint
+# rhyme_types = ['assonant', 'perfect', 'near']
+# top_k_rhyme_words = [10, 50, 100, 200, 500]
+# good_beamscore_multipliers_rhyme = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
+# good_beamscore_multipliers_assonant = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
+# continue_good_rhyme_multipliers = [0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99]
+# good_rhyming_token_multipliers = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
+# max_possible_syllable_counts = [1,2,3,4]
+
+# ## POS Constraint
+# top_k_words_to_consider_for_pos = [100,200, 500,1000,2000,5000]
+# good_beamscore_multipliers_pos = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
+# pos_similarity_limit_to_boosts = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
+# good_token_multipliers = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
+# margin_of_similarity_with_new_tokens = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
+# limilt_of_pos_similarity_to_satisfy_constraint = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,0.95, 0.96, 0.97, 0.98, 0.99]
 
 
 

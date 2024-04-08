@@ -338,13 +338,16 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
         chosen_hyper_parameters.update(pos_constraint.get_hyperparameters_in_dict())
 
 
+
+    folder_path_for_generated_parodies = kwargs.get('folder_path_for_generated_parodies', 'Experiments/ConstrainedParodieGenerator/GeneratedParodies/')
+
     print("Parodie: ", parodie)
-    write_song('Experiments/ConstrainedParodieGenerator/GeneratedParodies/', 
+    write_song(folder_path_for_generated_parodies, 
                 original_song_file_path = song_file_path, 
                 parodie = parodie, 
                 context = context_prompt, 
                 system_prompt = system_prompt, 
-                
+                assistant_prompt = assistant_prompt,
                 prompt = prompt, 
                 constraints_used = constraints_used,
                 chosen_hyper_parameters =chosen_hyper_parameters,
