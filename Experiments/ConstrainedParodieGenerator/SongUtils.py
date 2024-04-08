@@ -730,15 +730,18 @@ def _get_rhyming_words(word, rhyme_type = "perfect"):
 
     word = word.lower()
 
-
-    if rhyme_type == "perfect":
-        return get_perfect_rhyming_words(word)
-    elif rhyme_type == "assonant":
-        return get_assonant_rhyming_words(word)
-    elif rhyme_type == "near":
-        return get_near_rhyming_words(word)
-    else:
+    try:
+        if rhyme_type == "perfect":
+            return get_perfect_rhyming_words(word)
+        elif rhyme_type == "assonant":
+            return get_assonant_rhyming_words(word)
+        elif rhyme_type == "near":
+            return get_near_rhyming_words(word)
+        else:
+            return []
+    except KeyError:
         return []
+        
 
 def _get_rhyming_lines(paragraph, rhyme_type = "perfect"):
     
