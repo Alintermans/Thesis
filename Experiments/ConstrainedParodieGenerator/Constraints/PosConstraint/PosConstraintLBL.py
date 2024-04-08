@@ -114,7 +114,7 @@ class PosConstraintLBL(Constraint):
                 min_length = min(len(pos_tags), len(self.expected_pos_tags))
                 similarity_with_new_token = similarity_of_pos_tags_sequences(pos_tags, self.expected_pos_tags[:min_length])
                 if pos_tags is not None:
-                    print('similarity_with_new_token: ', similarity_with_new_token, 'similarity_of_last_line: ', similarity_of_last_line)
+                    #print('similarity_with_new_token: ', similarity_with_new_token, 'similarity_of_last_line: ', similarity_of_last_line)
                     if similarity_with_new_token >= similarity_of_last_line:
                         #print('similarity_with_new_token: ', similarity_with_new_token, 'similarity_of_last_line: ', similarity_of_last_line)
                         scores[i][token] = scores[i][token] - scores[i][token]*self.good_token_multiplier*similarity_with_new_token/(max(1-(similarity_with_new_token - similarity_of_last_line), 0.01))

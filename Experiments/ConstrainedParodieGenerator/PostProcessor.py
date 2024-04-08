@@ -9,14 +9,14 @@ class PostProcessor:
 
     def apply_beam_post_processing(self, nexttoken, next_score, input_ids, cur_len, length_penalty):
         if next_score.item() != next_score.item():
-            raise Exception('next_score is nan')
+            next_score = torch.tensor(-1000.0, device=next_score.device)
         
 
         if next_score.item() == float('inf'):
-            raise Exception('next_score is inf')
+            next_score = torch.finfo(next_score.dtype).max
         
         if next_score.item() == float('-inf'):
-            raise Exception('next_score is -inf')
+            next_score = torch.tensor(-1000.0, device=next_score.device)
 
 
         return next_score 

@@ -18,7 +18,7 @@ from LanguageModels.Mistral7BV01 import Mistral7BV01
 from LanguageModels.Mistral7BItV02 import Mistral7BItV02
 from LanguageModels.Mistral8x7BV01 import Mistral8x7BV01
 from LanguageModels.Mistral8x7BItV01 import Mistral8x7BItV01
-from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens, get_final_word_of_line,get_pos_tags_of_line, replace_content_for_prompts, cleanup_line
+from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens, get_final_word_of_line,get_pos_tags_of_line, replace_content_for_prompts, cleanup_line, get_song_structure, process_parody
 from SongEvaluator import count_same_nb_lines_and_return_same_paragraphs, count_syllable_difference_per_line, count_nb_line_pairs_match_rhyme_scheme, calculate_pos_tag_similarity
 import os
 
@@ -260,6 +260,10 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
     
     song = read_song(song_file_path) #expects a json file, where the lyrics is stored in the key 'lyrics'
     song_in_paragraphs = divide_song_into_paragraphs(song)
+    #print("Original Song: ", song)
+    song_in_paragraphs, original_structure = get_song_structure(song_in_paragraphs)
+    # print("Original Structure: ", original_structure)
+    # print("Song in Paragraphs: ", song_in_paragraphs)
 
     if system_prompt.endswith('.txt'):
         system_prompt = open(system_prompt, 'r').read()
@@ -316,6 +320,7 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
                 parodie += new_line + "\n"
                 print(line, " | ",new_line)
             parodie += "\n"
+        parodie = process_parody(parodie, original_structure)
     except Exception as e:
         raise Exception(e)
         print("Error has occured ", e)

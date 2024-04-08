@@ -191,6 +191,42 @@ def replace_content_for_prompts(system, context, assistant_prompt, parody, song,
             result[i] = result[i].replace("{{$SYLLABLE_AMOUNT}}", str(syllable_amount))
         result[i] = result[i].replace("{{$LINE}}", line)
     return result[0], result[1], result[2]
+
+def cleanup_line(line):
+    #remove al leading and trailing spaces
+    line = line.strip()
+    line = line.replace("’", "'")
+    line = line.replace("  ", " ")
+    line = line.replace("  ", " ")
+
+    return line
+
+
+def get_song_structure(song_in_paragraphs):
+    new_song_in_paragraphs = []
+    structure = []
+    for i in range(len(song_in_paragraphs)):
+        paragraph = song_in_paragraphs[i]
+        if paragraph not in new_song_in_paragraphs:
+            new_song_in_paragraphs.append(paragraph)
+            structure.append(len(new_song_in_paragraphs)-1)
+        else:
+            structure.append(new_song_in_paragraphs.index(paragraph))
+    
+    return new_song_in_paragraphs, structure
+
+def process_parody(parody, song_structure):
+    parody_in_paragraphs = divide_song_into_paragraphs(parody)
+    new_parody = []
+    for index in song_structure:
+        new_parody.append( parody_in_paragraphs[index])
+    
+    new_parody = [x+"\n"+"\n".join(y)+"\n" for x,y in new_parody]
+    new_parody = "\n".join(new_parody)
+
+    return new_parody
+
+    
         
 
     
