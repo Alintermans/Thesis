@@ -2,7 +2,7 @@ from transformers import LogitsProcessor
 import torch
 
 class Backtracking: 
-    def __init__(self, original_input_length, constraints, backtracking_logits_processor):
+    def __init__(self, original_input_length, constraints, backtracking_logits_processor, eos_token_id=None):
         self.original_input_length = original_input_length
         self.constraints = constraints
         self.does_loop_continue = True
@@ -13,6 +13,7 @@ class Backtracking:
         self.retries = [5,5,5]
         self.retry_points = [0.75, 0.5, 0.25]
         self.backtracking_logits_processor = backtracking_logits_processor
+        self.eos_token_id = eos_token_id
 
     
     def continue_loop(self):
@@ -22,7 +23,10 @@ class Backtracking:
         return self.best_result
     
 
-    def calculate_nb_tokens_to_remove(self, new_line_token_length):
+    def calculate_nb_tokens_to_remove(self, new_line_token_length, eos_token_present):
+        if eos_token_present:
+            new_line_token_length -= 1
+
         index = None
         for i in range(len(self.retries)):
             if self.retries[i] > 0:
@@ -32,7 +36,7 @@ class Backtracking:
             return 0
         print("retrying with index: ", index)
         self.retries[index] -= 1
-        return int(new_line_token_length * (1-self.retry_points[index]))
+        return int(new_line_token_length * (1-self.retry_points[index])) + 1 if eos_token_present else int(new_line_token_length * (1-self.retry_points[index]))
 
 
 
@@ -67,9 +71,12 @@ class Backtracking:
             self.best_result = decoded_result
         print(decoded_result)
         new_line_token_length = output_ids[index].shape[-1] - self.original_input_length
+        eos_token_present = False
+        if output_ids[index][-1].item == self.eos_token_id:
+            eos_token_present = True
         print("new_line_token_length: ", new_line_token_length)
         
-        nb_tokens_to_remove = self.calculate_nb_tokens_to_remove(new_line_token_length)
+        nb_tokens_to_remove = self.calculate_nb_tokens_to_remove(new_line_token_length, eos_token_present)
         print("nb_tokens_to_remove: ", nb_tokens_to_remove)
         if nb_tokens_to_remove == 0:
             self.does_loop_continue = False
