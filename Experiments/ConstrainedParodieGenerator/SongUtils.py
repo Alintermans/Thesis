@@ -198,7 +198,7 @@ def cleanup_line(line):
     line = line.replace("’", "'")
     line = line.replace("  ", " ")
     line = line.replace("  ", " ")
-
+    line = line.lower()
     return line
 
 
@@ -741,7 +741,7 @@ def _get_rhyming_words(word, rhyme_type = "perfect"):
             return []
     except KeyError:
         return []
-        
+
 
 def _get_rhyming_lines(paragraph, rhyme_type = "perfect"):
     
