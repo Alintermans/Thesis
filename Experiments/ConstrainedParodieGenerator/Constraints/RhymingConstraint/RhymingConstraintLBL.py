@@ -21,8 +21,6 @@ class RhymingConstraintLBL(Constraint):
         ## Hyperparameters
         self.max_possible_syllable_count = None
         self.good_beamscore_multiplier_same_rhyme_type = None
-        self.good_beamscore_multiplier_assonant = None
-        self.continue_good_rhyme_multiplier = None
         self.good_rhyming_token_multiplier = None
         self.top_k_rhyme_words = None
         self.rhyme_type = None
@@ -35,8 +33,6 @@ class RhymingConstraintLBL(Constraint):
             self.get_name(): {
                 'max_possible_syllable_count': self.max_possible_syllable_count,
                 'good_beamscore_multiplier_same_rhyme_type': self.good_beamscore_multiplier_same_rhyme_type,
-                'good_beamscore_multiplier_assonant': self.good_beamscore_multiplier_assonant,
-                'continue_good_rhyme_multiplier': self.continue_good_rhyme_multiplier,
                 'good_rhyming_token_multiplier': self.good_rhyming_token_multiplier,
                 'top_k_rhyme_words': self.top_k_rhyme_words,
                 'rhyme_type': self.rhyme_type
@@ -47,12 +43,10 @@ class RhymingConstraintLBL(Constraint):
         return 'RhymingConstraintLBL'
     
     @staticmethod
-    def hyperparameters_config(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_beamscore_multiplier_assonant=0.9, continue_good_rhyme_multiplier=0.99, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=100, rhyme_type='perfect'):
+    def hyperparameters_config(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=100, rhyme_type='perfect'):
         return {
             'max_possible_syllable_count': max_possible_syllable_count,
             'good_beamscore_multiplier_same_rhyme_type': good_beamscore_multiplier_same_rhyme_type,
-            'good_beamscore_multiplier_assonant': good_beamscore_multiplier_assonant,
-            'continue_good_rhyme_multiplier': continue_good_rhyme_multiplier,
             'good_rhyming_token_multiplier': good_rhyming_token_multiplier,
             'top_k_rhyme_words': top_k_rhyme_words,
             'rhyme_type': rhyme_type
@@ -61,8 +55,6 @@ class RhymingConstraintLBL(Constraint):
     def set_hyperparameters(self, config):
         self.max_possible_syllable_count = config['max_possible_syllable_count']
         self.good_beamscore_multiplier_same_rhyme_type = config['good_beamscore_multiplier_same_rhyme_type']
-        self.good_beamscore_multiplier_assonant = config['good_beamscore_multiplier_assonant']
-        self.continue_good_rhyme_multiplier = config['continue_good_rhyme_multiplier']
         self.good_rhyming_token_multiplier = config['good_rhyming_token_multiplier']
         self.top_k_rhyme_words = config['top_k_rhyme_words']
         self.rhyme_type = config['rhyme_type']
@@ -144,7 +136,7 @@ class RhymingConstraintLBL(Constraint):
 
             if _do_two_words_rhyme(last_word, self.rhyming_word, "assonant"):
                 
-                next_score = next_score - next_score*self.good_beamscore_multiplier_assonant
+                next_score = next_score - next_score*(self.good_beamscore_multiplier_same_rhyme_type - 0.05)
                 
                 return next_score
         return next_score
@@ -202,7 +194,7 @@ class RhymingConstraintLBL(Constraint):
                     if not started_with_rhyming_word:
                         scores[i] = abs(scores[i]) * torch.finfo(scores.dtype).min
                         started_with_rhyming_word = True
-                    scores[i][next_token] = score + self.continue_good_rhyme_multiplier*abs(score)
+                    scores[i][next_token] = score
 
 
                     

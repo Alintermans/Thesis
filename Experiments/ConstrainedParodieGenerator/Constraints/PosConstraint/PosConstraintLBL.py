@@ -12,22 +12,18 @@ class PosConstraintLBL(Constraint):
         self.disable_constraint = False
 
         #hyperparameters
-        self.top_k_words_to_consider = None
+        self.top_k_tokens_to_consider = None
         self.good_beamscore_multiplier = None
-        self.pos_similarity_limit_to_boost = None
         self.good_token_multiplier = None
-        self.margin_of_similarity_with_new_token = None
         self.limit_of_pos_similarity_to_satisfy_constraint = None
         
     
     def get_hyperparameters_in_dict(self):
         return {
             self.get_name(): {
-                'top_k_words_to_consider': self.top_k_words_to_consider,
+                'top_k_tokens_to_consider': self.top_k_tokens_to_consider,
                 'good_beamscore_multiplier': self.good_beamscore_multiplier,
-                'pos_similarity_limit_to_boost': self.pos_similarity_limit_to_boost,
                 'good_token_multiplier': self.good_token_multiplier,
-                'margin_of_similarity_with_new_token': self.margin_of_similarity_with_new_token,
                 'limit_of_pos_similarity_to_satisfy_constraint': self.limit_of_pos_similarity_to_satisfy_constraint
             }
         }
@@ -42,24 +38,20 @@ class PosConstraintLBL(Constraint):
         self.disable_constraint = False
     
     @staticmethod
-    def hyperparameters_config(good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1, limit_of_pos_similarity_to_satisfy_constraint=0.5, top_k_words_to_consider=100):
+    def hyperparameters_config(good_beamscore_multiplier=0.1, good_token_multiplier=0.6, limit_of_pos_similarity_to_satisfy_constraint=0.5, top_k_tokens_to_consider=100):
         return {
             'good_beamscore_multiplier': good_beamscore_multiplier,
-            'pos_similarity_limit_to_boost': pos_similarity_limit_to_boost,
             'good_token_multiplier': good_token_multiplier,
-            'margin_of_similarity_with_new_token': margin_of_similarity_with_new_token,
             'limit_of_pos_similarity_to_satisfy_constraint': limit_of_pos_similarity_to_satisfy_constraint,
-            'top_k_words_to_consider': top_k_words_to_consider
+            'top_k_tokens_to_consider': top_k_tokens_to_consider
         }
         
     
     def set_hyperparameters(self, config):
         self.good_beamscore_multiplier = config['good_beamscore_multiplier']
-        self.pos_similarity_limit_to_boost = config['pos_similarity_limit_to_boost']
         self.good_token_multiplier = config['good_token_multiplier']
-        self.margin_of_similarity_with_new_token = config['margin_of_similarity_with_new_token']
         self.limit_of_pos_similarity_to_satisfy_constraint = config['limit_of_pos_similarity_to_satisfy_constraint']
-        self.top_k_words_to_consider = config['top_k_words_to_consider']
+        self.top_k_tokens_to_consider = config['top_k_tokens_to_consider']
 
 
     def set_expected_pos_tags(self, expected_pos_tags):
@@ -87,9 +79,8 @@ class PosConstraintLBL(Constraint):
         min_length = min(len(pos_tags), len(self.expected_pos_tags))
         similarity = similarity_of_pos_tags_sequences(pos_tags, self.expected_pos_tags[:min_length])
         #print('similarity: ', similarity, 'pos_tags: ', pos_tags, 'expected_pos_tags: ', self.expected_pos_tags)
-        if similarity > self.pos_similarity_limit_to_boost:
             #return next_score - next_score*(similarity)*self.good_beamscore_multiplier * ( cur_len ** length_penalty)
-            return next_score - next_score*(similarity)*self.good_beamscore_multiplier 
+        return next_score - next_score*(similarity)*self.good_beamscore_multiplier 
 
         
         return next_score
@@ -112,7 +103,7 @@ class PosConstraintLBL(Constraint):
             text = self.tokenizer.decode(input, skip_special_tokens=True)
             last_line = text.split('\n')[-1]
 
-            _, best_tokens = scores[i].topk(self.top_k_words_to_consider)
+            _, best_tokens = scores[i].topk(self.top_k_tokens_to_consider)
             for token in best_tokens:
                 pos_tags_last_line = get_pos_tags_of_line(last_line)
                 #The min length is only ysed for the expected pos tags, because the last line may be shorter than the expected pos tags but dtw can handle multiple lengths, but to esnure a valid score when the full line is being generted, the min length is used to cap the length of the expected pos tags, but when the full length is reached both are compared as is
@@ -123,10 +114,10 @@ class PosConstraintLBL(Constraint):
                 min_length = min(len(pos_tags), len(self.expected_pos_tags))
                 similarity_with_new_token = similarity_of_pos_tags_sequences(pos_tags, self.expected_pos_tags[:min_length])
                 if pos_tags is not None:
-                    
-                    if similarity_with_new_token > min(similarity_of_last_line + self.margin_of_similarity_with_new_token, 0.99) or similarity_with_new_token == 1.0 :
+                    print('similarity_with_new_token: ', similarity_with_new_token, 'similarity_of_last_line: ', similarity_of_last_line)
+                    if similarity_with_new_token >= similarity_of_last_line:
                         #print('similarity_with_new_token: ', similarity_with_new_token, 'similarity_of_last_line: ', similarity_of_last_line)
-                        scores[i][token] = scores[i][token] - scores[i][token]*self.good_token_multiplier*(similarity_with_new_token - similarity_of_last_line)
+                        scores[i][token] = scores[i][token] - scores[i][token]*self.good_token_multiplier*similarity_with_new_token/(max(1-(similarity_with_new_token - similarity_of_last_line), 0.01))
                     
             
 

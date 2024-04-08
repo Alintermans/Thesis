@@ -18,7 +18,7 @@ from LanguageModels.Mistral7BV01 import Mistral7BV01
 from LanguageModels.Mistral7BItV02 import Mistral7BItV02
 from LanguageModels.Mistral8x7BV01 import Mistral8x7BV01
 from LanguageModels.Mistral8x7BItV01 import Mistral8x7BItV01
-from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens, get_final_word_of_line,get_pos_tags_of_line, replace_content_for_prompts
+from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens, get_final_word_of_line,get_pos_tags_of_line, replace_content_for_prompts, cleanup_line
 from SongEvaluator import count_same_nb_lines_and_return_same_paragraphs, count_syllable_difference_per_line, count_nb_line_pairs_match_rhyme_scheme, calculate_pos_tag_similarity
 import os
 
@@ -312,6 +312,7 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
                 new_rhyme_word = get_final_word_of_line(new_line)
                 rhyming_constraint.add_rhyming_words_to_ignore(new_rhyme_word)
                 print("Contraints are satisfied: ", constraints.are_constraints_satisfied(new_line))
+                new_line = cleanup_line(new_line)
                 parodie += new_line + "\n"
                 print(line, " | ",new_line)
             parodie += "\n"
@@ -386,8 +387,8 @@ if(__name__ == '__main__'):
 
     ######### Hyperparameters ##########
     syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.5, bad_beamscore_multiplier=5, top_k_tokens_to_consider=30)
-    rhyming_constraint_hyperparameters = RhymingConstraintLBL.hyperparameters_config(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_beamscore_multiplier_assonant=0.9, continue_good_rhyme_multiplier=0.99, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=10, rhyme_type='perfect')
-    pos_constraint_hyperparameters = PosConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.1, pos_similarity_limit_to_boost=0.5, good_token_multiplier=0.6, margin_of_similarity_with_new_token=0.1, limit_of_pos_similarity_to_satisfy_constraint=0.5, top_k_words_to_consider=200)
+    rhyming_constraint_hyperparameters = RhymingConstraintLBL.hyperparameters_config(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=10, rhyme_type='perfect')
+    pos_constraint_hyperparameters = PosConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.1, good_token_multiplier=0.6, limit_of_pos_similarity_to_satisfy_constraint=0.5, top_k_tokens_to_consider=200)
 
     
 
