@@ -24,9 +24,9 @@ class LM(ABC):
 
         self.bnb_config = BitsAndBytesConfig(
             load_in_4bit=use_4bit,
-            bnb_4bit_quant_type=bnb_4bit_quant_type,
+            #bnb_4bit_quant_type=bnb_4bit_quant_type,
             bnb_4bit_compute_dtype=compute_dtype,
-            bnb_4bit_use_double_quant=use_nested_quant,
+            #bnb_4bit_use_double_quant=use_nested_quant,
         )
 
         return None
