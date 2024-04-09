@@ -372,8 +372,8 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
 if(__name__ == '__main__'):
     ###### Set Up ######
     language_model = 'GPT2'
-    # language_model = 'Llama2_7BChat'
-
+    #language_model = 'Llama2_7BChat'
+    #language_model = "Mistral7BItV02"
     song_directory = 'Songs/json/'
     song_file_path = 'Songs/json/Taylor_Swift-It_Is_Over_Now_(Very_Small).json'
     #song_file_path = 'Songs/json/Coldplay-Viva_La_Vida.json'
