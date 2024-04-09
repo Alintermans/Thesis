@@ -177,9 +177,9 @@ class SyllableConstraintLBL(Constraint):
                 print(best_scores)
                 for score, token in zip(best_scores, best_tokens):
                     next_token_tensor = torch.tensor([token], device = scores[i].device)
-                    candidate_text = self.tokenizer.decode(torch.cat([input, next_token_tensor], dim=0))
+                    candidate_text = self.tokenizer.decode(torch.cat([input, next_token_tensor], dim=0), skip_special_tokens=True)
                     syllable_count = get_syllable_count_of_sentence(candidate_text[len(self.original_prompt):])
-                    if syllable_count <= self.new_syllable_amount:
+                    if syllable_count <= self.new_syllable_amount and not does_string_contain_newline(candidate_text[len(self.original_prompt):]):
                         scores[i][token] = score
                     
                 

@@ -982,8 +982,8 @@ if __name__ == "__main__":
     # print(do_two_end_phon_seq_near_rhyme(pron_1, pron_2))
     #print(get_near_rhyming_words("ought"))
     #print(get_pos_tags_of_line("It is "))
-    #print(get_syllable_count_of_sentence("You still wouldn't go"))
+    print(get_syllable_count_of_sentence("thepie"))
     
     # print(_do_two_words_rhyme("dream", "ims", "assonant"))
-    print(get_assonant_rhyming_words("Great"))
+    #print(get_assonant_rhyming_words("Great"))
     
