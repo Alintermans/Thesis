@@ -118,7 +118,7 @@ class PosConstraintLBL(Constraint):
                     if similarity_with_new_token >= similarity_of_last_line:
                         #print('similarity_with_new_token: ', similarity_with_new_token, 'similarity_of_last_line: ', similarity_of_last_line)
                         scores[i][token] = scores[i][token] - scores[i][token]*self.good_token_multiplier*similarity_with_new_token/(max(1-(similarity_with_new_token - similarity_of_last_line), 0.01))
-                    
+                        #scores[i][token] = scores[i][token] - scores[i][token]*self.good_token_multiplier*similarity_with_new_token
             
 
             

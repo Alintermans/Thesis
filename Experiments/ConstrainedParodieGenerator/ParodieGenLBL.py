@@ -391,8 +391,8 @@ if(__name__ == '__main__'):
     
 
     ######### Hyperparameters ##########
-    syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.5, bad_beamscore_multiplier=5, top_k_tokens_to_consider=30)
-    rhyming_constraint_hyperparameters = RhymingConstraintLBL.hyperparameters_config(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=10, rhyme_type='perfect')
+    syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.5, bad_beamscore_multiplier=5, top_k_tokens_to_consider=50)
+    rhyming_constraint_hyperparameters = RhymingConstraintLBL.hyperparameters_config(max_possible_syllable_count=2, good_beamscore_multiplier_same_rhyme_type=0.95, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=10, rhyme_type='perfect')
     pos_constraint_hyperparameters = PosConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.1, good_token_multiplier=0.6, limit_of_pos_similarity_to_satisfy_constraint=0.5, top_k_tokens_to_consider=200)
 
     
