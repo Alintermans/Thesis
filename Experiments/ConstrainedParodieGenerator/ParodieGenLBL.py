@@ -384,9 +384,9 @@ if(__name__ == '__main__'):
 
     #system_prompt = "I'm a parody genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song"
     #context_prompt = "The following parodie will be about that pineaple shouldn't be on pizza\nORIGINAL SONG : \n\n{{$SONG}}\n\nAlready generated PARODIE: \n\n{{$PARODY}}"
-    system_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/system_prompt.txt"
-    context_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/context_prompt.txt"
-    assistant_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/assistant_prompt.txt"
+    system_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/Old/system_prompt.txt"
+    context_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/Old/context_prompt.txt"
+    assistant_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/Old/assistant_prompt.txt"
 
     
 

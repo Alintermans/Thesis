@@ -14,9 +14,9 @@ from Constraints.PosConstraint.PosConstraintLBL import PosConstraintLBL
 GLOBAL_SEED = 42
 POSSIBLE_NUM_BEAMS  = [2,4,8,12,16]
 SONG_DIR = "Songs/json/"
-SYSTEM_PROMPTS = []
-CONTEXT_PROMPTS = []
-ASSISTANT_PROMPTS = []
+SYSTEM_PROMPTS = ["Experiments/ConstrainedParodieGenerator/PromptTexts/1/system_prompt.txt", "Experiments/ConstrainedParodieGenerator/PromptTexts/2/system_prompt.txt", "Experiments/ConstrainedParodieGenerator/PromptTexts/3/system_prompt.txt"]
+CONTEXT_PROMPTS = ["Experiments/ConstrainedParodieGenerator/PromptTexts/1/context_prompt.txt", "Experiments/ConstrainedParodieGenerator/PromptTexts/2/context_prompt.txt", "Experiments/ConstrainedParodieGenerator/PromptTexts/3/context_prompt.txt"]
+ASSISTANT_PROMPTS = ["Experiments/ConstrainedParodieGenerator/PromptTexts/1/assistant_prompt.txt", "Experiments/ConstrainedParodieGenerator/PromptTexts/2/assistant_prompt.txt", "Experiments/ConstrainedParodieGenerator/PromptTexts/3/assistant_prompt.txt"]
 
 ## Init parameters
 random.seed(GLOBAL_SEED)
