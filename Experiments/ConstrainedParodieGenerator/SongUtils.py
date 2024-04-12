@@ -199,6 +199,8 @@ def cleanup_line(line):
     line = line.replace("  ", " ")
     line = line.replace("  ", " ")
     line = line.lower()
+    line= line.replace(" i ", " I ")
+    line = line.replace(" i'", " I'")
     return line
 
 
