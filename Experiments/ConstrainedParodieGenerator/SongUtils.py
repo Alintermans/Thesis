@@ -992,5 +992,5 @@ if __name__ == "__main__":
     
     # print(_do_two_words_rhyme("dream", "ims", "assonant"))
     #print(get_assonant_rhyming_words("Great"))
-    print(cleanup_line("now in kitchen, I chills alone �"))
+    print(cleanup_line("now in 300 kitchen, I chills alone �"))
     

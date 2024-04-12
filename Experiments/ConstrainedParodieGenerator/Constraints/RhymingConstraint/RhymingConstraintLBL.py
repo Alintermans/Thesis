@@ -230,14 +230,16 @@ class RhymingConstraintLBL(Constraint):
         return scores
     
     def is_constrained_satisfied(self, generated_text):
-        if self.rhyming_word is None or self.disable_constraint:
+        if self.rhyming_word is None or self.disable_constraint or self.rhyming_words == []:
             return True
         
         last_word = get_final_word_of_line(generated_text)
         if last_word is None:
             return False
+
         
         result = _do_two_words_rhyme(last_word, self.rhyming_word, self.rhyme_type)
+
         print('last word: ', last_word, ' rhyming word: ', self.rhyming_word, ' rhyme type: ', self.rhyme_type, ' result: ', result)
         return result
         
