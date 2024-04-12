@@ -777,15 +777,15 @@ def _get_rhyming_lines(paragraph, rhyme_type = "perfect"):
 def rhyming_words_to_tokens_and_syllable_count(tokenizer, rhyming_words, start_token = None):
     result = []
     max_syllable_count = 0
-    space_token = tokenizer.encode(" ")[0]
+    space_token = tokenizer.encode(" ", add_special_tokens=False)[0]
     for word in rhyming_words:
-        tokens_with_space = tokenizer.encode(" "+word)
+        tokens_with_space = tokenizer.encode(" "+word, add_special_tokens=False)
         if start_token is None and tokens_with_space[0] == space_token:
             tokens_with_space = tokens_with_space[1:]
         elif start_token is not None and start_token == tokens_with_space[0] and tokens_with_space[1] == space_token:
             tokens_with_space = tokens_with_space[2:]
         
-        tokens = tokenizer.encode(word)
+        tokens = tokenizer.encode(word, add_special_tokens=False)
         if start_token is not None and tokens[0] == start_token:
             tokens = tokens[1:]
 
@@ -803,7 +803,7 @@ def rhyming_words_to_tokens_and_syllable_count(tokenizer, rhyming_words, start_t
             "word": word
         }
         result.append(dict_with_space)
-        #result.append(dict_without_space)
+        result.append(dict_without_space)
     return result, max_syllable_count
 
 

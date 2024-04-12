@@ -109,7 +109,8 @@ class PosConstraintLBL(Constraint):
                 #The min length is only ysed for the expected pos tags, because the last line may be shorter than the expected pos tags but dtw can handle multiple lengths, but to esnure a valid score when the full line is being generted, the min length is used to cap the length of the expected pos tags, but when the full length is reached both are compared as is
                 min_length = min(len(pos_tags_last_line), len(self.expected_pos_tags))
                 similarity_of_last_line = similarity_of_pos_tags_sequences(pos_tags_last_line, self.expected_pos_tags[:min_length])
-                candidate_text = last_line + self.tokenizer.decode(token, skip_special_tokens=True)
+                next_token_tensor = torch.tensor([token], device = scores[i].device)
+                candidate_text = self.tokenizer.decode(torch.cat([input, next_token_tensor], dim=0), skip_special_tokens=True).split('\n')[-1]
                 pos_tags = get_pos_tags_of_line(candidate_text)
                 min_length = min(len(pos_tags), len(self.expected_pos_tags))
                 similarity_with_new_token = similarity_of_pos_tags_sequences(pos_tags, self.expected_pos_tags[:min_length])
@@ -117,8 +118,8 @@ class PosConstraintLBL(Constraint):
                     #print('similarity_with_new_token: ', similarity_with_new_token, 'similarity_of_last_line: ', similarity_of_last_line)
                     if similarity_with_new_token >= similarity_of_last_line:
                         #print('similarity_with_new_token: ', similarity_with_new_token, 'similarity_of_last_line: ', similarity_of_last_line)
-                        scores[i][token] = scores[i][token] - scores[i][token]*self.good_token_multiplier*similarity_with_new_token/(max(1-(similarity_with_new_token - similarity_of_last_line), 0.01))
-                        #scores[i][token] = scores[i][token] - scores[i][token]*self.good_token_multiplier*similarity_with_new_token
+                        #scores[i][token] = scores[i][token] - scores[i][token]*self.good_token_multiplier*similarity_with_new_token/(max(1-(similarity_with_new_token - similarity_of_last_line), 0.01))
+                        scores[i][token] = scores[i][token] - scores[i][token]*self.good_token_multiplier*similarity_with_new_token
             
 
             

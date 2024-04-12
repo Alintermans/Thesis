@@ -172,9 +172,11 @@ class SyllableConstraintLBL(Constraint):
                 
 
                 best_scores, best_tokens = scores[i].topk(self.top_k_tokens_to_consider)
+                if best_scores[0].item() == float('-inf'):
+                    scores[i][self.tokenizer.eos_token_id] = torch.tensor(-1, device = scores.device)
                 
                 scores[i] = abs(scores[i])*torch.finfo(scores.dtype).min
-                print(best_scores)
+                #print(best_scores)
                 for score, token in zip(best_scores, best_tokens):
                     next_token_tensor = torch.tensor([token], device = scores[i].device)
                     candidate_text = self.tokenizer.decode(torch.cat([input, next_token_tensor], dim=0), skip_special_tokens=True)
