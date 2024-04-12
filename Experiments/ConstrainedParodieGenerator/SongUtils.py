@@ -207,6 +207,11 @@ def cleanup_line(line):
 
     return line
 
+def only_adds_regular_characters(original_line, new_line):
+    original_line = ''.join(e for e in original_line if e.isalnum() or e in ["'"])
+    new_line = ''.join(e for e in new_line if e.isalnum() or e in ["'"])
+    return original_line != new_line
+
 
 def get_song_structure(song_in_paragraphs):
     new_song_in_paragraphs = []
@@ -992,5 +997,6 @@ if __name__ == "__main__":
     
     # print(_do_two_words_rhyme("dream", "ims", "assonant"))
     #print(get_assonant_rhyming_words("Great"))
-    print(cleanup_line("now in 300 kitchen, I chills alone �"))
+    #print(cleanup_line("now in 300 kitchen, I chills alone �"))
+    print(only_adds_regular_characters("I'm a test sentenc", "I'm a test sentenc've"))
     
