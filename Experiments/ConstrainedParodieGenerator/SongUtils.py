@@ -210,10 +210,8 @@ def cleanup_line(line):
 def only_adds_regular_characters(original_line, new_line):
     new_line = new_line.replace("’", "'")
     original_line = original_line.replace("’", "'")
-    if new_line.endswith(" '"):
-        return False
-    original_line = ''.join(e for e in original_line if e.isalnum() or e in ["'"])
-    new_line = ''.join(e for e in new_line if e.isalnum() or e in ["'"])
+    original_line = ''.join(e for e in original_line if e.isalnum() )
+    new_line = ''.join(e for e in new_line if e.isalnum() )
     return original_line != new_line
 
 
