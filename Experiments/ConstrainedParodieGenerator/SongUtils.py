@@ -206,7 +206,7 @@ def cleanup_line(line):
     line = line.replace(",,", ",")
 
     #delete all non regular characters
-    line = ''.join(e for e in line if e.isalnum() or e in [" ", "'", "-", ",", ".", "!", "?", ";", ":", "(", ")"])
+    line = ''.join(e for e in line if e.isalnum() or e in [" ", "'", "-", ",", ".", "!", "?", "(", ")"])
 
     return line
 
@@ -1024,5 +1024,5 @@ if __name__ == "__main__":
     #print(get_assonant_rhyming_words("Great"))
     #print(cleanup_line("now in 300 kitchen, I chills alone �"))
     #print(only_adds_regular_characters("I'm a test sentenc", "I'm a test sentenc've"))
-    print(last_word_only_has_consontants("I'm a tset-? "))
+    print(get_syllable_count_of_sentence("Let's fast forward to three hundred takeout coffees later"))
     
