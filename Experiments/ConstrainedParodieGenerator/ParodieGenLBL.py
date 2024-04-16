@@ -22,6 +22,7 @@ from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count
 from SongEvaluator import count_same_nb_lines_and_return_same_paragraphs, count_syllable_difference_per_line, count_nb_line_pairs_match_rhyme_scheme, calculate_pos_tag_similarity
 import os
 
+
 from transformers import (
                 set_seed, 
                 StoppingCriteriaList, 
@@ -31,9 +32,13 @@ from transformers import (
                 NoRepeatNGramLogitsProcessor,
                 TopKLogitsWarper,
                 TopPLogitsWarper,
-                TemperatureLogitsWarper
+                TemperatureLogitsWarper,
+                utils
                 )
 import torch
+
+######### Supress Warnings ##########
+utils.logging.set_verbosity_error()
 
 ########## Global Variables ##########
 lm = None
@@ -58,6 +63,7 @@ AVAILABLE_LMS = {'GPT2': GPT2, 'Gemma2BIt': Gemma2BIt, 'Gemma2B': Gemma2B, 'Gemm
 
 ########## LM ##########
 def set_language_model(lm_name, use_quantization=False, use_cuda=True):
+    torch.cuda.empty_cache()
     global lm
     if lm_name in AVAILABLE_LMS:
         lm = AVAILABLE_LMS[lm_name](use_quantization=use_quantization, use_cuda=use_cuda)
@@ -69,7 +75,7 @@ def set_language_model(lm_name, use_quantization=False, use_cuda=True):
     tokenizer = lm.get_tokenizer()
     model = lm.get_model()
     start_token = lm.get_start_token()
-    model.bfloat16()
+    #model.bfloat16()
     global eos_token_id
     global pad_token_id
     eos_token_id = tokenizer.eos_token_id
@@ -99,11 +105,11 @@ def set_constraints():
 
     pos_constraint = PosConstraintLBL(tokenizer, start_token=start_token)
 
-    forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '\\', '/', '_', '——', ' — ', '..' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?', '\n', '\n\n', '  ', '...']
+    forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '/', '_', '——', '.' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?', '\n', '\n\n']
     forbidden_tokens = forbidden_charachters_to_tokens(tokenizer, forbidden_charachters)
     forbidden_tokens_logit_processor = NoBadWordsLogitsProcessor(forbidden_tokens, eos_token_id=tokenizer.eos_token_id)
 
-    no_ngram_logits_processor = NoRepeatNGramLogitsProcessor(2)
+    no_ngram_logits_processor = NoRepeatNGramLogitsProcessor(1)
     ## Combine Constraints
     constraints = ConstraintList([pos_constraint, rhyming_constraint, syllable_constraint])
 
@@ -384,14 +390,17 @@ if(__name__ == '__main__'):
 
     #system_prompt = "I'm a parody genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song"
     #context_prompt = "The following parodie will be about that pineaple shouldn't be on pizza\nORIGINAL SONG : \n\n{{$SONG}}\n\nAlready generated PARODIE: \n\n{{$PARODY}}"
-    system_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/Old/system_prompt.txt"
-    context_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/Old/context_prompt.txt"
-    assistant_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/Old/assistant_prompt.txt"
+
+    prompt_version = "Old"
+
+    system_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/"+prompt_version+"/system_prompt.txt"
+    context_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/"+prompt_version+"/context_prompt.txt"
+    assistant_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/"+prompt_version+"/assistant_prompt.txt"
 
     
 
     ######### Hyperparameters ##########
-    syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.5, bad_beamscore_multiplier=5, top_k_tokens_to_consider=50)
+    syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.5, bad_beamscore_multiplier=5, top_k_tokens_to_consider=50, all_beams_have_syllable_amount=True)
     rhyming_constraint_hyperparameters = RhymingConstraintLBL.hyperparameters_config(max_possible_syllable_count=2, good_beamscore_multiplier_same_rhyme_type=0.95, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=10, rhyme_type='perfect')
     pos_constraint_hyperparameters = PosConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.1, good_token_multiplier=0.6, limit_of_pos_similarity_to_satisfy_constraint=0.5, top_k_tokens_to_consider=200)
 

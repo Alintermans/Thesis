@@ -5,6 +5,7 @@ class Llama2_70BChat(LM):
     def __init__(self,  use_quantization=False, use_cuda=True):
         super().__init__(use_quantization, use_cuda)
         self.model_url = "meta-llama/Llama-2-70b-chat-hf"
+        self.quantized_model_url = "TheBloke/Llama-2-70B-Chat-AWQ"
         self.setup_language_model()
         self.name = 'Llama 2 70B Chat'
         return None
@@ -28,9 +29,13 @@ class Llama2_70BChat(LM):
             {"role": "assistant", "content": assistant_prompt}
         ]
 
-        tokenized_prompt =  self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, return_tensors="pt")
-        tokenized_prompt += '\n' + assistant_prompt
-        tokenized_prompt = self.tokenizer.encode(tokenized_prompt, return_tensors="pt")
+        untokenized_prompt =  self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, return_tensors="pt")
+        if assistant_prompt != '':
+            untokenized_prompt += '\n' + assistant_prompt
+            if not untokenized_prompt.endswith("\n"):
+                untokenized_prompt += "\n"
+            
+        tokenized_prompt = self.tokenizer.encode(untokenized_prompt, return_tensors="pt") 
         prompt = self.tokenizer.decode(tokenized_prompt[0], skip_special_tokens=True)
 
         return prompt, tokenized_prompt

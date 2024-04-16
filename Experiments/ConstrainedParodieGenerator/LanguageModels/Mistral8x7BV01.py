@@ -5,6 +5,7 @@ class Mistral8x7BV01(LM):
     def __init__(self,  use_quantization=False, use_cuda=True):
         super().__init__(use_quantization, use_cuda)
         self.model_url = "mistralai/Mixtral-8x7B-v0.1"
+        self.quantized_model_url = "TheBloke/mixtral-8x7b-v0.1-AWQ"
         self.setup_language_model()
         self.name = 'Mistral 8x7B v0.1'
         return None

@@ -11,39 +11,24 @@ class LM(ABC):
         self.use_cuda = use_cuda and torch.cuda.is_available()
         self.use_quantization = use_quantization and torch.cuda.is_available()
         self.model_url = None
-
-        ## quantization config
-        use_4bit = True
-        # Compute dtype for 4-bit base models
-        bnb_4bit_compute_dtype = "float16"
-        # Quantization type (fp4 or nf4)
-        bnb_4bit_quant_type = "nf4"
-        use_nested_quant = False
-
-        compute_dtype = getattr(torch, "float16")
-
-        self.bnb_config = BitsAndBytesConfig(
-            load_in_4bit=use_4bit,
-            #bnb_4bit_quant_type=bnb_4bit_quant_type,
-            bnb_4bit_compute_dtype=compute_dtype,
-            #bnb_4bit_use_double_quant=use_nested_quant,
-        )
+        self.quantized_model_url = None
+        self.quantized_revision = "main"
 
         return None
     
     def setup_language_model(self):
+        if self.quantized_model_url is None:
+            self.quantized_model_url = self.model_url
+
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_url, token= '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', use_fast=True)
         if self.use_cuda and self.use_quantization:
-            self.tokenizer = AutoTokenizer.from_pretrained(self.model_url, token= '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')
-            self.model = AutoModelForCausalLM.from_pretrained(self.model_url, 
+            self.model = AutoModelForCausalLM.from_pretrained(self.quantized_model_url, revision=self.quantized_revision,
             token= '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',
-            quantization_config=self.bnb_config,
             device_map = 'auto'
             )
         elif self.use_cuda and not self.use_quantization:
-            self.tokenizer = AutoTokenizer.from_pretrained(self.model_url, token= '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')
             self.model = AutoModelForCausalLM.from_pretrained(self.model_url, token= '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', device_map='auto')
         else:
-            self.tokenizer = AutoTokenizer.from_pretrained(self.model_url, token= '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')
             self.model = AutoModelForCausalLM.from_pretrained(self.model_url, token= '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')
     
     def get_start_token(self):

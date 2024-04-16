@@ -1,5 +1,5 @@
 from Constraint import Constraint
-from SongUtils import  get_syllable_count_of_sentence, does_string_contain_newline
+from SongUtils import  get_syllable_count_of_sentence, does_string_contain_newline, only_adds_regular_characters, last_word_only_has_consontants
 import torch
 ################################################ CONSTRAINT CLASS ################################################
 
@@ -83,8 +83,8 @@ class SyllableConstraintLBL(Constraint):
         # if self.syllable_amount_prompt is None:
         #     raise Exception('Syllable amount prompt not set')
         next_token_tensor = torch.tensor([next_token.item()], device = next_token.device)
-        candidate_text = self.tokenizer.decode(torch.cat([input_ids, next_token_tensor], dim=0))
-        current_token_text = self.tokenizer.decode(next_token)
+        candidate_text = self.tokenizer.decode(torch.cat([input_ids, next_token_tensor], dim=0), skip_special_tokens=True)
+        current_token_text = self.tokenizer.decode(next_token, skip_special_tokens=True)
         # candidate_text = previous_text + current_token_text
 
         last_line = candidate_text[len(self.original_prompt):]
@@ -128,7 +128,8 @@ class SyllableConstraintLBL(Constraint):
             if last_line.endswith(self.eos_string):
                 last_line = last_line.replace(self.eos_string, '')
             sum = get_syllable_count_of_sentence(last_line)
-            if sum >=self.new_syllable_amount:
+            last_token = input[-1].item()
+            if sum >=self.new_syllable_amount or last_token == self.tokenizer.eos_token_id:
                 #print('sum: ',sum, 'sentence: ', sentences[len(self.original_prompt):])
                 result.append(True)
             else:
@@ -182,12 +183,39 @@ class SyllableConstraintLBL(Constraint):
                     candidate_text = self.tokenizer.decode(torch.cat([input, next_token_tensor], dim=0), skip_special_tokens=True)
                     syllable_count = get_syllable_count_of_sentence(candidate_text[len(self.original_prompt):])
                     if syllable_count <= self.new_syllable_amount and not does_string_contain_newline(candidate_text[len(self.original_prompt):]):
-                        scores[i][token] = score
+                        if syllable_count == self.new_syllable_amount and not last_word_only_has_consontants(candidate_text[len(self.original_prompt):]):
+                            scores[i][token] = score
+                        else:
+                            scores[i][token] = score
                     
                 
                 for token in self.special_new_line_tokens:
                     scores[i][token] = torch.finfo(scores.dtype).min
                 scores[i][self.tokenizer.eos_token_id] = torch.finfo(scores.dtype).min
+            elif sum == self.new_syllable_amount:
+                best_scores, best_tokens = scores[i].topk(2)
+                if best_scores[0].item() == float('-inf'):
+                    scores[i][self.tokenizer.eos_token_id] = torch.tensor(-1, device = scores.device)
+                
+                scores[i] = abs(scores[i])*torch.finfo(scores.dtype).min
+
+                activated = False
+
+                #print(best_scores)
+                for score, token in zip(best_scores, best_tokens):
+                    next_token_tensor = torch.tensor([token], device = scores[i].device)
+                    candidate_text = self.tokenizer.decode(torch.cat([input, next_token_tensor], dim=0), skip_special_tokens=True)
+                    syllable_count = get_syllable_count_of_sentence(candidate_text[len(self.original_prompt):])
+                    if syllable_count <= self.new_syllable_amount and not does_string_contain_newline(candidate_text[len(self.original_prompt):]) and only_adds_regular_characters(last_line,candidate_text[len(self.original_prompt):]):
+                        scores[i][token] = score
+                        #print(last_line,candidate_text[len(self.original_prompt):])
+                        activated = True 
+
+                
+                if not activated:
+                    scores[i][self.tokenizer.eos_token_id] = torch.tensor(-1, device = scores.device)
+
+
             else:
                 eos_score = scores[i][self.tokenizer.eos_token_id]
                 scores[i] = abs(scores[i])*torch.finfo(scores.dtype).min

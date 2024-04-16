@@ -4,8 +4,9 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 class Gemma7BIt(LM):
     def __init__(self,  use_quantization=False, use_cuda=True):
         super().__init__(use_quantization, use_cuda)
-        self.model_url = "google/gemma-7b-it"
+        self.model_url = "google/gemma-1.1-7b-it"
         self.setup_language_model()
+
         self.name = 'Gemma 7B It'
         return None
     

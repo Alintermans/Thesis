@@ -5,6 +5,7 @@ class Llama2_70B(LM):
     def __init__(self,  use_quantization=False, use_cuda=True):
         super().__init__(use_quantization, use_cuda)
         self.model_url = "meta-llama/Llama-2-70b-hf"
+        self.quantized_model_url = "TheBloke/Llama-2-70B-AWQ"
         self.setup_language_model()
         self.name = 'Llama 2 70B'
         return None

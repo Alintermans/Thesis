@@ -199,20 +199,18 @@ def cleanup_line(line):
     line = line.replace("  ", " ")
     line = line.replace("  ", " ")
     line = line.lower()
+    if line.startswith("i "):
+        line = line.replace("i ", "I ")
     line= line.replace(" i ", " I ")
     line = line.replace(" i'", " I'")
+    line = line.replace(",,", ",")
 
     #delete all non regular characters
     line = ''.join(e for e in line if e.isalnum() or e in [" ", "'", "-", ",", ".", "!", "?", ";", ":", "(", ")"])
 
     return line
 
-def only_adds_regular_characters(original_line, new_line):
-    new_line = new_line.replace("’", "'")
-    original_line = original_line.replace("’", "'")
-    original_line = ''.join(e for e in original_line if e.isalnum() )
-    new_line = ''.join(e for e in new_line if e.isalnum() )
-    return original_line != new_line
+
 
 
 def get_song_structure(song_in_paragraphs):
@@ -246,6 +244,24 @@ def process_parody(parody, song_structure):
 
 ################################################## SYLLABLE COUNTER FUNCTIONS ##################################################
 
+def only_adds_regular_characters(original_line, new_line):
+    new_line = new_line.replace("’", "'")
+    original_line = original_line.replace("’", "'")
+    original_line = ''.join(e for e in original_line if e.isalnum() )
+    new_line = ''.join(e for e in new_line if e.isalnum() )
+    return original_line != new_line
+
+def last_word_only_has_consontants(line):
+    line = line.replace("’", "'")
+    words = line.split(" ")
+    if words == []:
+        return False
+    if words[-1] == "":
+        words = words[:-1]
+        if words == []:
+            return False
+    word = words[-1]
+    return not any(e in ['a','e','i','o','u'] for e in word)
 
 
 
@@ -826,6 +842,11 @@ def rhyming_words_to_tokens_and_syllable_count(tokenizer, rhyming_words, start_t
 ################################################## POS TAGGING FUNCTIONS ##################################################
 
 def get_pos_tags_of_line(line):
+    line = line.replace("’", "'")
+    #remove all signs that don't belong to a word
+    line = ''.join(e for e in line if e.isalnum() or e in [" ", "'"])
+
+
     words = nltk.word_tokenize(line, language='english', preserve_line=False)
     tags = nltk.pos_tag(words, tagset='universal')
 
@@ -989,8 +1010,9 @@ if __name__ == "__main__":
     #create_rhyming_dicts()
     load_rhyming_dicts()
 
-    # pron_1 = get_pronounciation_of_word("world")
-    # pron_2 = get_pronounciation_of_word("word")
+    # pron_1 = get_pronounciation_of_word("paddle")
+    # pron_2 = get_pronounciation_of_word("mull")
+    # print(pron_1, pron_2)
 
     # print(do_two_end_phon_seq_near_rhyme(pron_1, pron_2))
     #print(get_near_rhyming_words("ought"))
@@ -1000,5 +1022,6 @@ if __name__ == "__main__":
     # print(_do_two_words_rhyme("dream", "ims", "assonant"))
     #print(get_assonant_rhyming_words("Great"))
     #print(cleanup_line("now in 300 kitchen, I chills alone �"))
-    print(only_adds_regular_characters("I'm a test sentenc", "I'm a test sentenc've"))
+    #print(only_adds_regular_characters("I'm a test sentenc", "I'm a test sentenc've"))
+    print(last_word_only_has_consontants("I'm a tset-? "))
     
