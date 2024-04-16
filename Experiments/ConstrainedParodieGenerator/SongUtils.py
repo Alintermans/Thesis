@@ -330,6 +330,7 @@ def count_syllables_hard(word):
 
 def get_syllable_count_of_sentence(sentence):
     sentence = sentence.replace("’", "'")
+    sentence = cleanup_line(sentence)
     words = tokenize_sentence(sentence)
     result = sum(count_syllables(word) for word in words)
     return result
