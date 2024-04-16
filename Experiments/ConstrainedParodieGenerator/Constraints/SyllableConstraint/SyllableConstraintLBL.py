@@ -102,10 +102,10 @@ class SyllableConstraintLBL(Constraint):
         if next_score != next_score:
             next_score = torch.tensor(0.0, device=next_score.device)
         
-        if result > self.new_syllable_amount or (result == self.new_syllable_amount and get_syllable_count_of_sentence(current_token_text) == 0) or does_string_contain_newline(last_line):
+        # if result > self.new_syllable_amount or (result == self.new_syllable_amount and get_syllable_count_of_sentence(current_token_text) == 0) or does_string_contain_newline(last_line):
             
-            next_score = next_score + next_score*self.bad_beamscore_multiplier
-            #next_score = float('-inf')
+        #     next_score = next_score + next_score*self.bad_beamscore_multiplier
+        #     #next_score = float('-inf')
         elif result == self.new_syllable_amount:
             next_score = next_score - next_score*self.good_beamscore_multiplier
             #print("next score=", next_score)

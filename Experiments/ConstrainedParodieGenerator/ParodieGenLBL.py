@@ -417,6 +417,7 @@ if(__name__ == '__main__'):
         do_sample=True, 
         top_p=0.95, 
         temperature=0.7, 
+        #temperature=float(2),
         num_beams=2, 
         seed=42, 
         syllable_constrained = True,
