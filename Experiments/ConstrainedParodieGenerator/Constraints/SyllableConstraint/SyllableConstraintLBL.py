@@ -1,5 +1,5 @@
 from Constraint import Constraint
-from SongUtils import  get_syllable_count_of_sentence, does_string_contain_newline, only_adds_regular_characters, last_word_only_has_consontants
+from SongUtils import  get_syllable_count_of_sentence, does_string_contain_newline, only_adds_regular_characters, last_word_only_has_consontants, candidate_text[len(self.original_prompt):]
 import torch
 ################################################ CONSTRAINT CLASS ################################################
 
@@ -183,7 +183,7 @@ class SyllableConstraintLBL(Constraint):
                     candidate_text = self.tokenizer.decode(torch.cat([input, next_token_tensor], dim=0), skip_special_tokens=True)
                     syllable_count = get_syllable_count_of_sentence(candidate_text[len(self.original_prompt):])
                     if syllable_count <= self.new_syllable_amount and not does_string_contain_newline(candidate_text[len(self.original_prompt):]):
-                        if syllable_count == self.new_syllable_amount and not last_word_only_has_consontants(candidate_text[len(self.original_prompt):]):
+                        if syllable_count == self.new_syllable_amount and not last_word_only_has_consontants(candidate_text[len(self.original_prompt):]) and does_not_contain_special_characters(candidate_text[len(self.original_prompt):]):
                             scores[i][token] = score
                         else:
                             scores[i][token] = score

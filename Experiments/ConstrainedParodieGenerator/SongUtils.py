@@ -251,6 +251,11 @@ def only_adds_regular_characters(original_line, new_line):
     new_line = ''.join(e for e in new_line if e.isalnum() )
     return original_line != new_line
 
+def does_not_contain_special_characters(line):
+    line = line.replace("’", "'")
+    line = ''.join(e for e in line if e.isalnum() or e in [" ", "'"])
+    return line != line
+
 def last_word_only_has_consontants(line):
     line = line.replace("’", "'")
     words = line.split(" ")
