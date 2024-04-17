@@ -328,7 +328,7 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
             parodie += "\n"
         parodie = process_parody(parodie, original_structure)
     except Exception as e:
-        raise Exception(e)
+        #raise Exception(e)
         print("Error has occured ", e)
         state = "Error has occured " + str(e) + "\n" + "Not finished correctly"
         parodie += "\n\n" + "[ERROR]: Not finished correctly" + "\n\n"
@@ -404,6 +404,7 @@ if(__name__ == '__main__'):
     rhyming_constraint_hyperparameters = RhymingConstraintLBL.hyperparameters_config(max_possible_syllable_count=2, good_beamscore_multiplier_same_rhyme_type=0.95, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=10, rhyme_type='perfect', frequent_words=True)
     pos_constraint_hyperparameters = PosConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.1, good_token_multiplier=0.6, limit_of_pos_similarity_to_satisfy_constraint=0.5, top_k_tokens_to_consider=200)
 
+    
     
 
     generate_parody(
