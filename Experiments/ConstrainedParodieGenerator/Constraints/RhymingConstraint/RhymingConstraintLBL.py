@@ -16,7 +16,7 @@ class RhymingConstraintLBL(Constraint):
         self.start_token = start_token
         self.disable_constraint = False
 
-        load_rhyming_dicts()
+        
         
         ## Hyperparameters
         self.max_possible_syllable_count = None
@@ -24,6 +24,7 @@ class RhymingConstraintLBL(Constraint):
         self.good_rhyming_token_multiplier = None
         self.top_k_rhyme_words = None
         self.rhyme_type = None
+        self.frequent_words = False
         
 
         
@@ -35,7 +36,8 @@ class RhymingConstraintLBL(Constraint):
                 'good_beamscore_multiplier_same_rhyme_type': self.good_beamscore_multiplier_same_rhyme_type,
                 'good_rhyming_token_multiplier': self.good_rhyming_token_multiplier,
                 'top_k_rhyme_words': self.top_k_rhyme_words,
-                'rhyme_type': self.rhyme_type
+                'rhyme_type': self.rhyme_type,
+                'frequent_words': self.frequent_words
             }
         }
 
@@ -43,13 +45,14 @@ class RhymingConstraintLBL(Constraint):
         return 'RhymingConstraintLBL'
     
     @staticmethod
-    def hyperparameters_config(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=100, rhyme_type='perfect'):
+    def hyperparameters_config(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.95, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=100, rhyme_type='perfect', frequent_words=False):
         return {
             'max_possible_syllable_count': max_possible_syllable_count,
             'good_beamscore_multiplier_same_rhyme_type': good_beamscore_multiplier_same_rhyme_type,
             'good_rhyming_token_multiplier': good_rhyming_token_multiplier,
             'top_k_rhyme_words': top_k_rhyme_words,
-            'rhyme_type': rhyme_type
+            'rhyme_type': rhyme_type,
+            'frequent_words': frequent_words
         }
     
     def set_hyperparameters(self, config):
@@ -58,6 +61,9 @@ class RhymingConstraintLBL(Constraint):
         self.good_rhyming_token_multiplier = config['good_rhyming_token_multiplier']
         self.top_k_rhyme_words = config['top_k_rhyme_words']
         self.rhyme_type = config['rhyme_type']
+        self.frequent_words = config['frequent_words']
+
+        load_rhyming_dicts(self.frequent_words)
     
     def disable(self):
         self.disable_constraint = True

@@ -196,8 +196,7 @@ def cleanup_line(line):
     #remove al leading and trailing spaces
     line = line.strip()
     line = line.replace("’", "'")
-    line = line.replace("  ", " ")
-    line = line.replace("  ", " ")
+    line = " ".join(line.split())
     line = line.lower()
     if line.startswith("i "):
         line = line.replace("i ", "I ")
@@ -406,10 +405,10 @@ def create_rhyming_dicts():
     global INVERTED_ASSONANT_RHYMES_DICT
     perf_rhymes = {}
     assonant_rhymes = {}
-    frequents_words = get_top_frequent_words()
+    #frequents_words = get_top_frequent_words()
     for word, prons in d.items():
-        if word not in frequents_words:
-            continue
+        # if word not in frequents_words:
+        #     continue
         perf_rhymes[word] = []
         assonant_rhymes[word] = []
         for pron in prons:
@@ -480,22 +479,40 @@ def create_rhyming_dicts():
 
 
 
-def load_rhyming_dicts():
+def load_rhyming_dicts(use_frequent_words = False):
     global PERF_RHYMES_DICT
     global ASSONANT_RHYMES_DICT
     global NEAR_RHYME_CLASSES
     global INVERTED_PERF_RHYMES_DICT
     global INVERTED_ASSONANT_RHYMES_DICT
-    with open(folder_path_rhyming_dicts + 'perf_rhymes.pkl', 'rb') as f:
-        perf_rhymes = pickle.load(f)
-    with open(folder_path_rhyming_dicts + 'assonant_rhymes.pkl', 'rb') as f:
-        assonant_rhymes = pickle.load(f)
-    with open(folder_path_rhyming_dicts + 'near_rhyme_classes.pkl', 'rb') as f:
-        near_rhyme_classes = pickle.load(f)
-    with open(folder_path_rhyming_dicts + 'inverted_perf_rhymes.pkl', 'rb') as f:
-        inverted_perf_rhymes = pickle.load(f)
-    with open(folder_path_rhyming_dicts + 'inverted_assonant_rhymes.pkl', 'rb') as f:
-        inverted_assonant_rhymes = pickle.load(f)
+    perf_rhymes = None
+    assonant_rhymes = None
+    near_rhyme_classes = None
+    inverted_perf_rhymes = None
+    inverted_assonant_rhymes = None
+    if use_frequent_words:
+        folder_path_rhyming_dicts_frequent = folder_path_rhyming_dicts + "frequent_top_words/"
+        with open(folder_path_rhyming_dicts_frequent + 'perf_rhymes.pkl', 'rb') as f:
+            perf_rhymes = pickle.load(f)
+        with open(folder_path_rhyming_dicts_frequent + 'assonant_rhymes.pkl', 'rb') as f:
+            assonant_rhymes = pickle.load(f)
+        with open(folder_path_rhyming_dicts_frequent + 'near_rhyme_classes.pkl', 'rb') as f:
+            near_rhyme_classes = pickle.load(f)
+        with open(folder_path_rhyming_dicts_frequent + 'inverted_perf_rhymes.pkl', 'rb') as f:
+            inverted_perf_rhymes = pickle.load(f)
+        with open(folder_path_rhyming_dicts_frequent + 'inverted_assonant_rhymes.pkl', 'rb') as f:
+            inverted_assonant_rhymes = pickle.load(f)
+    else:
+        with open(folder_path_rhyming_dicts + 'perf_rhymes.pkl', 'rb') as f:
+            perf_rhymes = pickle.load(f)
+        with open(folder_path_rhyming_dicts + 'assonant_rhymes.pkl', 'rb') as f:
+            assonant_rhymes = pickle.load(f)
+        with open(folder_path_rhyming_dicts + 'near_rhyme_classes.pkl', 'rb') as f:
+            near_rhyme_classes = pickle.load(f)
+        with open(folder_path_rhyming_dicts + 'inverted_perf_rhymes.pkl', 'rb') as f:
+            inverted_perf_rhymes = pickle.load(f)
+        with open(folder_path_rhyming_dicts + 'inverted_assonant_rhymes.pkl', 'rb') as f:
+            inverted_assonant_rhymes = pickle.load(f)
     PERF_RHYMES_DICT = perf_rhymes
     ASSONANT_RHYMES_DICT = assonant_rhymes
     NEAR_RHYME_CLASSES = near_rhyme_classes
@@ -1026,21 +1043,22 @@ if __name__ == "__main__":
     #test_syllable_counter_functions()
     #print("All tests passed")
     #create_rhyming_dicts()
-    load_rhyming_dicts()
+    load_rhyming_dicts(use_frequent_words=True)
 
     # pron_1 = get_pronounciation_of_word("paddle")
     # pron_2 = get_pronounciation_of_word("mull")
     # print(pron_1, pron_2)
 
     # print(do_two_end_phon_seq_near_rhyme(pron_1, pron_2))
-    print(get_assonant_rhyming_words("ought"))
+    print(get_perfect_rhyming_words("ought"))
     #print(get_pos_tags_of_line("It is "))
     #print(get_syllable_count_of_sentence("thepie"))
     
     # print(_do_two_words_rhyme("dream", "ims", "assonant"))
     #print(get_assonant_rhyming_words("Great"))
-    #print(cleanup_line("now in 300 kitchen, I chills alone �"))
+    #print(cleanup_line("now in  300 kitchen,                     I chills alone �"))
     #print(only_adds_regular_characters("I'm a test sentenc", "I'm a test sentenc've"))
     #print(get_syllable_count_of_sentence("Let's fast forward to three hundred takeout coffees later"))
     #print(get_top_frequent_words())
+
     
