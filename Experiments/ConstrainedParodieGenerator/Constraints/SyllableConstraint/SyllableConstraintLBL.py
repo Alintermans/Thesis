@@ -32,24 +32,24 @@ class SyllableConstraintLBL(Constraint):
         return {
             self.get_name(): {
                 'good_beamscore_multiplier': self.good_beamscore_multiplier,
-                'bad_beamscore_multiplier': self.bad_beamscore_multiplier,
+                #'bad_beamscore_multiplier': self.bad_beamscore_multiplier,
                 'top_k_tokens_to_consider': self.top_k_tokens_to_consider,
                 'all_beams_have_syllable_amount': self.all_beams_have_syllable_amount
             }
         }
 
     @staticmethod
-    def hyperparameters_config(good_beamscore_multiplier=0.1, bad_beamscore_multiplier=10, top_k_tokens_to_consider=30, all_beams_have_syllable_amount=False):
+    def hyperparameters_config(good_beamscore_multiplier=0.1, top_k_tokens_to_consider=30, all_beams_have_syllable_amount=False):
         return {
             'good_beamscore_multiplier': good_beamscore_multiplier,
-            'bad_beamscore_multiplier': bad_beamscore_multiplier,
+            #'bad_beamscore_multiplier': bad_beamscore_multiplier,
             'top_k_tokens_to_consider': top_k_tokens_to_consider,
             'all_beams_have_syllable_amount': all_beams_have_syllable_amount
         }
 
     def set_hyperparameters(self, config):
         self.good_beamscore_multiplier = config['good_beamscore_multiplier']
-        self.bad_beamscore_multiplier = config['bad_beamscore_multiplier']
+       #self.bad_beamscore_multiplier = config['bad_beamscore_multiplier']
         self.top_k_tokens_to_consider = config['top_k_tokens_to_consider']
         self.all_beams_have_syllable_amount = config['all_beams_have_syllable_amount']
 
