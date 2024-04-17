@@ -387,7 +387,16 @@ NEAR_RHYME_CLASSES = None
 INVERTED_PERF_RHYMES_DICT = None
 INVERTED_ASSONANT_RHYMES_DICT = None
 
-
+def get_top_frequent_words():
+    file_path = 'Experiments/ConstrainedParodieGenerator/Constraints/RhymingConstraint/Most_frequent_english_words/frequents_words.txt'
+    with open(file_path, 'r') as f:
+        text = f.readlines()
+    words = []
+    for line in text:
+        line = line.strip()
+        line = line.replace("\n", "")
+        words += line.split(" ")
+    return words
 
 def create_rhyming_dicts():
     global PERF_RHYMES_DICT
@@ -397,7 +406,10 @@ def create_rhyming_dicts():
     global INVERTED_ASSONANT_RHYMES_DICT
     perf_rhymes = {}
     assonant_rhymes = {}
+    frequents_words = get_top_frequent_words()
     for word, prons in d.items():
+        if word not in frequents_words:
+            continue
         perf_rhymes[word] = []
         assonant_rhymes[word] = []
         for pron in prons:
@@ -1021,7 +1033,7 @@ if __name__ == "__main__":
     # print(pron_1, pron_2)
 
     # print(do_two_end_phon_seq_near_rhyme(pron_1, pron_2))
-    #print(get_near_rhyming_words("ought"))
+    print(get_assonant_rhyming_words("ought"))
     #print(get_pos_tags_of_line("It is "))
     #print(get_syllable_count_of_sentence("thepie"))
     
@@ -1029,5 +1041,6 @@ if __name__ == "__main__":
     #print(get_assonant_rhyming_words("Great"))
     #print(cleanup_line("now in 300 kitchen, I chills alone �"))
     #print(only_adds_regular_characters("I'm a test sentenc", "I'm a test sentenc've"))
-    print(get_syllable_count_of_sentence("Let's fast forward to three hundred takeout coffees later"))
+    #print(get_syllable_count_of_sentence("Let's fast forward to three hundred takeout coffees later"))
+    #print(get_top_frequent_words())
     
