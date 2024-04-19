@@ -1,8 +1,6 @@
 Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song.
 Original song:
 {{$SONG}}
-
 Already generated parody:
 {{$PARODY}}
-
 The next line, you will write,  needs to have {{$SYLLABLE_AMOUNT}} syllables, and rhyme with {{$RHYMING_WORD}} (If its None, no end rhyme word is needed), and have the following POS-tag sequence: {{$POS_TAGS}}. 
