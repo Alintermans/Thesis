@@ -24,7 +24,11 @@ class Llama2_70B(LM):
     
     def prepare_prompt(self, system_prompt, context_prompt, assistant_prompt):
 
-        prompt = system_prompt + '\n' + context_prompt + '\n' + assistant_prompt
+        prompt = system_prompt + '\n' + context_prompt 
+        if assistant_prompt != '':
+            prompt += '\n' + assistant_prompt
+            if not prompt.endswith("\n"):
+                prompt += "\n"
         tokenized_prompt = self.tokenizer.encode(prompt, return_tensors="pt")   
         
         return prompt, tokenized_prompt

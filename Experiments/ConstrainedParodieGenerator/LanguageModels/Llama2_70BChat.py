@@ -25,8 +25,7 @@ class Llama2_70BChat(LM):
     def prepare_prompt(self, system_prompt, context_prompt, assistant_prompt):
         messages = [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": context_prompt},
-            {"role": "assistant", "content": assistant_prompt}
+            {"role": "user", "content": context_prompt}
         ]
 
         untokenized_prompt =  self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, return_tensors="pt")

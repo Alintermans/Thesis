@@ -185,6 +185,9 @@ def replace_content_for_prompts(system, context, assistant_prompt, parody, song,
         result[i] = result[i].replace("{{$PARODY}}", parody)
         if rhyming_word is not None:
             result[i] = result[i].replace("{{$RHYMING_WORD}}", rhyming_word)
+        else: 
+            result[i] = result[i].replace("{{$RHYMING_WORD}}", "None")
+        
         if pos_tags is not None:
             result[i] = result[i].replace("{{$POS_TAGS}}", ", ".join(str(element) for element in pos_tags))
         if syllable_amount is not None:
