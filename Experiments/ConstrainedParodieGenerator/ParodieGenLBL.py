@@ -195,7 +195,7 @@ def generate_line(prompt, input_ids, **kwargs):
                     
                 ]
             )
-            start_time = time.time()
+            
             outputs = model.beam_sample(
                 prepared_input_ids,
                 beam_scorer=beam_scorer,
@@ -212,7 +212,7 @@ def generate_line(prompt, input_ids, **kwargs):
                 use_cache=True,
                 renormalize_logits=True
             )
-            print("Time taken for one line: ", time.time()-start_time)
+            
         else:
             outputs = model.beam_search(
                 prepared_input_ids,
@@ -297,7 +297,7 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
             kwargs['top_p'] = 0.95
         if kwargs.get('temperature') is None:
             kwargs['temperature'] = 0.7
-
+    start_time = time.time()
     try: 
         for paragraph in song_in_paragraphs:
             rhyming_lines = rhyming_constraint.get_rhyming_lines(paragraph[1])
@@ -357,7 +357,7 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
         constraints_used += "POS Constraint | "
         chosen_hyper_parameters.update(pos_constraint.get_hyperparameters_in_dict())
 
-
+    generation_duration = round(time.time() - start_time, 2)
 
     folder_path_for_generated_parodies = kwargs.get('folder_path_for_generated_parodies', 'Experiments/ConstrainedParodieGenerator/GeneratedParodies/')
 
@@ -373,6 +373,7 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
                 chosen_hyper_parameters =chosen_hyper_parameters,
                 num_beams = kwargs['num_beams'],
                 seed = kwargs['seed'],
+                duration = generation_duration,
                 language_model_name = lm.get_name(),
                 state = state,
                 way_of_generation = "Line by Line",

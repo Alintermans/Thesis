@@ -88,6 +88,7 @@ def write_song(folder_path, **kwargs):
     chosen_hyper_parameters = kwargs['chosen_hyper_parameters']
     num_beams = kwargs['num_beams']
     seed = kwargs['seed']
+    duration = kwargs['duration']
 
     date_today = date.today().strftime("%d-%m-%Y")
     time = datetime.now().strftime("%Hh-%Mm-%Ss")
@@ -140,6 +141,7 @@ def write_song(folder_path, **kwargs):
         "state": state,
         "date": date_today,
         "time": time,
+        "generation_duration": duration,
         "parodie": parodie
     }
 
