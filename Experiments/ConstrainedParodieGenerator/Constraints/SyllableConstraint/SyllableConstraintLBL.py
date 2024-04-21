@@ -243,12 +243,14 @@ class SyllableConstraintLBL(Constraint):
         sum = get_syllable_count_of_sentence(last_line)
         scores[self.tokenizer.bos_token_id] = torch.finfo(scores.dtype).min
         if sum < self.new_syllable_amount:
+            prev_scores = scores.clone()
+            scores = abs(scores)*torch.finfo(scores.dtype).min
 
             for i in range(len(best_tokens)):
                 token = best_tokens[i]
-                score = scores[i]
-                scores[i] = abs(scores[i])*torch.finfo(scores.dtype).min
+                score = prev_scores[token]
                 new_line = new_lines[i]
+                print(new_line)
                 syllable_count = get_syllable_count_of_sentence(new_line)
                 if syllable_count <= self.new_syllable_amount and not does_string_contain_newline(new_line)and does_not_contain_special_characters(new_line):
                     if syllable_count == self.new_syllable_amount:
