@@ -83,7 +83,7 @@ def generate_parody(**kwargs):
         prepared_system_prompt, prepared_context_prompt, prepared_assistant_prompt = replace_content_for_prompts(system_prompt, context_prompt, assistant_prompt, parodie, song, "", "", 0, "")
         prompt, tokenized_prompt = lm.prepare_prompt(prepared_system_prompt, prepared_context_prompt, prepared_assistant_prompt)
         tokenized_prompt = tokenized_prompt.to(model.device)
-        parodie = model.generate(tokenized_prompt, do_sample=kwargs['do_sample'], top_p=kwargs['top_p'], temperature=kwargs['temperature'], num_beams=kwargs['num_beams'],no_repeat_ngram_size=1, max_length=4096, pad_token_id=tokenizer.eos_token_id, use_cache=True)
+        parodie = model.generate(tokenized_prompt, do_sample=kwargs['do_sample'], top_p=kwargs['top_p'], temperature=kwargs['temperature'], num_beams=kwargs['num_beams'],repetition_penalty=1.2, max_length=4096, pad_token_id=tokenizer.pad_token_id, use_cache=True)
         parodie = tokenizer.decode(parodie[0], skip_special_tokens=True)[len(prompt):]
 
 

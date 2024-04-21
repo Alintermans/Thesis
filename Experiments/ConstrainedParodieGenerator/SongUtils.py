@@ -205,6 +205,7 @@ def cleanup_line(line):
         line = line.replace("i ", "I ")
     line= line.replace(" i ", " I ")
     line = line.replace(" i'", " I'")
+    line = line.replace("i'", "I'")
     line = line.replace(",,", ",")
 
     #delete all non regular characters

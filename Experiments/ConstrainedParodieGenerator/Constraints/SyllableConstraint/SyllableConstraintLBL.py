@@ -225,6 +225,73 @@ class SyllableConstraintLBL(Constraint):
 
 
         return scores
+    
+
+
+    def apply_optimzed_logit_processor(self, input_ids, scores, best_tokens, last_line, new_lines):
+        if self.disable_constraint:
+            return scores
+
+        if self.new_syllable_amount is None:
+            raise Exception('Syllable amount not set')
+        
+        new_line_token = self.new_line_tokens
+
+       
+        if last_line.endswith(self.eos_string):
+            last_line = last_line.replace(self.eos_string, '')
+        sum = get_syllable_count_of_sentence(last_line)
+        scores[self.tokenizer.bos_token_id] = torch.finfo(scores.dtype).min
+        if sum < self.new_syllable_amount:
+
+            for i in range(len(best_tokens)):
+                token = best_tokens[i]
+                score = scores[i]
+                scores[i] = abs(scores[i])*torch.finfo(scores.dtype).min
+                new_line = new_lines[i]
+                syllable_count = get_syllable_count_of_sentence(new_line)
+                if syllable_count <= self.new_syllable_amount and not does_string_contain_newline(new_line)and does_not_contain_special_characters(new_line):
+                    if syllable_count == self.new_syllable_amount:
+                        if not last_word_only_has_consontants(new_line):
+                            scores[token] = score
+                    else:
+                        scores[token] = score
+                
+            
+            for token in self.special_new_line_tokens:
+                scores[token] = torch.finfo(scores.dtype).min
+            scores[self.tokenizer.eos_token_id] = torch.finfo(scores.dtype).min
+        elif sum == self.new_syllable_amount:
+            best_scores, best_tokens = scores.topk(2)
+            if best_scores[0].item() == float('-inf'):
+                scores[self.tokenizer.eos_token_id] = torch.tensor(-1, device = scores.device)
+            
+            scores = abs(scores)*torch.finfo(scores.dtype).min
+
+            activated = False
+
+            for score, token in zip(best_scores, best_tokens):
+                index = torch.where(best_tokens == token)[0].item()
+                new_line = new_lines[index]
+                syllable_count = get_syllable_count_of_sentence(new_line)
+                if syllable_count <= self.new_syllable_amount and not does_string_contain_newline(new_line) and only_adds_regular_characters(last_line,new_line):
+                    scores[token] = score
+                    #print(last_line,candidate_text[len(self.original_prompt):])
+                    activated = True 
+
+            
+            if not activated:
+                scores[self.tokenizer.eos_token_id] = torch.tensor(-1, device = scores.device)
+
+
+        else:
+            scores = abs(scores)*torch.finfo(scores.dtype).min
+            scores[self.tokenizer.eos_token_id] = torch.tensor(-1, device = scores.device)
+            
+
+
+        return scores
+
 
 
     def is_constrained_satisfied(self, generated_text):

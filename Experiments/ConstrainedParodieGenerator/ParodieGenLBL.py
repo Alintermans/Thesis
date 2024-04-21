@@ -1,6 +1,7 @@
 from Constraints.SyllableConstraint.SyllableConstraintLBL import SyllableConstraintLBL
 from Constraints.RhymingConstraint.RhymingConstraintLBL import RhymingConstraintLBL
 from Constraints.PosConstraint.PosConstraintLBL import PosConstraintLBL
+from Constraints.OptimizedConstraint import OptimizedConstraint
 from Constraint import ConstraintList
 from PostProcessor import PostProcessor
 from BeamSearchScorerConstrained import BeamSearchScorerConstrained
@@ -21,6 +22,7 @@ from LanguageModels.Mistral8x7BItV01 import Mistral8x7BItV01
 from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens, get_final_word_of_line,get_pos_tags_of_line, replace_content_for_prompts, cleanup_line, get_song_structure, process_parody
 from SongEvaluator import count_same_nb_lines_and_return_same_paragraphs, count_syllable_difference_per_line, count_nb_line_pairs_match_rhyme_scheme, calculate_pos_tag_similarity
 import os
+import time
 
 
 from transformers import (
@@ -29,7 +31,7 @@ from transformers import (
                 MaxLengthCriteria, 
                 LogitsProcessorList, 
                 NoBadWordsLogitsProcessor, 
-                NoRepeatNGramLogitsProcessor,
+                RepetitionPenaltyLogitsProcessor,
                 TopKLogitsWarper,
                 TopPLogitsWarper,
                 TemperatureLogitsWarper,
@@ -56,6 +58,7 @@ logits_processor_list = None
 eos_token_id = None
 pad_token_id = None
 post_processor = None
+optimized_constraint = None
 
 ########## Constants ##########
 
@@ -98,6 +101,7 @@ def set_constraints():
     global logits_processor
     global logits_processor_list
     global post_processor
+    global optimized_constraint
     syllable_constraint = SyllableConstraintLBL(tokenizer, start_token=start_token)
     syllable_constraint.set_special_new_line_tokens(lm.special_new_line_tokens())
 
@@ -109,14 +113,17 @@ def set_constraints():
     forbidden_tokens = forbidden_charachters_to_tokens(tokenizer, forbidden_charachters)
     forbidden_tokens_logit_processor = NoBadWordsLogitsProcessor(forbidden_tokens, eos_token_id=tokenizer.eos_token_id)
 
-    no_ngram_logits_processor = NoRepeatNGramLogitsProcessor(1)
+    repetition_penalty_logits_processor = RepetitionPenaltyLogitsProcessor(1.6)
     ## Combine Constraints
     constraints = ConstraintList([pos_constraint, rhyming_constraint, syllable_constraint])
 
+    optimized_constraint = OptimizedConstraint(constraints, tokenizer, top_k=100)
+
     stopping_criteria_list = constraints.get_stopping_criteria_list() + []
     stopping_criteria = StoppingCriteriaList(stopping_criteria_list)
+    logits_processor_list = constraints.get_logits_processor_list() + [repetition_penalty_logits_processor, forbidden_tokens_logit_processor]
+    #logits_processor_list = [optimized_constraint] + [repetition_penalty_logits_processor, forbidden_tokens_logit_processor]
 
-    logits_processor_list = constraints.get_logits_processor_list() + [no_ngram_logits_processor, forbidden_tokens_logit_processor]
     
 
     ## Initialize Post Processor
@@ -188,7 +195,7 @@ def generate_line(prompt, input_ids, **kwargs):
                     
                 ]
             )
-            
+            start_time = time.time()
             outputs = model.beam_sample(
                 prepared_input_ids,
                 beam_scorer=beam_scorer,
@@ -205,6 +212,7 @@ def generate_line(prompt, input_ids, **kwargs):
                 use_cache=True,
                 renormalize_logits=True
             )
+            print("Time taken for one line: ", time.time()-start_time)
         else:
             outputs = model.beam_search(
                 prepared_input_ids,
@@ -315,7 +323,7 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
                 prompt, tokenized_prompt = lm.prepare_prompt(prepared_system_prompt, prepared_context_prompt, prepared_assistant_prompt)
                 #prompt = system_prompt + context_prompt + "ORIGINAL SONG : \n\n" + song + "\n\nAlready generated PARODIE: \n\n" + parodie
                 syllable_constraint.set_original_prompt(prompt)
-
+                optimized_constraint.set_prompt_length(len(prompt))
                 ##Generate new line
                 
                 new_line = generate_line(prompt, tokenized_prompt, new_syllable_amount=syllable_amount, rhyming_word=rhyming_word, pos_tags=pos_tags, **kwargs)
@@ -328,7 +336,7 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
             parodie += "\n"
         parodie = process_parody(parodie, original_structure)
     except Exception as e:
-        #raise Exception(e)
+        raise Exception(e)
         print("Error has occured ", e)
         state = "Error has occured " + str(e) + "\n" + "Not finished correctly"
         parodie += "\n\n" + "[ERROR]: Not finished correctly" + "\n\n"

@@ -126,6 +126,28 @@ class PosConstraintLBL(Constraint):
                     
         return scores
     
+    def apply_optimzed_logit_processor(self, input_ids, scores, best_tokens, last_line, new_lines):
+        if self.disable_constraint:
+            return scores
+        
+
+        for i  in range(len(best_tokens)):
+            token = best_tokens[i]
+            new_line = new_lines[i]
+            pos_tags_last_line = get_pos_tags_of_line(last_line)
+            #The min length is only ysed for the expected pos tags, because the last line may be shorter than the expected pos tags but dtw can handle multiple lengths, but to esnure a valid score when the full line is being generted, the min length is used to cap the length of the expected pos tags, but when the full length is reached both are compared as is
+            min_length = min(len(pos_tags_last_line), len(self.expected_pos_tags))
+            similarity_of_last_line = similarity_of_pos_tags_sequences(pos_tags_last_line, self.expected_pos_tags[:min_length])
+            pos_tags = get_pos_tags_of_line(new_line)
+            min_length = min(len(pos_tags), len(self.expected_pos_tags))
+            similarity_with_new_token = similarity_of_pos_tags_sequences(pos_tags, self.expected_pos_tags[:min_length])
+            if pos_tags is not None:
+                #print('similarity_with_new_token: ', similarity_with_new_token, 'similarity_of_last_line: ', similarity_of_last_line)
+                if similarity_with_new_token >= similarity_of_last_line:
+                    #print('similarity_with_new_token: ', similarity_with_new_token, 'similarity_of_last_line: ', similarity_of_last_line)
+                    #scores[i][token] = scores[i][token] - scores[i][token]*self.good_token_multiplier*similarity_with_new_token/(max(1-(similarity_with_new_token - similarity_of_last_line), 0.01))
+                    scores[token] = scores[token] - scores[token]*self.good_token_multiplier*similarity_with_new_token
+        return scores
 
     def is_constrained_satisfied(self, generated_text):
         if self.disable_constraint:
