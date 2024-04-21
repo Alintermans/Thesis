@@ -294,7 +294,7 @@ class RhymingConstraintLBL(Constraint):
                 next_token = rhyming_word['tokens'][current_token_index + 1]
                 score = prev_scores[next_token]
                 if not started_with_rhyming_word:
-                    scores = abs(scores[i]) * torch.finfo(scores.dtype).min
+                    scores = abs(scores) * torch.finfo(scores.dtype).min
                     started_with_rhyming_word = True
                 if score.item() == float('-inf'):
                     score = torch.tensor(-1.0, device=score.device)
