@@ -250,7 +250,6 @@ class SyllableConstraintLBL(Constraint):
                 token = best_tokens[i]
                 score = prev_scores[token]
                 new_line = new_lines[i]
-                print(new_line)
                 syllable_count = get_syllable_count_of_sentence(new_line)
                 if syllable_count <= self.new_syllable_amount and not does_string_contain_newline(new_line)and does_not_contain_special_characters(new_line):
                     if syllable_count == self.new_syllable_amount:

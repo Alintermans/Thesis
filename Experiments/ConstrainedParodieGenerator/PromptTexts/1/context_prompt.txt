@@ -1,3 +1,3 @@
-Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song.
+Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song.  Can you make sure to keep the same format as the original song?
 Original song:
 {{$SONG}}
