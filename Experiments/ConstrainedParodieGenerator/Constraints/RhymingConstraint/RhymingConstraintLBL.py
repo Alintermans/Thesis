@@ -329,7 +329,7 @@ class RhymingConstraintLBL(Constraint):
             #print('first token: ', first_token, ' score: ', score + 1*abs(score))
             
             if score.item() != float('-inf'):
-                print(score)
+                #print(score)
                 scores[first_token] = score + self.good_rhyming_token_multiplier*abs(score)
                     
         return scores
