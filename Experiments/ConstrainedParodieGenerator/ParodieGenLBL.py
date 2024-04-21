@@ -121,8 +121,8 @@ def set_constraints():
 
     stopping_criteria_list = constraints.get_stopping_criteria_list() + []
     stopping_criteria = StoppingCriteriaList(stopping_criteria_list)
-    #logits_processor_list = constraints.get_logits_processor_list() + [repetition_penalty_logits_processor, forbidden_tokens_logit_processor]
-    logits_processor_list = [optimized_constraint] + [repetition_penalty_logits_processor, forbidden_tokens_logit_processor]
+    logits_processor_list = constraints.get_logits_processor_list() + [repetition_penalty_logits_processor, forbidden_tokens_logit_processor]
+    #logits_processor_list = [optimized_constraint] + [repetition_penalty_logits_processor, forbidden_tokens_logit_processor]
 
     
 
@@ -408,7 +408,7 @@ if(__name__ == '__main__'):
     
 
     ######### Hyperparameters ##########
-    syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.5, top_k_tokens_to_consider=50, all_beams_have_syllable_amount=True)
+    syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.5, top_k_tokens_to_consider=50, all_beams_have_syllable_amount=False)
     rhyming_constraint_hyperparameters = RhymingConstraintLBL.hyperparameters_config(max_possible_syllable_count=2, good_beamscore_multiplier_same_rhyme_type=0.95, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=10, rhyme_type='perfect', frequent_words=True)
     pos_constraint_hyperparameters = PosConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.1, good_token_multiplier=0.6, limit_of_pos_similarity_to_satisfy_constraint=0.5, top_k_tokens_to_consider=200)
 

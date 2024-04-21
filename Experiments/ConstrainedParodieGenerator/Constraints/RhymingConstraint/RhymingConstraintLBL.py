@@ -1,6 +1,7 @@
 from Constraint import Constraint
 from SongUtils import  rhyming_words_to_tokens_and_syllable_count, load_rhyming_dicts, get_syllable_count_of_sentence, _get_rhyming_words, _get_rhyming_lines, _do_two_words_rhyme, get_final_word_of_line
 import torch
+import time
 ################################################ CONSTRAINT CLASS ################################################
 
 
@@ -156,14 +157,11 @@ class RhymingConstraintLBL(Constraint):
         return False
     
     def logits_processor(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
-        if self.disable_constraint:
+        if self.disable_constraint or self.rhyming_word is None:
             return scores
 
-        if self.rhyming_word is None:
-            return scores
         if self.required_syllable_count is None:
             raise Exception('Required syllable count not set')
-
 
         for i in range(len(input_ids)):
             input = input_ids[i]
@@ -171,78 +169,148 @@ class RhymingConstraintLBL(Constraint):
             last_line = sentence.split('\n')[-1]
             syllable_count = get_syllable_count_of_sentence(last_line)
             syllables_left = self.required_syllable_count - syllable_count
-            
+
             if syllables_left <= 0 or syllables_left > self.max_syllable_count:
                 continue
 
-            #first check if the rhyming word is already initialized and the first token of one of the rhyming words is the last token of the sentence
+            # Precompute whether the input ends with any rhyming word's token
+            ended_with_rhyme_token = any(input[-1].item() == token for word in self.rhyming_words_tokens for token in word['tokens'])
+
+            # Working only if the last token starts a rhyming word
             started_with_rhyming_word = False
             prev_scores = scores[i].clone()
-            for rhyming_word in self.rhyming_words_tokens:
-                if input[-1] in rhyming_word['tokens']:
-                    
-                    current_token_index = rhyming_word['tokens'].index(input[-1])
-                    
-                    #verify the whole word is in the input
-                    # print(input[-current_token_index - 1:])
-                    # print(rhyming_word['tokens'][:current_token_index + 1])
-                    if input[-current_token_index - 1:].tolist() != rhyming_word['tokens'][:current_token_index + 1]:
-                        continue
-                    
-                    
 
-                    input_without_rhyme = input[:len(input)-current_token_index - 1]
-                    text = self.tokenizer.decode(input_without_rhyme, skip_special_tokens=True)
-                    last_line = text.split('\n')[-1]
-                    syllable_count_without_rhyme = get_syllable_count_of_sentence(last_line)
-                    if syllable_count_without_rhyme + rhyming_word['syllable_count'] != self.required_syllable_count:
-                        continue
-                    
-                    if current_token_index + 1 >= len(rhyming_word['tokens']):
-                        if not started_with_rhyming_word:
-                            scores[i] = abs(scores[i]) * torch.finfo(scores.dtype).min
-                            scores[i][self.tokenizer.eos_token_id] = torch.tensor(-1, device = scores.device)
-                        continue
+            if ended_with_rhyme_token:
+                # Handle scenarios where last token is part of a rhyming word
+                for rhyming_word in self.rhyming_words_tokens:
+                    if input[-1] in rhyming_word['tokens']:
+                        current_token_index = rhyming_word['tokens'].index(input[-1])
+                        # Verify if the whole word is in the input
+                        if input[-current_token_index - 1:].tolist() == rhyming_word['tokens'][:current_token_index + 1]:
+                            # Adjust scores based on syllable count
+                            input_without_rhyme = input[:-current_token_index - 1]
+                            text_without_rhyme = self.tokenizer.decode(input_without_rhyme, skip_special_tokens=True).split('\n')[-1]
+                            syllable_count_without_rhyme = get_syllable_count_of_sentence(text_without_rhyme)
+                            if syllable_count_without_rhyme + rhyming_word['syllable_count'] == self.required_syllable_count:
+                                self._update_scores_for_rhyming_word(scores, i, rhyming_word, current_token_index, started_with_rhyming_word, prev_scores)
 
-                    next_token = rhyming_word['tokens'][current_token_index + 1]
-                    score = prev_scores[next_token]
-                    if not started_with_rhyming_word:
-                        scores[i] = abs(scores[i]) * torch.finfo(scores.dtype).min
-                        started_with_rhyming_word = True
-                    scores[i][next_token] = score
+            if not started_with_rhyming_word:
+                # Select and adjust scores for rhyming words that fit the remaining syllables
+                self._adjust_scores_for_rhyme_fit(scores, i, syllables_left, prev_scores)
 
+        return scores
 
-                    
-            if started_with_rhyming_word:
-                continue
-            
-            
-            #get the rhyming words that have the same syllable count as the syllables left
-            rhyming_words_with_syllables_left = [word for word in self.rhyming_words_tokens if word['syllable_count'] == syllables_left]
-            if len(rhyming_words_with_syllables_left) == 0:
-                continue
-            
-            
-            
-            #Sort the rhyming words by their score
-            scores_rhyme_word = [scores[i][word['tokens'][0]] for word in rhyming_words_with_syllables_left]
+    # Helper method to update scores for complete rhyming words
+    def _update_scores_for_rhyming_word(self, scores, index, rhyming_word, token_index, started, prev_scores):
+        if token_index + 1 < len(rhyming_word['tokens']):
+            next_token = rhyming_word['tokens'][token_index + 1]
+            score = prev_scores[next_token]
+            if not started:
+                scores[index] = abs(scores[index]) * torch.finfo(scores.dtype).min
+                started = True
+            scores[index][next_token] = score
+
+    # Helper method to adjust scores based on rhyme fit
+    def _adjust_scores_for_rhyme_fit(self, scores, index, syllables_left, prev_scores):
+        rhyming_words_with_syllables_left = [word for word in self.rhyming_words_tokens if word['syllable_count'] == syllables_left]
+        if rhyming_words_with_syllables_left:
+            scores_rhyme_word = [prev_scores[word['tokens'][0]] for word in rhyming_words_with_syllables_left]
             ordered_rhyming_words = [x for _, x in sorted(zip(scores_rhyme_word, rhyming_words_with_syllables_left), key=lambda pair: pair[0], reverse=True)]
-            
-
-            
-            # #get the rhyming words that have the same syllable count as the syllables left and the first token of one of the rhyming words is the last token of the sentence
             for rhyming_word in ordered_rhyming_words[:self.top_k_rhyme_words]:
                 first_token = rhyming_word['tokens'][0]
-                
-                #if the first token isn't in the best tokens, we continue
                 score = prev_scores[first_token]
-                
-                #print('first token: ', first_token, ' score: ', score + 1*abs(score))
-                
                 if score.item() != float('-inf'):
-                    scores[i][first_token] = score + self.good_rhyming_token_multiplier*abs(score)
+                    scores[index][first_token] = score + self.good_rhyming_token_multiplier * abs(score)
+    
+    # def logits_processor(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
+    #     if self.disable_constraint:
+    #         return scores
+
+    #     if self.rhyming_word is None:
+    #         return scores
+    #     if self.required_syllable_count is None:
+    #         raise Exception('Required syllable count not set')
+
+
+    #     for i in range(len(input_ids)):
+    #         input = input_ids[i]
+    #         sentence = self.tokenizer.decode(input, skip_special_tokens=True)
+    #         last_line = sentence.split('\n')[-1]
+    #         syllable_count = get_syllable_count_of_sentence(last_line)
+    #         syllables_left = self.required_syllable_count - syllable_count
+            
+    #         if syllables_left <= 0 or syllables_left > self.max_syllable_count:
+    #             continue
+
+    #         #first check if the rhyming word is already initialized and the first token of one of the rhyming words is the last token of the sentence
+    #         started_with_rhyming_word = False
+    #         prev_scores = scores[i].clone()
+    #         for rhyming_word in self.rhyming_words_tokens:
+    #             if input[-1] in rhyming_word['tokens']:
                     
-        return scores
+    #                 current_token_index = rhyming_word['tokens'].index(input[-1])
+                    
+    #                 #verify the whole word is in the input
+    #                 # print(input[-current_token_index - 1:])
+    #                 # print(rhyming_word['tokens'][:current_token_index + 1])
+    #                 if input[-current_token_index - 1:].tolist() != rhyming_word['tokens'][:current_token_index + 1]:
+    #                     continue
+                    
+                    
+
+    #                 input_without_rhyme = input[:len(input)-current_token_index - 1]
+    #                 text = self.tokenizer.decode(input_without_rhyme, skip_special_tokens=True)
+    #                 last_line = text.split('\n')[-1]
+    #                 syllable_count_without_rhyme = get_syllable_count_of_sentence(last_line)
+    #                 if syllable_count_without_rhyme + rhyming_word['syllable_count'] != self.required_syllable_count:
+    #                     continue
+                    
+    #                 if current_token_index + 1 >= len(rhyming_word['tokens']):
+    #                     if not started_with_rhyming_word:
+    #                         scores[i] = abs(scores[i]) * torch.finfo(scores.dtype).min
+    #                         scores[i][self.tokenizer.eos_token_id] = torch.tensor(-1, device = scores.device)
+    #                     continue
+
+    #                 next_token = rhyming_word['tokens'][current_token_index + 1]
+    #                 score = prev_scores[next_token]
+    #                 if not started_with_rhyming_word:
+    #                     scores[i] = abs(scores[i]) * torch.finfo(scores.dtype).min
+    #                     started_with_rhyming_word = True
+    #                 scores[i][next_token] = score
+
+
+                    
+    #         if started_with_rhyming_word:
+    #             continue
+            
+            
+    #         #get the rhyming words that have the same syllable count as the syllables left
+    #         rhyming_words_with_syllables_left = [word for word in self.rhyming_words_tokens if word['syllable_count'] == syllables_left]
+    #         if len(rhyming_words_with_syllables_left) == 0:
+    #             continue
+            
+            
+            
+    #         #Sort the rhyming words by their score
+    #         scores_rhyme_word = [scores[i][word['tokens'][0]] for word in rhyming_words_with_syllables_left]
+    #         ordered_rhyming_words = [x for _, x in sorted(zip(scores_rhyme_word, rhyming_words_with_syllables_left), key=lambda pair: pair[0], reverse=True)]
+            
+
+            
+    #         # #get the rhyming words that have the same syllable count as the syllables left and the first token of one of the rhyming words is the last token of the sentence
+    #         for rhyming_word in ordered_rhyming_words[:self.top_k_rhyme_words]:
+    #             first_token = rhyming_word['tokens'][0]
+                
+    #             #if the first token isn't in the best tokens, we continue
+    #             score = prev_scores[first_token]
+                
+    #             #print('first token: ', first_token, ' score: ', score + 1*abs(score))
+                
+    #             if score.item() != float('-inf'):
+    #                 scores[i][first_token] = score + self.good_rhyming_token_multiplier*abs(score)
+                    
+    #     return scores
+
         
     def apply_optimzed_logit_processor(self, input_ids, scores, best_tokens, last_line, new_lines):
         if self.disable_constraint:
