@@ -12,7 +12,7 @@ from Constraints.PosConstraint.PosConstraintLBL import PosConstraintLBL
 
 ## Constants
 GLOBAL_SEED = 42
-POSSIBLE_NUM_BEAMS  = [2,4,8,12,16]
+POSSIBLE_NUM_BEAMS  = [2,5,10,15]
 SONG_DIR = "Songs/json/"
 SYSTEM_PROMPTS = ["Experiments/ConstrainedParodieGenerator/PromptTexts/1/system_prompt.txt", "Experiments/ConstrainedParodieGenerator/PromptTexts/2/system_prompt.txt", "Experiments/ConstrainedParodieGenerator/PromptTexts/3/system_prompt.txt"]
 CONTEXT_PROMPTS = ["Experiments/ConstrainedParodieGenerator/PromptTexts/1/context_prompt.txt", "Experiments/ConstrainedParodieGenerator/PromptTexts/2/context_prompt.txt", "Experiments/ConstrainedParodieGenerator/PromptTexts/3/context_prompt.txt"]
@@ -25,10 +25,8 @@ random.seed(GLOBAL_SEED)
 
 
 def calibrate_syllable_constraint(song_file_path, prompt_nb, language_model):
-    possible_good_beamscore_multipliers_syllable = [0,1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99]
-    possible_bad_beamscore_multipliers_syllable = [0, 2, 4, 6, 8, 10],
-    possible_top_k_tokens_to_consider = [5, 10, 30, 50, 100, 200],
-    possible_all_beams_have_syllable_amount = [True, False]
+    possible_good_beamscore_multipliers_syllable = [ 0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
+    possible_top_k_tokens_to_consider = [200]
 
     folder_path_for_generated_parodies = "Experiments/ConstrainedParodieGenerator/CallibrationExperiments/" + "SyllableConstraint/" + str(prompt_nb)+"/"
     if not os.path.exists(folder_path_for_generated_parodies):
@@ -42,40 +40,37 @@ def calibrate_syllable_constraint(song_file_path, prompt_nb, language_model):
 
     for num_beams in POSSIBLE_NUM_BEAMS:
         for good_beamscore_multiplier_syllable in possible_good_beamscore_multipliers_syllable:
-            for bad_beamscore_multiplier_syllable in possible_bad_beamscore_multipliers_syllable:
-                for top_k_tokens_to_consider in possible_top_k_tokens_to_consider:
-                    for all_beams_have_syllable_amount in possible_all_beams_have_syllable_amount:
-                        
-                        syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=good_beamscore_multiplier_syllable, bad_beamscore_multiplier=bad_beamscore_multiplier_syllable, top_k_tokens_to_consider=top_k_tokens_to_consider, all_beams_have_syllable_amount=all_beams_have_syllable_amount)
+            for top_k_tokens_to_consider in possible_top_k_tokens_to_consider:
+                syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=good_beamscore_multiplier_syllable, top_k_tokens_to_consider=top_k_tokens_to_consider, all_beams_have_syllable_amount=False)
 
-                        generate_parody(
-                        song_file_path= song_file_path, 
-                        system_prompt = system_prompt, 
-                        context_prompt = context_prompt, 
-                        assistant_prompt = assistant_prompt,
-                        language_model = language_model,
-                        folder_path_for_generated_parodies = folder_path_for_generated_parodies,
-                        use_cuda=True,
-                        use_quantization=True,
-                        do_sample=True, 
-                        top_p=0.95, 
-                        temperature=0.7, 
-                        num_beams=num_beams, 
-                        seed=GLOBAL_SEED, 
-                        syllable_constrained = True,
-                        rhyming_constrained = False,
-                        pos_constrained = False,
-                        syllable_constraint_hyperparameters=syllable_constraint_hyperparameters
-                        )
+                generate_parody(
+                song_file_path= song_file_path, 
+                system_prompt = system_prompt, 
+                context_prompt = context_prompt, 
+                assistant_prompt = assistant_prompt,
+                language_model = language_model,
+                folder_path_for_generated_parodies = folder_path_for_generated_parodies,
+                use_cuda=True,
+                use_quantization=True,
+                do_sample=True, 
+                top_p=0.9, 
+                temperature=0.75, 
+                num_beams=num_beams, 
+                seed=GLOBAL_SEED, 
+                syllable_constrained = True,
+                rhyming_constrained = False,
+                pos_constrained = False,
+                syllable_constraint_hyperparameters=syllable_constraint_hyperparameters
+                )
 
 
 
 def calibrate_rhyming_constraint(song_file_path, prompt_nb, language_model):
-    possible_rhyme_types = ['assonant', 'perfect', 'near']
+    possible_rhyme_types = [ 'perfect']
     top_k_rhyme_words = [2,5,10,20]
-    good_beamscore_multipliers_rhyme = [0,1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99]
-    good_rhyming_token_multipliers = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99]
-    max_possible_syllable_counts = [1,2,3]
+    good_beamscore_multipliers_rhyme = [ 0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
+    good_rhyming_token_multipliers = [ 0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
+    max_possible_syllable_counts = [2,3]
 
     syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.5, bad_beamscore_multiplier=5, top_k_tokens_to_consider=30, all_beams_have_syllable_amount=False)
 
