@@ -150,173 +150,173 @@ class SyllableConstraintLBL(Constraint):
 
         return False
     
-    def logits_processor(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
-        if self.disable_constraint:
-            return scores
-
-        if self.new_syllable_amount is None:
-            raise Exception('Syllable amount not set')
-
-        # Prepare for operations
-        min_score = torch.finfo(scores.dtype).min
-        eos_token_id = self.tokenizer.eos_token_id
-        bos_token_id = self.tokenizer.bos_token_id
-        prompt_length = len(self.original_prompt)
-        original_prompt_length = len(self.original_prompt)
-
-        # Process each input sequence
-        for i in range(len(input_ids)):
-            input_seq = input_ids[i]
-            decoded_text = self.tokenizer.decode(input_seq, skip_special_tokens=True)
-            last_line = decoded_text[original_prompt_length:]
-
-            # Handle special tokens and end of string
-            if last_line.endswith(self.eos_string):
-                last_line = last_line.replace(self.eos_string, '')
-
-            syllable_count = get_syllable_count_of_sentence(last_line)
-            scores[i][bos_token_id] = min_score
-
-            # Main logic based on the syllable count
-            if syllable_count < self.new_syllable_amount:
-                scores = self.process_token_selection(scores, i, input_seq, last_line, decoded_text, syllable_count, min_score, eos_token_id, prompt_length)
-            elif syllable_count == self.new_syllable_amount:
-                scores = self.process_completion(scores, i, input_seq, last_line, decoded_text, min_score, eos_token_id, prompt_length)
-            else:
-                scores[i] = torch.abs(scores[i]) * min_score
-                scores[i][eos_token_id] = torch.tensor(-1, device=scores.device)
-
-        return scores
-
-    def process_token_selection(self, scores, index, input_seq, last_line, decoded_text, current_syllable_count, min_score, eos_token_id, prompt_length):
-        best_scores, best_tokens = scores[index].topk(self.top_k_tokens_to_consider)
-        scores[index] = torch.abs(scores[index]) * min_score
-
-        if best_scores[0].item() == float('-inf'):
-            scores[index][eos_token_id] = torch.tensor(-1, device=scores.device)
-
-        for score, token in zip(best_scores, best_tokens):
-            next_token_tensor = torch.tensor([token], device=scores.device)
-            candidate_text = self.tokenizer.decode(torch.cat([input_seq, next_token_tensor], dim=0), skip_special_tokens=True)[prompt_length:]
-            syllable_count = get_syllable_count_of_sentence(candidate_text)
-
-            if self.is_valid_candidate(syllable_count, candidate_text, current_syllable_count):
-                scores[index][token] = score
-        
-        return scores
-
-    def process_completion(self, scores, index, input_seq, last_line, decoded_text, min_score, eos_token_id, prompt_length):
-        best_scores, best_tokens = scores[index].topk(2)
-        activated = False
-        scores[index] = torch.abs(scores[index]) * min_score
-
-        for score, token in zip(best_scores, best_tokens):
-            next_token_tensor = torch.tensor([token], device=scores.device)
-            candidate_text = self.tokenizer.decode(torch.cat([input_seq, next_token_tensor], dim=0), skip_special_tokens=True)[prompt_length:]
-            syllable_count = get_syllable_count_of_sentence(candidate_text)
-
-            if self.is_valid_completion(candidate_text, syllable_count):
-                scores[index][token] = score
-                activated = True
-
-        if not activated:
-            scores[index][eos_token_id] = torch.tensor(-1, device=scores.device)
-        
-        return scores
-
-    def is_valid_candidate(self, syllable_count, candidate_text, current_syllable_count):
-        if  syllable_count <= self.new_syllable_amount and not does_string_contain_newline(candidate_text) and does_not_contain_special_characters(candidate_text):
-            if syllable_count == self.new_syllable_amount:
-                if not last_word_only_has_consontants(candidate_text):
-                    return True
-            else:
-                return True
-        else:
-            return False
-
-    def is_valid_completion(self, candidate_text, syllable_count):
-        return syllable_count <= self.new_syllable_amount and not does_string_contain_newline(candidate_text) and only_adds_regular_characters(candidate_text)
-
-    
     # def logits_processor(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
     #     if self.disable_constraint:
     #         return scores
 
     #     if self.new_syllable_amount is None:
     #         raise Exception('Syllable amount not set')
-        
-    #     new_line_token = self.new_line_tokens
-    #     # if (len(new_line_token) > 1):
-    #     #     for i in range(len(input_ids)):
-    #     #         input = input_ids[i]
-    #     #         last_token = input[-1].item()
-    #     #         if last_token == new_line_token[-2]:
-    #     #             scores[i][new_line_token[-1]] = float('-inf')
 
+    #     # Prepare for operations
+    #     min_score = torch.finfo(scores.dtype).min
+    #     eos_token_id = self.tokenizer.eos_token_id
+    #     bos_token_id = self.tokenizer.bos_token_id
+    #     prompt_length = len(self.original_prompt)
+    #     original_prompt_length = len(self.original_prompt)
+
+    #     # Process each input sequence
     #     for i in range(len(input_ids)):
-    #         input = input_ids[i]
-    #         sentences = self.tokenizer.decode(input, skip_special_tokens=True)
-    #         last_line = sentences[len(self.original_prompt):]
+    #         input_seq = input_ids[i]
+    #         decoded_text = self.tokenizer.decode(input_seq, skip_special_tokens=True)
+    #         last_line = decoded_text[original_prompt_length:]
+
+    #         # Handle special tokens and end of string
     #         if last_line.endswith(self.eos_string):
     #             last_line = last_line.replace(self.eos_string, '')
-    #         sum = get_syllable_count_of_sentence(last_line)
-    #         scores[i][self.tokenizer.bos_token_id] = torch.finfo(scores.dtype).min
-    #         if sum < self.new_syllable_amount:
+
+    #         syllable_count = get_syllable_count_of_sentence(last_line)
+    #         scores[i][bos_token_id] = min_score
+
+    #         # Main logic based on the syllable count
+    #         if syllable_count < self.new_syllable_amount:
+    #             scores = self.process_token_selection(scores, i, input_seq, last_line, decoded_text, syllable_count, min_score, eos_token_id, prompt_length)
+    #         elif syllable_count == self.new_syllable_amount:
+    #             scores = self.process_completion(scores, i, input_seq, last_line, decoded_text, min_score, eos_token_id, prompt_length)
+    #         else:
+    #             scores[i] = torch.abs(scores[i]) * min_score
+    #             scores[i][eos_token_id] = torch.tensor(-1, device=scores.device)
+
+    #     return scores
+
+    # def process_token_selection(self, scores, index, input_seq, last_line, decoded_text, current_syllable_count, min_score, eos_token_id, prompt_length):
+    #     best_scores, best_tokens = scores[index].topk(self.top_k_tokens_to_consider)
+    #     scores[index] = torch.abs(scores[index]) * min_score
+
+    #     if best_scores[0].item() == float('-inf'):
+    #         scores[index][eos_token_id] = torch.tensor(-1, device=scores.device)
+
+    #     for score, token in zip(best_scores, best_tokens):
+    #         next_token_tensor = torch.tensor([token], device=scores.device)
+    #         candidate_text = self.tokenizer.decode(torch.cat([input_seq, next_token_tensor], dim=0), skip_special_tokens=True)[prompt_length:]
+    #         syllable_count = get_syllable_count_of_sentence(candidate_text)
+
+    #         if self.is_valid_candidate(syllable_count, candidate_text, current_syllable_count):
+    #             scores[index][token] = score
+        
+    #     return scores
+
+    # def process_completion(self, scores, index, input_seq, last_line, decoded_text, min_score, eos_token_id, prompt_length):
+    #     best_scores, best_tokens = scores[index].topk(2)
+    #     activated = False
+    #     scores[index] = torch.abs(scores[index]) * min_score
+
+    #     for score, token in zip(best_scores, best_tokens):
+    #         next_token_tensor = torch.tensor([token], device=scores.device)
+    #         candidate_text = self.tokenizer.decode(torch.cat([input_seq, next_token_tensor], dim=0), skip_special_tokens=True)[prompt_length:]
+    #         syllable_count = get_syllable_count_of_sentence(candidate_text)
+
+    #         if self.is_valid_completion(candidate_text, syllable_count):
+    #             scores[index][token] = score
+    #             activated = True
+
+    #     if not activated:
+    #         scores[index][eos_token_id] = torch.tensor(-1, device=scores.device)
+        
+    #     return scores
+
+    # def is_valid_candidate(self, syllable_count, candidate_text, current_syllable_count):
+    #     if  syllable_count <= self.new_syllable_amount and not does_string_contain_newline(candidate_text) and does_not_contain_special_characters(candidate_text):
+    #         if syllable_count == self.new_syllable_amount:
+    #             if not last_word_only_has_consontants(candidate_text):
+    #                 return True
+    #         else:
+    #             return True
+    #     else:
+    #         return False
+
+    # def is_valid_completion(self, candidate_text, syllable_count):
+    #     return syllable_count <= self.new_syllable_amount and not does_string_contain_newline(candidate_text) and only_adds_regular_characters(candidate_text)
+
+    
+    def logits_processor(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
+        if self.disable_constraint:
+            return scores
+
+        if self.new_syllable_amount is None:
+            raise Exception('Syllable amount not set')
+        
+        new_line_token = self.new_line_tokens
+        # if (len(new_line_token) > 1):
+        #     for i in range(len(input_ids)):
+        #         input = input_ids[i]
+        #         last_token = input[-1].item()
+        #         if last_token == new_line_token[-2]:
+        #             scores[i][new_line_token[-1]] = float('-inf')
+
+        for i in range(len(input_ids)):
+            input = input_ids[i]
+            sentences = self.tokenizer.decode(input, skip_special_tokens=True)
+            last_line = sentences[len(self.original_prompt):]
+            if last_line.endswith(self.eos_string):
+                last_line = last_line.replace(self.eos_string, '')
+            sum = get_syllable_count_of_sentence(last_line)
+            scores[i][self.tokenizer.bos_token_id] = torch.finfo(scores.dtype).min
+            if sum < self.new_syllable_amount:
                 
 
-    #             best_scores, best_tokens = scores[i].topk(self.top_k_tokens_to_consider)
-    #             if best_scores[0].item() == float('-inf'):
-    #                 scores[i][self.tokenizer.eos_token_id] = torch.tensor(-1, device = scores.device)
+                best_scores, best_tokens = scores[i].topk(self.top_k_tokens_to_consider)
+                if best_scores[0].item() == float('-inf'):
+                    scores[i][self.tokenizer.eos_token_id] = torch.tensor(-1, device = scores.device)
                 
-    #             scores[i] = abs(scores[i])*torch.finfo(scores.dtype).min
-    #             #print(best_scores)
-    #             for score, token in zip(best_scores, best_tokens):
-    #                 next_token_tensor = torch.tensor([token], device = scores[i].device)
-    #                 candidate_text = self.tokenizer.decode(torch.cat([input, next_token_tensor], dim=0), skip_special_tokens=True)
-    #                 syllable_count = get_syllable_count_of_sentence(candidate_text[len(self.original_prompt):])
-    #                 if syllable_count <= self.new_syllable_amount and not does_string_contain_newline(candidate_text[len(self.original_prompt):])and does_not_contain_special_characters(candidate_text[len(self.original_prompt):]):
-    #                     if syllable_count == self.new_syllable_amount:
-    #                         if not last_word_only_has_consontants(candidate_text[len(self.original_prompt):]):
-    #                             scores[i][token] = score
-    #                     else:
-    #                         scores[i][token] = score
+                scores[i] = abs(scores[i])*torch.finfo(scores.dtype).min
+                #print(best_scores)
+                for score, token in zip(best_scores, best_tokens):
+                    next_token_tensor = torch.tensor([token], device = scores[i].device)
+                    candidate_text = self.tokenizer.decode(torch.cat([input, next_token_tensor], dim=0), skip_special_tokens=True)
+                    syllable_count = get_syllable_count_of_sentence(candidate_text[len(self.original_prompt):])
+                    if syllable_count <= self.new_syllable_amount and not does_string_contain_newline(candidate_text[len(self.original_prompt):])and does_not_contain_special_characters(candidate_text[len(self.original_prompt):]):
+                        if syllable_count == self.new_syllable_amount:
+                            if not last_word_only_has_consontants(candidate_text[len(self.original_prompt):]):
+                                scores[i][token] = score
+                        else:
+                            scores[i][token] = score
                     
                 
-    #             for token in self.special_new_line_tokens:
-    #                 scores[i][token] = torch.finfo(scores.dtype).min
-    #             scores[i][self.tokenizer.eos_token_id] = torch.finfo(scores.dtype).min
-    #         elif sum == self.new_syllable_amount:
-    #             best_scores, best_tokens = scores[i].topk(2)
-    #             if best_scores[0].item() == float('-inf'):
-    #                 scores[i][self.tokenizer.eos_token_id] = torch.tensor(-1, device = scores.device)
+                for token in self.special_new_line_tokens:
+                    scores[i][token] = torch.finfo(scores.dtype).min
+                scores[i][self.tokenizer.eos_token_id] = torch.finfo(scores.dtype).min
+            elif sum == self.new_syllable_amount:
+                best_scores, best_tokens = scores[i].topk(2)
+                if best_scores[0].item() == float('-inf'):
+                    scores[i][self.tokenizer.eos_token_id] = torch.tensor(-1, device = scores.device)
                 
-    #             scores[i] = abs(scores[i])*torch.finfo(scores.dtype).min
+                scores[i] = abs(scores[i])*torch.finfo(scores.dtype).min
 
-    #             activated = False
+                activated = False
 
-    #             #print(best_scores)
-    #             for score, token in zip(best_scores, best_tokens):
-    #                 next_token_tensor = torch.tensor([token], device = scores[i].device)
-    #                 candidate_text = self.tokenizer.decode(torch.cat([input, next_token_tensor], dim=0), skip_special_tokens=True)
-    #                 syllable_count = get_syllable_count_of_sentence(candidate_text[len(self.original_prompt):])
-    #                 if syllable_count <= self.new_syllable_amount and not does_string_contain_newline(candidate_text[len(self.original_prompt):]) and only_adds_regular_characters(last_line,candidate_text[len(self.original_prompt):]):
-    #                     scores[i][token] = score
-    #                     #print(last_line,candidate_text[len(self.original_prompt):])
-    #                     activated = True 
+                #print(best_scores)
+                for score, token in zip(best_scores, best_tokens):
+                    next_token_tensor = torch.tensor([token], device = scores[i].device)
+                    candidate_text = self.tokenizer.decode(torch.cat([input, next_token_tensor], dim=0), skip_special_tokens=True)
+                    syllable_count = get_syllable_count_of_sentence(candidate_text[len(self.original_prompt):])
+                    if syllable_count <= self.new_syllable_amount and not does_string_contain_newline(candidate_text[len(self.original_prompt):]) and only_adds_regular_characters(last_line,candidate_text[len(self.original_prompt):]):
+                        scores[i][token] = score
+                        #print(last_line,candidate_text[len(self.original_prompt):])
+                        activated = True 
 
                 
-    #             if not activated:
-    #                 scores[i][self.tokenizer.eos_token_id] = torch.tensor(-1, device = scores.device)
+                if not activated:
+                    scores[i][self.tokenizer.eos_token_id] = torch.tensor(-1, device = scores.device)
 
 
-    #         else:
-    #             eos_score = scores[i][self.tokenizer.eos_token_id]
-    #             scores[i] = abs(scores[i])*torch.finfo(scores.dtype).min
-    #             scores[i][self.tokenizer.eos_token_id] = torch.tensor(-1, device = scores.device)
+            else:
+                eos_score = scores[i][self.tokenizer.eos_token_id]
+                scores[i] = abs(scores[i])*torch.finfo(scores.dtype).min
+                scores[i][self.tokenizer.eos_token_id] = torch.tensor(-1, device = scores.device)
             
 
 
-    #     return scores
+        return scores
 
     def apply_optimzed_logit_processor(self, input_ids, scores, best_tokens, last_line, new_lines):
         if self.disable_constraint:
