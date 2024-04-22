@@ -26,7 +26,7 @@ random.seed(GLOBAL_SEED)
 START_FOLDER = None
 
 if platform.system() == 'Linux':
-    START_FOLDER = os.environ["$VSC_DATA"] + "/CallibrationExperiments/"
+    START_FOLDER = os.environ["VSC_DATA"] + "/CallibrationExperiments/"
 else:
     START_FOLDER = "Experiments/ConstrainedParodieGenerator/CallibrationExperiments/"
 

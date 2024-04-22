@@ -32,6 +32,7 @@ from transformers import (
                 LogitsProcessorList, 
                 NoBadWordsLogitsProcessor, 
                 RepetitionPenaltyLogitsProcessor,
+                NoRepeatNGramLogitsProcessor,
                 TopKLogitsWarper,
                 TopPLogitsWarper,
                 TemperatureLogitsWarper,
@@ -114,6 +115,9 @@ def set_constraints():
     forbidden_tokens_logit_processor = NoBadWordsLogitsProcessor(forbidden_tokens, eos_token_id=tokenizer.eos_token_id)
 
     repetition_penalty_logits_processor = RepetitionPenaltyLogitsProcessor(1.2)
+
+    no_repeat_ngram_logit_processor = NoRepeatNGramLogitsProcessor(3,3)
+
     ## Combine Constraints
     constraints = ConstraintList([pos_constraint, rhyming_constraint, syllable_constraint])
 
@@ -121,7 +125,7 @@ def set_constraints():
 
     stopping_criteria_list = constraints.get_stopping_criteria_list() + []
     stopping_criteria = StoppingCriteriaList(stopping_criteria_list)
-    logits_processor_list = constraints.get_logits_processor_list() + [repetition_penalty_logits_processor, forbidden_tokens_logit_processor]
+    logits_processor_list = constraints.get_logits_processor_list() + [repetition_penalty_logits_processor, no_repeat_ngram_logit_processor, forbidden_tokens_logit_processor]
     #logits_processor_list = [optimized_constraint] + [repetition_penalty_logits_processor, forbidden_tokens_logit_processor]
 
     

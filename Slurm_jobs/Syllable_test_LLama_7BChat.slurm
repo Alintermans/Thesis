@@ -1,7 +1,7 @@
 #!/bin/bash -l
 #SBATCH --job-name=Syllable_test_Llama2_chat7B_${SLURM_ARRAY_TASK_ID}
-#SBATCH --output=Syllable_test_Llama2_chat7B.out
-#SBATCH --error=Syllable_test_Llama2_chat7B.err
+#SBATCH --output=Syllable_test_Llama2_chat7B_${SLURM_ARRAY_TASK_ID}.out
+#SBATCH --error=Syllable_test_Llama2_chat7B_${SLURM_ARRAY_TASK_ID}.err
 
 set -e 
 
