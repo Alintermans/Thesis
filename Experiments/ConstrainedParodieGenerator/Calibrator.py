@@ -201,7 +201,7 @@ if __name__ == '__main__':
     print(len(songs))
     print(song)
     song_file_path = SONG_DIR + song
-    prompt_nb = 1
+    prompt_nb = 0
     if constraint == "syllable":
         calibrate_syllable_constraint(song_file_path, prompt_nb, language_model)
     elif constraint == "rhyming":
