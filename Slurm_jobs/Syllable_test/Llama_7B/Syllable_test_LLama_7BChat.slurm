@@ -10,7 +10,7 @@ set -e
 #SBATCH --nodes=1 
 #SBATCH --ntasks=8 
 #SBATCH --gpus-per-node=1
-#SBATCH --time=02:00:00
+#SBATCH --time=02:15:00
 #SBATCH --mem-per-cpu=8000
 #SBATCH --account=intro_vsc36141
 
