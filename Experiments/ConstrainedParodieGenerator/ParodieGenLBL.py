@@ -113,7 +113,7 @@ def set_constraints():
     forbidden_tokens = forbidden_charachters_to_tokens(tokenizer, forbidden_charachters)
     forbidden_tokens_logit_processor = NoBadWordsLogitsProcessor(forbidden_tokens, eos_token_id=tokenizer.eos_token_id)
 
-    repetition_penalty_logits_processor = RepetitionPenaltyLogitsProcessor(1.6)
+    repetition_penalty_logits_processor = RepetitionPenaltyLogitsProcessor(1.2)
     ## Combine Constraints
     constraints = ConstraintList([pos_constraint, rhyming_constraint, syllable_constraint])
 

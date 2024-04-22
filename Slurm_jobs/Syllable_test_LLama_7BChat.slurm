@@ -1,7 +1,9 @@
 #!/bin/bash -l
-#SBATCH --job-name=Syllable_test_Llama2_chat7B
+#SBATCH --job-name=Syllable_test_Llama2_chat7B_${SLURM_ARRAY_TASK_ID}
 #SBATCH --output=Syllable_test_Llama2_chat7B.out
 #SBATCH --error=Syllable_test_Llama2_chat7B.err
+
+set -e 
 
 #SBATCH --clusters=wice
 #SBATCH --partition=gpu_a100
