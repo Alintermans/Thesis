@@ -3,8 +3,6 @@
 #SBATCH --output=Syllable_test_Llama2_chat7B_${SLURM_ARRAY_TASK_ID}.out
 #SBATCH --error=Syllable_test_Llama2_chat7B_${SLURM_ARRAY_TASK_ID}.err
 
-set -e 
-
 #SBATCH --clusters=wice
 #SBATCH --partition=gpu_a100
 #SBATCH --nodes=1 
@@ -13,6 +11,8 @@ set -e
 #SBATCH --time=02:15:00
 #SBATCH --mem-per-cpu=8000
 #SBATCH --account=intro_vsc36141
+
+set -e 
 
 
 module load Python/3.10.8-GCCcore-12.2.0
