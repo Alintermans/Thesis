@@ -336,7 +336,7 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
             parodie += "\n"
         parodie = process_parody(parodie, original_structure)
     except Exception as e:
-        raise Exception(e)
+        #raise Exception(e)
         print("Error has occured ", e)
         state = "Error has occured " + str(e) + "\n" + "Not finished correctly"
         parodie += "\n\n" + "[ERROR]: Not finished correctly" + "\n\n"

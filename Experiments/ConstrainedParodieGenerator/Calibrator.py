@@ -8,7 +8,7 @@ from ParodieGenLBL import generate_parody, AVAILABLE_LMS
 from Constraints.SyllableConstraint.SyllableConstraintLBL import SyllableConstraintLBL
 from Constraints.RhymingConstraint.RhymingConstraintLBL import RhymingConstraintLBL
 from Constraints.PosConstraint.PosConstraintLBL import PosConstraintLBL
-
+import platform
 
 ## Constants
 GLOBAL_SEED = 42
@@ -22,13 +22,18 @@ ASSISTANT_PROMPTS = ["Experiments/ConstrainedParodieGenerator/PromptTexts/1/assi
 random.seed(GLOBAL_SEED)
     
 
+START_FOLDER = None
 
+if platform.system() == 'Linux':
+    START_FOLDER = "$VSC_DATA/CallibrationExperiments/"
+else:
+    START_FOLDER = "Experiments/ConstrainedParodieGenerator/CallibrationExperiments/"
 
 def calibrate_syllable_constraint(song_file_path, prompt_nb, language_model):
     possible_good_beamscore_multipliers_syllable = [ 0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
     possible_top_k_tokens_to_consider = [200]
 
-    folder_path_for_generated_parodies = "Experiments/ConstrainedParodieGenerator/CallibrationExperiments/" + "SyllableConstraint/" + str(prompt_nb)+"/"
+    folder_path_for_generated_parodies = START_FOLDER + "SyllableConstraint/" + str(prompt_nb)+"/"
     if not os.path.exists(folder_path_for_generated_parodies):
         os.makedirs(folder_path_for_generated_parodies)
 
@@ -36,6 +41,8 @@ def calibrate_syllable_constraint(song_file_path, prompt_nb, language_model):
     system_prompt = SYSTEM_PROMPTS[prompt_nb]
     context_prompt = CONTEXT_PROMPTS[prompt_nb]
     assistant_prompt = ASSISTANT_PROMPTS[prompt_nb]
+
+    index = 0 
 
 
     for num_beams in POSSIBLE_NUM_BEAMS:
@@ -49,7 +56,7 @@ def calibrate_syllable_constraint(song_file_path, prompt_nb, language_model):
                 context_prompt = context_prompt, 
                 assistant_prompt = assistant_prompt,
                 language_model = language_model,
-                folder_path_for_generated_parodies = folder_path_for_generated_parodies,
+                folder_path_for_generated_parodies = folder_path_for_generated_parodies + str(index) + "/",
                 use_cuda=True,
                 use_quantization=True,
                 do_sample=True, 
@@ -63,18 +70,20 @@ def calibrate_syllable_constraint(song_file_path, prompt_nb, language_model):
                 syllable_constraint_hyperparameters=syllable_constraint_hyperparameters
                 )
 
+                index += 1
+
 
 
 def calibrate_rhyming_constraint(song_file_path, prompt_nb, language_model):
     possible_rhyme_types = [ 'perfect']
-    top_k_rhyme_words = [2,5,10,20]
+    top_k_rhyme_words = [10]
     good_beamscore_multipliers_rhyme = [ 0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
     good_rhyming_token_multipliers = [ 0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
-    max_possible_syllable_counts = [2,3]
+    max_possible_syllable_counts = [3]
 
     syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.5, bad_beamscore_multiplier=5, top_k_tokens_to_consider=30, all_beams_have_syllable_amount=False)
 
-    folder_path_for_generated_parodies = "Experiments/ConstrainedParodieGenerator/CallibrationExperiments/" + "RhymingConstraint/" + str(prompt_nb)+"/"
+    folder_path_for_generated_parodies = START_FOLDER + "RhymingConstraint/" + str(prompt_nb)+"/"
 
     if not os.path.exists(folder_path_for_generated_parodies):
         os.makedirs(folder_path_for_generated_parodies)
@@ -82,6 +91,8 @@ def calibrate_rhyming_constraint(song_file_path, prompt_nb, language_model):
     system_prompt = SYSTEM_PROMPTS[prompt_nb]
     context_prompt = CONTEXT_PROMPTS[prompt_nb]
     assistant_prompt = ASSISTANT_PROMPTS[prompt_nb]
+
+    index = 0
 
     for num_beams in POSSIBLE_NUM_BEAMS:
         for rhyme_type in possible_rhyme_types:
@@ -97,7 +108,7 @@ def calibrate_rhyming_constraint(song_file_path, prompt_nb, language_model):
                                 context_prompt = context_prompt, 
                                 assistant_prompt = assistant_prompt,
                                 language_model = language_model,
-                                folder_path_for_generated_parodies = folder_path_for_generated_parodies,
+                                folder_path_for_generated_parodies = folder_path_for_generated_parodies + str(index) + "/",
                                 use_cuda=True,
                                 use_quantization=True,
                                 do_sample=True, 
@@ -111,6 +122,8 @@ def calibrate_rhyming_constraint(song_file_path, prompt_nb, language_model):
                                 rhyme_constraint_hyperparameters=rhyme_constraint_hyperparameters
                                 )
 
+                                index += 1
+
 def calibrate_pos_constraint(song_file_path, prompt_nb, language_model):
     top_k_tokens_to_consider_for_pos = [100,200, 500,1000,2000,5000]
     good_beamscore_multipliers_pos = [0,1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99]
@@ -119,7 +132,7 @@ def calibrate_pos_constraint(song_file_path, prompt_nb, language_model):
 
     syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.5, bad_beamscore_multiplier=5, top_k_tokens_to_consider=30, all_beams_have_syllable_amount=False)
 
-    folder_path_for_generated_parodies = "Experiments/ConstrainedParodieGenerator/CallibrationExperiments/" + "PosConstraint/" + str(prompt_nb)+"/"
+    folder_path_for_generated_parodies = START_FOLDER + "PosConstraint/" + str(prompt_nb)+"/"
 
     if not os.path.exists(folder_path_for_generated_parodies):
         os.makedirs(folder_path_for_generated_parodies)
@@ -127,6 +140,8 @@ def calibrate_pos_constraint(song_file_path, prompt_nb, language_model):
     system_prompt = SYSTEM_PROMPTS[prompt_nb]
     context_prompt = CONTEXT_PROMPTS[prompt_nb]
     assistant_prompt = ASSISTANT_PROMPTS[prompt_nb]
+
+    index = 0
 
     for num_beams in POSSIBLE_NUM_BEAMS:
         for top_k_tokens_to_consider in top_k_tokens_to_consider_for_pos:
@@ -142,7 +157,7 @@ def calibrate_pos_constraint(song_file_path, prompt_nb, language_model):
                         context_prompt = context_prompt, 
                         assistant_prompt = assistant_prompt,
                         language_model = language_model,
-                        folder_path_for_generated_parodies = folder_path_for_generated_parodies,
+                        folder_path_for_generated_parodies = folder_path_for_generated_parodies + str(index) + "/",
                         use_cuda=True,
                         use_quantization=True,
                         do_sample=True, 
@@ -157,6 +172,8 @@ def calibrate_pos_constraint(song_file_path, prompt_nb, language_model):
                         syllable_constraint_hyperparameters=syllable_constraint_hyperparameters
                         )
 
+                        index += 1
+
 
 
 
@@ -164,30 +181,33 @@ def calibrate_pos_constraint(song_file_path, prompt_nb, language_model):
 
 if __name__ == '__main__':
     if len(sys.argv) < 4:
-        print("Usage: python3 Calibrator.py <mode> <constraint> <language_model>\n <mode> = generate/evaluate\n <constraint> = syllable/rhyming/pos\n <language_model> = " + str(AVAILABLE_LMS.keys()) + "\n")
+        print("Usage: python3 Calibrator.py  <constraint> <language_model> <song>\n <constraint> = syllable/rhyming/pos\n <language_model> = " + str(AVAILABLE_LMS.keys()) + "\n <song> a number between 1 and 20")
         sys.exit(1)
     
 
-    mode = sys.argv[1]
     
-    constraint = sys.argv[2]
-
-    language_model = sys.argv[3]
-
-    if mode == "generate":
     
-        songs = os.listdir(SONG_DIR)
-        for song in songs:
-            song_file_path = SONG_DIR + song
-            for prompt_nb in range(len(SYSTEM_PROMPTS)):
-                if constraint == "syllable":
-                    calibrate_syllable_constraint(song_file_path, prompt_nb, language_model)
-                elif constraint == "rhyming":
-                    calibrate_rhyming_constraint(song_file_path, prompt_nb, language_model)
-                elif constraint == "pos":
-                    calibrate_pos_constraint(song_file_path, prompt_nb, language_model)
-    elif mode == "evaluate":
-        pass
+    constraint = sys.argv[1]
+
+    language_model = sys.argv[2]
+
+    song_nb = sys.argv[3]
+
+    
+    
+    songs = os.listdir(SONG_DIR)
+    song = songs[int(song_nb)-1]
+    print(len(songs))
+    print(song)
+    song_file_path = SONG_DIR + song
+    prompt_nb = 1
+    if constraint == "syllable":
+        calibrate_syllable_constraint(song_file_path, prompt_nb, language_model)
+    elif constraint == "rhyming":
+        calibrate_rhyming_constraint(song_file_path, prompt_nb, language_model)
+    elif constraint == "pos":
+        calibrate_pos_constraint(song_file_path, prompt_nb, language_model)
+    
 
 
 
