@@ -43,7 +43,7 @@ def calibrate_syllable_constraint(song_file_path, prompt_nb, language_model):
     context_prompt = CONTEXT_PROMPTS[prompt_nb]
     assistant_prompt = ASSISTANT_PROMPTS[prompt_nb]
 
-    index = 0 
+    index = 1
 
 
     for num_beams in POSSIBLE_NUM_BEAMS:
@@ -68,7 +68,8 @@ def calibrate_syllable_constraint(song_file_path, prompt_nb, language_model):
                 syllable_constrained = True,
                 rhyming_constrained = False,
                 pos_constrained = False,
-                syllable_constraint_hyperparameters=syllable_constraint_hyperparameters
+                syllable_constraint_hyperparameters=syllable_constraint_hyperparameters,
+                use_backtracking = False
                 )
 
                 index += 1
@@ -93,7 +94,7 @@ def calibrate_rhyming_constraint(song_file_path, prompt_nb, language_model):
     context_prompt = CONTEXT_PROMPTS[prompt_nb]
     assistant_prompt = ASSISTANT_PROMPTS[prompt_nb]
 
-    index = 0
+    index = 1
 
     for num_beams in POSSIBLE_NUM_BEAMS:
         for rhyme_type in possible_rhyme_types:
@@ -120,7 +121,8 @@ def calibrate_rhyming_constraint(song_file_path, prompt_nb, language_model):
                                 syllable_constrained = False,
                                 rhyming_constrained = True,
                                 pos_constrained = False,
-                                rhyme_constraint_hyperparameters=rhyme_constraint_hyperparameters
+                                rhyme_constraint_hyperparameters=rhyme_constraint_hyperparameters,
+                                use_backtracking = False
                                 )
 
                                 index += 1
@@ -142,7 +144,7 @@ def calibrate_pos_constraint(song_file_path, prompt_nb, language_model):
     context_prompt = CONTEXT_PROMPTS[prompt_nb]
     assistant_prompt = ASSISTANT_PROMPTS[prompt_nb]
 
-    index = 0
+    index = 1
 
     for num_beams in POSSIBLE_NUM_BEAMS:
         for top_k_tokens_to_consider in top_k_tokens_to_consider_for_pos:
@@ -170,7 +172,8 @@ def calibrate_pos_constraint(song_file_path, prompt_nb, language_model):
                         rhyming_constrained = False,
                         pos_constrained = True,
                         pos_constraint_hyperparameters=pos_constraint_hyperparameters,
-                        syllable_constraint_hyperparameters=syllable_constraint_hyperparameters
+                        syllable_constraint_hyperparameters=syllable_constraint_hyperparameters,
+                        use_backtracking = False
                         )
 
                         index += 1
