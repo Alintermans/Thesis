@@ -158,7 +158,7 @@ def generate_line(prompt, input_ids, **kwargs):
 
     ## Prepare backtracking
     backtracking_logits_processor = BacktrackingLogitsProcessor(original_input_length)
-    backtracking = Backtracking(original_input_length, constraints, backtracking_logits_processor, eos_token_id)
+    backtracking = Backtracking(original_input_length, constraints, backtracking_logits_processor, eos_token_id, use_backtracking=kwargs.get('use_backtracking', True))
     
     ## Constraints
     syllable_constraint.set_new_syllable_amount(kwargs['new_syllable_amount'])

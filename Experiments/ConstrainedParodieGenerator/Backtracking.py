@@ -2,7 +2,7 @@ from transformers import LogitsProcessor
 import torch
 
 class Backtracking: 
-    def __init__(self, original_input_length, constraints, backtracking_logits_processor, eos_token_id=None):
+    def __init__(self, original_input_length, constraints, backtracking_logits_processor, eos_token_id=None, use_backtracking=True):
         self.original_input_length = original_input_length
         self.constraints = constraints
         self.does_loop_continue = True
@@ -14,6 +14,7 @@ class Backtracking:
         self.retry_points = [0.75, 0.5, 0.25]
         self.backtracking_logits_processor = backtracking_logits_processor
         self.eos_token_id = eos_token_id
+        self.use_backtracking = use_backtracking
 
     
     def continue_loop(self):
@@ -21,6 +22,8 @@ class Backtracking:
 
     def get_result(self):
         return self.best_result
+    
+
     
 
     def calculate_nb_tokens_to_remove(self, new_line_token_length, eos_token_present):
@@ -61,7 +64,7 @@ class Backtracking:
         constraints_satisfied, nb_satisfied_constraints = self.constraints.are_constraints_satisfied(decoded_result)
         score = scores[index].item()
         
-        if constraints_satisfied:
+        if constraints_satisfied or not self.use_backtracking:
             self.best_result = decoded_result
             self.does_loop_continue = False
             return True
