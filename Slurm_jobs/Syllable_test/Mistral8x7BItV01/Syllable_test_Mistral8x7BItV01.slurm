@@ -4,10 +4,10 @@
 #SBATCH --error=Syllable_test_Mistral8x7BItV01.err
 
 #SBATCH --clusters=wice
-#SBATCH --partition=gpu_h100
+#SBATCH --partition=gpu_a100
 #SBATCH --nodes=1 
 #SBATCH --ntasks=8 
-#SBATCH --gpus-per-node=2
+#SBATCH --gpus-per-node=4
 #SBATCH --time=02:15:00
 #SBATCH --mem-per-cpu=8000
 #SBATCH --account=intro_vsc36141
