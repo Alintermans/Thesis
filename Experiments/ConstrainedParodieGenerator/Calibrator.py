@@ -9,6 +9,7 @@ from Constraints.SyllableConstraint.SyllableConstraintLBL import SyllableConstra
 from Constraints.RhymingConstraint.RhymingConstraintLBL import RhymingConstraintLBL
 from Constraints.PosConstraint.PosConstraintLBL import PosConstraintLBL
 import platform
+import os 
 
 ## Constants
 GLOBAL_SEED = 42
@@ -25,7 +26,7 @@ random.seed(GLOBAL_SEED)
 START_FOLDER = None
 
 if platform.system() == 'Linux':
-    START_FOLDER = "$VSC_DATA/CallibrationExperiments/"
+    START_FOLDER = os.environ["$VSC_DATA"] + "/CallibrationExperiments/"
 else:
     START_FOLDER = "Experiments/ConstrainedParodieGenerator/CallibrationExperiments/"
 
