@@ -116,7 +116,7 @@ def set_constraints():
 
     repetition_penalty_logits_processor = RepetitionPenaltyLogitsProcessor(1.2)
 
-    no_repeat_ngram_logit_processor = NoRepeatNGramLogitsProcessor(3,3)
+    no_repeat_ngram_logit_processor = NoRepeatNGramLogitsProcessor(4)
 
     ## Combine Constraints
     constraints = ConstraintList([pos_constraint, rhyming_constraint, syllable_constraint])
