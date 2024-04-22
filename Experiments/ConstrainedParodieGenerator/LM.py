@@ -24,7 +24,7 @@ class LM(ABC):
         if self.use_cuda and self.use_quantization:
             self.model = AutoModelForCausalLM.from_pretrained(self.quantized_model_url, revision=self.quantized_revision,
             token= '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',
-            device_map = 'auto'
+            device_map = 'balanced'
             )
         elif self.use_cuda and not self.use_quantization:
             self.model = AutoModelForCausalLM.from_pretrained(self.model_url, token= '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', device_map='auto')
