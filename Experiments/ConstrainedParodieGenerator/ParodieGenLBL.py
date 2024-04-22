@@ -23,6 +23,7 @@ from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count
 from SongEvaluator import count_same_nb_lines_and_return_same_paragraphs, count_syllable_difference_per_line, count_nb_line_pairs_match_rhyme_scheme, calculate_pos_tag_similarity
 import os
 import time
+import gc
 
 
 from transformers import (
@@ -249,6 +250,7 @@ def generate_line(prompt, input_ids, **kwargs):
 
 
 def generate_parody(song_file_path, system_prompt, context_prompt, assistant_prompt, **kwargs):
+    global lm
     ## Setup 
     use_cuda = kwargs.get('use_cuda', False)
     use_quantization = kwargs.get('use_quantization', False)
@@ -384,6 +386,11 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
                 decoding_method = decoding_method)
 
     parodie_in_paragraphs = divide_song_into_paragraphs(parodie)
+    del lm.model
+    del lm
+    gc.collect()
+    torch.cuda.empty_cache()
+
     return song_in_paragraphs, parodie_in_paragraphs
 
 
