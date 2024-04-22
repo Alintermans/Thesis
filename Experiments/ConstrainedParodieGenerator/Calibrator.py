@@ -12,7 +12,7 @@ from Constraints.PosConstraint.PosConstraintLBL import PosConstraintLBL
 
 ## Constants
 GLOBAL_SEED = 42
-POSSIBLE_NUM_BEAMS  = [2,5,10,15]
+POSSIBLE_NUM_BEAMS  = [5]
 SONG_DIR = "Songs/json/"
 SYSTEM_PROMPTS = ["Experiments/ConstrainedParodieGenerator/PromptTexts/1/system_prompt.txt", "Experiments/ConstrainedParodieGenerator/PromptTexts/2/system_prompt.txt", "Experiments/ConstrainedParodieGenerator/PromptTexts/3/system_prompt.txt"]
 CONTEXT_PROMPTS = ["Experiments/ConstrainedParodieGenerator/PromptTexts/1/context_prompt.txt", "Experiments/ConstrainedParodieGenerator/PromptTexts/2/context_prompt.txt", "Experiments/ConstrainedParodieGenerator/PromptTexts/3/context_prompt.txt"]
