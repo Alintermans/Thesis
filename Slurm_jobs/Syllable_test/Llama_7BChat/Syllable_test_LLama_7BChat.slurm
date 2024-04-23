@@ -1,16 +1,16 @@
 #!/bin/bash -l
-#SBATCH --job-name=Syllable_test_Llama2_chat7B_${SLURM_ARRAY_TASK_ID}
-#SBATCH --output=Syllable_test_Llama2_chat7B_${SLURM_ARRAY_TASK_ID}.out
-#SBATCH --error=Syllable_test_Llama2_chat7B_${SLURM_ARRAY_TASK_ID}.err
+#SBATCH --job-name=Syllable_test_Llama2_chat7B
+#SBATCH --output=Syllable_test_Llama2_chat7B.out
+#SBATCH --error=Syllable_test_Llama2_chat7B.err
 
 #SBATCH --clusters=wice
-#SBATCH --partition=gpu_a100
+#SBATCH --partition=gpu_h100
 #SBATCH --nodes=1 
-#SBATCH --ntasks=8 
+#SBATCH --ntasks=4 
 #SBATCH --gpus-per-node=1
 #SBATCH --time=02:15:00
 #SBATCH --mem-per-cpu=8000
-#SBATCH --account=intro_vsc36141
+#SBATCH --account=lp_dtai1
 
 set -e 
 
@@ -22,4 +22,4 @@ cd $VSC_SCRATCH
 export HF_HOME="/scratch/leuven/361/vsc36141/HF/"
 source ThesisEnv/bin/activate
 cd Thesis
-python Experiments/ConstrainedParodieGenerator/Calibrator.py syllable Llama2_7BChat ${SLURM_ARRAY_TASK_ID}
+python Experiments/ConstrainedParodieGenerator/Calibrator.py generate syllable Llama2_7BChat ${SLURM_ARRAY_TASK_ID}
