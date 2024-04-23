@@ -252,6 +252,7 @@ def generate_line(prompt, input_ids, **kwargs):
 
 def generate_parody(song_file_path, system_prompt, context_prompt, assistant_prompt, **kwargs):
     global lm
+    global model
     utils.logging.set_verbosity_error()
     ## Setup 
     use_cuda = kwargs.get('use_cuda', False)
