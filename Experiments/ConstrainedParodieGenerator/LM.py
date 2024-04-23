@@ -24,13 +24,13 @@ class LM(ABC):
         if self.use_cuda and self.use_quantization:
             self.model = AutoModelForCausalLM.from_pretrained(self.quantized_model_url, revision=self.quantized_revision,
             token= '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',
-            device_map = 'balanced'
+            device_map = 'balanced_low_0'
             )
         elif self.use_cuda and not self.use_quantization:
             self.model = AutoModelForCausalLM.from_pretrained(self.model_url, token= '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', device_map='auto')
         else:
             self.model = AutoModelForCausalLM.from_pretrained(self.model_url, token= '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')
-    
+        model.eval()
     def get_start_token(self):
         return self.tokenizer.encode('')[0] if (len(self.tokenizer.encode(''))>0)  else None
     

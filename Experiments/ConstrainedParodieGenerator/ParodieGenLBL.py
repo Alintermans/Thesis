@@ -200,40 +200,41 @@ def generate_line(prompt, input_ids, **kwargs):
                     
                 ]
             )
-            
-            outputs = model.beam_sample(
-                prepared_input_ids,
-                beam_scorer=beam_scorer,
-                stopping_criteria=stopping_criteria,
-                logits_processor=LogitsProcessorList([backtracking_logits_processor] +  logits_processor_list),
-                logits_warper=logits_warper,
-                pad_token_id=pad_token_id,
-                eos_token_id=eos_token_id,
-                output_scores = True,
-                return_dict_in_generate=True,
-                attention_mask=attention_mask,
-                output_attentions=False,
-                output_hidden_states=False,
-                use_cache=True,
-                renormalize_logits=True
-            )
+            with torch.no_grad():
+                outputs = model.beam_sample(
+                    prepared_input_ids,
+                    beam_scorer=beam_scorer,
+                    stopping_criteria=stopping_criteria,
+                    logits_processor=LogitsProcessorList([backtracking_logits_processor] +  logits_processor_list),
+                    logits_warper=logits_warper,
+                    pad_token_id=pad_token_id,
+                    eos_token_id=eos_token_id,
+                    output_scores = True,
+                    return_dict_in_generate=True,
+                    attention_mask=attention_mask,
+                    output_attentions=False,
+                    output_hidden_states=False,
+                    use_cache=True,
+                    renormalize_logits=True
+                )
             
         else:
-            outputs = model.beam_search(
-                prepared_input_ids,
-                beam_scorer=beam_scorer,
-                stopping_criteria=stopping_criteria,
-                logits_processor= LogitsProcessorList([backtracking_logits_processor] +  logits_processor_list),
-                pad_token_id=pad_token_id,
-                eos_token_id=eos_token_id,
-                output_scores = True,
-                return_dict_in_generate=True,
-                attention_mask=attention_mask,
-                output_attentions=False,
-                output_hidden_states=False,
-                use_cache=True,
-                renormalize_logits=True 
-            )
+            with torch.no_grad():
+                outputs = model.beam_search(
+                    prepared_input_ids,
+                    beam_scorer=beam_scorer,
+                    stopping_criteria=stopping_criteria,
+                    logits_processor= LogitsProcessorList([backtracking_logits_processor] +  logits_processor_list),
+                    pad_token_id=pad_token_id,
+                    eos_token_id=eos_token_id,
+                    output_scores = True,
+                    return_dict_in_generate=True,
+                    attention_mask=attention_mask,
+                    output_attentions=False,
+                    output_hidden_states=False,
+                    use_cache=True,
+                    renormalize_logits=True 
+                )
         
         ## Decode and validate result
         decoded_results = [tokenizer.decode(sequence, skip_special_tokens=True)[original_prompt_length:] for sequence in outputs['sequences']]
@@ -251,6 +252,7 @@ def generate_line(prompt, input_ids, **kwargs):
 
 def generate_parody(song_file_path, system_prompt, context_prompt, assistant_prompt, **kwargs):
     global lm
+    utils.logging.set_verbosity_error()
     ## Setup 
     use_cuda = kwargs.get('use_cuda', False)
     use_quantization = kwargs.get('use_quantization', False)
@@ -386,7 +388,7 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
                 decoding_method = decoding_method)
 
     parodie_in_paragraphs = divide_song_into_paragraphs(parodie)
-    del lm.model
+    del model
     del lm
     gc.collect()
     torch.cuda.empty_cache()
@@ -411,7 +413,7 @@ if(__name__ == '__main__'):
     #system_prompt = "I'm a parody genrator that will write beatifull parodies and make sure that the syllable count and the rhyming of my parodies are the same as the original song"
     #context_prompt = "The following parodie will be about that pineaple shouldn't be on pizza\nORIGINAL SONG : \n\n{{$SONG}}\n\nAlready generated PARODIE: \n\n{{$PARODY}}"
 
-    prompt_version = "Old"
+    prompt_version = "1"
 
     system_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/"+prompt_version+"/system_prompt.txt"
     context_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/"+prompt_version+"/context_prompt.txt"
