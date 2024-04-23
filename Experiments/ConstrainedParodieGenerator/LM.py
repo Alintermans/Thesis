@@ -30,7 +30,7 @@ class LM(ABC):
             self.model = AutoModelForCausalLM.from_pretrained(self.model_url, token= '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', device_map='auto')
         else:
             self.model = AutoModelForCausalLM.from_pretrained(self.model_url, token= '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')
-        model.eval()
+        self.model.eval()
     def get_start_token(self):
         return self.tokenizer.encode('')[0] if (len(self.tokenizer.encode(''))>0)  else None
     
