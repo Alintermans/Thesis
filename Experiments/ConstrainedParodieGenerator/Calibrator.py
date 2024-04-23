@@ -153,6 +153,7 @@ def calibrate_rhyming_constraint(song_file_path, prompt_nb, language_model, beam
                                 rhyming_constrained = True,
                                 pos_constrained = False,
                                 rhyming_constraint_hyperparameters=rhyming_constraint_hyperparameters,
+                                syllable_constraint_hyperparameters=syllable_constraint_hyperparameters,
                                 use_backtracking = False
                                 ))
                         else:
@@ -174,6 +175,7 @@ def calibrate_rhyming_constraint(song_file_path, prompt_nb, language_model, beam
                                 rhyming_constrained = True,
                                 pos_constrained = False,
                                 rhyming_constraint_hyperparameters=rhyming_constraint_hyperparameters,
+                                syllable_constraint_hyperparameters=syllable_constraint_hyperparameters,
                                 use_backtracking = False
                                 )
 
