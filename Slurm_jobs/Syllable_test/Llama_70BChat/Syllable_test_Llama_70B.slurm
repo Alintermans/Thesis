@@ -1,16 +1,17 @@
 #!/bin/bash -l
-#SBATCH --job-name=Syllable_test_Mistral8x7BItV01
-#SBATCH --output=Syllable_test_Mistral8x7BItV01.out
-#SBATCH --error=Syllable_test_Mistral8x7BItV01.err
+#SBATCH --job-name=Syllable_test_Llama2_chat70B%a
+#SBATCH --output=Syllable_test_Llama2_chat70B%a.out
+#SBATCH --error=Syllable_test_Llama2_chat70B%a.err
 
 #SBATCH --clusters=wice
 #SBATCH --partition=gpu_h100
 #SBATCH --nodes=1 
-#SBATCH --ntasks=4 
+#SBATCH --ntasks=16
 #SBATCH --gpus-per-node=1
 #SBATCH --time=03:15:00
 #SBATCH --mem-per-cpu=8000
 #SBATCH --account=lp_dtai1
+
 set -e 
 
 module load Python/3.10.8-GCCcore-12.2.0
@@ -20,4 +21,4 @@ cd $VSC_SCRATCH
 export HF_HOME="/scratch/leuven/361/vsc36141/HF/"
 source ThesisEnv/bin/activate
 cd Thesis
-python Experiments/ConstrainedParodieGenerator/Calibrator.py generate syllable Mistral8x7BItV01 ${SLURM_ARRAY_TASK_ID}
+python Experiments/ConstrainedParodieGenerator/Calibrator.py generate syllable Llama2_70BChat ${SLURM_ARRAY_TASK_ID}
