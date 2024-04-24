@@ -1,16 +1,6 @@
 #!/bin/bash -l
-
-#SBATCH --clusters=wice
-#SBATCH --partition=gpu_h100
 #SBATCH --time=03:15:00
-#SBATCH --nodes=1 
-#SBATCH --ntasks=16
-#SBATCH --gpus-per-node=1
-#SBATCH --account=lp_dtai1
-
-
-set -e 
-
+module load cluster/wice/gpu_h100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
