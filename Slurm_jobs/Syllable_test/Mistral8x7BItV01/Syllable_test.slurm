@@ -8,7 +8,7 @@
 #SBATCH --nodes=1 
 #SBATCH --ntasks=4 
 #SBATCH --gpus-per-node=1
-#SBATCH --time=02:15:00
+#SBATCH --time=03:15:00
 #SBATCH --mem-per-cpu=8000
 #SBATCH --account=lp_dtai1
 set -e 
