@@ -5,12 +5,12 @@
 
 #SBATCH --clusters=wice
 #SBATCH --partition=gpu_h100
+#SBATCH --time=03:15:00
 #SBATCH --nodes=1 
 #SBATCH --ntasks=16
 #SBATCH --gpus-per-node=1
-#SBATCH --time=03:15:00
-#SBATCH --mem-per-cpu=8000
 #SBATCH --account=lp_dtai1
+
 
 set -e 
 
