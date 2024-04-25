@@ -145,7 +145,7 @@ if(__name__ == '__main__'):
                 assistant_prompt = assistant_prompt,
                 language_model = language_model,
                 use_cuda=True,
-                use_quantization=False,
+                use_quantization=True,
                 do_sample=True, 
                 top_p=0.9, 
                 temperature=0.75, 
