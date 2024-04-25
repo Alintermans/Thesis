@@ -322,7 +322,7 @@ def count_syllables(word):
     try:
         result =  [len(list(y for y in x if y[-1].isdigit())) for x in d[word.lower()]][0]
         if result == 0:
-            result = count_syllables_hard(word)
+            result = 1
     except KeyError:
         # if word not found in cmudict
         result =  count_syllables_hard(word)
@@ -331,20 +331,20 @@ def count_syllables(word):
 
 def count_syllables_hard(word):
     word = word.lower()
-    pron = get_pronounciation_of_unknown_word(word)
-    count = len([x for x in pron if x[-1].isdigit()])
+    # pron = get_pronounciation_of_unknown_word(word)
+    # count = len([x for x in pron if x[-1].isdigit()])
 
-    # count = 0
-    # vowels = "aeiouy"
-    # if word[0] in vowels:
-    #     count += 1
-    # for index in range(1, len(word)):
-    #     if word[index] in vowels and word[index - 1] not in vowels:
-    #         count += 1
-    # if word.endswith("e"):
-    #     count -= 1
-    # if count == 0:
-    #     count += 1
+    count = 0
+    vowels = "aeiouy"
+    if word[0] in vowels:
+        count += 1
+    for index in range(1, len(word)):
+        if word[index] in vowels and word[index - 1] not in vowels:
+            count += 1
+    if word.endswith("e"):
+        count -= 1
+    if count == 0:
+        count += 1
     return count
 
 def get_syllable_count_of_sentence(sentence):
