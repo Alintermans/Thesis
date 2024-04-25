@@ -4,6 +4,14 @@ import os
 from SongUtils import divide_song_into_paragraphs, get_pos_tags_of_line, similarity_of_pos_tags_sequences, get_syllable_count_of_sentence, _get_rhyming_lines,load_rhyming_dicts
 from evaluate import load
 
+
+################# Init #################
+perplexity = load("perplexity", module_type="metric")
+load_rhyming_dicts()
+
+
+################# Evaluation functions #################
+
 def get_nb_lines_in_paragraphs(paragraphs):
     nb_lines = 0
     for paragraph in paragraphs:
@@ -82,10 +90,10 @@ def calculate_perplexity(original_song_paragraph, parody_song_paragraph):
         for j in range(len(original_song_paragraph[i])):
             original_line = original_song_paragraph[i][j]
             parody_line = parody_song_paragraph[i][j]
-            full_original_song_per_line.append(original_line)
+            full_original_song_per_line.append(original_line)   
             full_parody_song_per_line.append(parody_line)
     
-    perplexity = load("perplexity", module_type="metric")
+    
     original_song_perplexity = perplexity.compute(predictions=full_original_song_per_line, model_id='gpt2')
     parody_song_perplexity = perplexity.compute(predictions=full_parody_song_per_line, model_id='gpt2')
 
@@ -121,15 +129,19 @@ def calculate_repetition_score(song):
     return len(unique_words)/nb_total_words
 
 
-def evaluate(original_song_file_path, parody_file_path, rhyme_type='perfect'):
-    original_song_file = None
+def evaluate( parody_file_path, rhyme_type='perfect'):
     parody_song_file = None
-    # Read the original song file
-    with open(song_file_path, "r") as f:
-        original_song_file = json.load(f)
+
     # Read the parodie song file
     with open(parody_file_path, "r") as f:
         parody_song_file = json.load(f)
+
+    original_song_name = parody_song_file['original_song_title'].replace(' ', '_')
+    original_song_artist = parody_song_file['original_song_artist'].replace(' ', '_')
+    original_song_file_path = 'Songs/json/' + original_song_artist + '-' + original_song_name + '.json'
+    # Read the original song file
+    with open(original_song_file_path, "r") as f:
+        original_song_file = json.load(f)
     
 
     original_song = original_song_file['lyrics']
@@ -183,7 +195,7 @@ def evaluate(original_song_file_path, parody_file_path, rhyme_type='perfect'):
     results = {
         "original_song_name": original_song_file['title'],
         "parody_song_name": parody_song_file['original_song_title'],
-        "original_song_file_path": song_file_path,
+        "original_song_file_path": original_song_file_path,
         "parody_song_file_path": parody_file_path,
         "original_song_nb_paragraphs": original_song_nb_paragraphs,
         "parody_song_nb_paragraphs": parody_song_nb_paragraphs,
@@ -222,6 +234,8 @@ def evaluate(original_song_file_path, parody_file_path, rhyme_type='perfect'):
 
     with open(file_path, 'w') as f:
         json.dump(results, f, indent=4)
+    
+    return results
 
     
 
@@ -236,7 +250,7 @@ if __name__ == "__main__":
     song_file_path = 'Songs/json/Taylor_Swift-Is_It_Over_Now_(Small_Version).json'
     parody_file_path = 'Experiments/ConstrainedParodieGenerator/GeneratedParodies/GPT2/All/json/Is_It_Over_Now_(Small_Version)_parodie_27-03-2024_09h-15m-55s.json'
     
-    load_rhyming_dicts()
+    
     evaluate(song_file_path, parody_file_path)
 
 
