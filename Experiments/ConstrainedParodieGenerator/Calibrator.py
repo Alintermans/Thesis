@@ -301,6 +301,15 @@ def calculate_results_syllable(file, folder_path):
     results = evaluate_song(folder_path + file)
     return results
 
+def plot_results(x_data, y_data, xlabel, ylabel, title, file_name):
+    plt.figure(figsize=(10, 6))
+    plt.plot(x_data, y_data, marker='o', linestyle='-', color='b')
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.grid(True)
+    plt.savefig(file_name, dpi=300)
+
 
 def evaluate_syllable(language_model_name, folder_path):
     possible_good_beamscore_multipliers_syllable = [0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
@@ -309,7 +318,7 @@ def evaluate_syllable(language_model_name, folder_path):
     avg_syllable_differences = []
     avg_mean_deviation_syllable_count = []
 
-    print("Evaluating Syllable Constraint")
+    print("Evaluating Syllable Constraint for " + language_model_name)
     constraint_folder_path = "Syllable_Constraint_|_/"
     for index in tqdm(range(len(possible_good_beamscore_multipliers_syllable))):
         temp_folder_path = folder_path + str(index + 1) + "/" + language_model_name + "/" + constraint_folder_path +"/json/"
@@ -400,14 +409,7 @@ if __name__ == '__main__':
     
     
     
-def plot_results(x_data, y_data, xlabel, ylabel, title, file_name):
-    plt.figure(figsize=(10, 6))
-    plt.plot(x_data, y_data, marker='o', linestyle='-', color='b')
-    plt.title(title)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.grid(True)
-    plt.savefig(file_name, dpi=300)
+
 
 
 
