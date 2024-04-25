@@ -317,6 +317,7 @@ def evaluate_syllable(language_model_name, folder_path):
     avg_perplexities = []
     avg_syllable_differences = []
     avg_mean_deviation_syllable_count = []
+    avg_correct_syllable_count = []
 
     print("Evaluating Syllable Constraint for " + language_model_name)
     constraint_folder_path = "Syllable_Constraint_|_/"
@@ -326,6 +327,7 @@ def evaluate_syllable(language_model_name, folder_path):
             perplexities = []
             syllable_differences = []
             mean_deviation_syllable_count = []
+            correct_syllale_count = []
 
             if len(os.listdir(temp_folder_path)) != 20:
                 raise Exception("Not all songs have been generated only " + str(len(os.listdir(temp_folder_path))))
@@ -335,13 +337,32 @@ def evaluate_syllable(language_model_name, folder_path):
                 perplexities.append(result["parody_song_perplexity"])
                 syllable_differences.append(result["avg_syllable_count_difference"])
                 mean_deviation_syllable_count.append(result["mean_deviation_syllable_count"])
+                correct_syllale_count.append(result["nb_lines_correct_syllable_count"]/result["correct_nb_lines"])
 
             avg_perplexities.append(sum(perplexities)/len(perplexities))
             avg_syllable_differences.append(sum(syllable_differences)/len(syllable_differences))
             avg_mean_deviation_syllable_count.append(sum(mean_deviation_syllable_count)/len(mean_deviation_syllable_count))
+            avg_correct_syllable_count.append(sum(correct_syllale_count)/len(correct_syllale_count))
     print("Perplexities: ", avg_perplexities)
     print("Syllable Differences: ", avg_syllable_differences)
     print("Mean Deviation Syllable Count: ", avg_mean_deviation_syllable_count)
+    print("Correct Syllable Count: ", avg_correct_syllable_count)
+
+    if os.path.isdir("Experiments/ConstrainedParodieGenerator/CalibrationResults/SyllableConstraint/") == False:
+        os.makedirs("Experiments/ConstrainedParodieGenerator/CalibrationResults/SyllableConstraint/")
+    
+    if os.path.isdir("Experiments/ConstrainedParodieGenerator/CalibrationResults/SyllableConstraint/"+language_model_name.replace(" ", "_")) == False:
+        os.makedirs("Experiments/ConstrainedParodieGenerator/CalibrationResults/SyllableConstraint/"+language_model_name.replace(" ", "_"))
+    
+    #save results 
+    with open("Experiments/ConstrainedParodieGenerator/CalibrationResults/SyllableConstraint/"+language_model_name.replace(" ", "_")+"/results.json", "w") as f:
+        json.dump({
+            "good_beamscore_multipliers_syllable": possible_good_beamscore_multipliers_syllable,
+            "avg_perplexities": avg_perplexities,
+            "avg_syllable_differences": avg_syllable_differences,
+            "avg_mean_deviation_syllable_count": avg_mean_deviation_syllable_count,
+            "avg_correct_syllable_count": avg_correct_syllable_count
+        }, f, indent=4)
 
     plot_results(
         possible_good_beamscore_multipliers_syllable,
@@ -368,6 +389,15 @@ def evaluate_syllable(language_model_name, folder_path):
         'Mean Deviation Syllable Count',
         'Mean Deviation Syllable Count vs. Good Beamscore Multiplier',
         'Experiments/ConstrainedParodieGenerator/CalibrationResults/SyllableConstraint/'+language_model_name.replace(" ", '_')+'/mean_deviation_syllable_count.png'
+    )
+
+    plot_results(
+        possible_good_beamscore_multipliers_syllable,
+        avg_correct_syllable_count,
+        'Good Beamscore Multiplier',
+        'Correct Syllable Count',
+        'Correct Syllable Count vs. Good Beamscore Multiplier',
+        'Experiments/ConstrainedParodieGenerator/CalibrationResults/SyllableConstraint/'+language_model_name.replace(" ", "_")+'/correct_syllable_count.png'
     )
 
 
