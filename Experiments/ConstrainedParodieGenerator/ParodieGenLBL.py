@@ -331,7 +331,7 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
                 prepared_system_prompt, prepared_context_prompt, prepared_assistant_prompt = replace_content_for_prompts(system_prompt, context_prompt, assistant_prompt, parodie, song, rhyming_word, pos_tags, syllable_amount, line)
                 prompt, tokenized_prompt = lm.prepare_prompt(prepared_system_prompt, prepared_context_prompt, prepared_assistant_prompt)
                 #prompt = system_prompt + context_prompt + "ORIGINAL SONG : \n\n" + song + "\n\nAlready generated PARODIE: \n\n" + parodie
-                syllable_constraint.set_original_prompt(prompt)
+                syllable_constraint.set_original_prompt(prompt, tokenized_prompt.shape[-1])
                 optimized_constraint.set_prompt_length(len(prompt))
                 ##Generate new line
                 

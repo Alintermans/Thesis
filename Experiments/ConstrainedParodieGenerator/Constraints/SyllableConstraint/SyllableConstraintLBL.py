@@ -18,6 +18,8 @@ class SyllableConstraintLBL(Constraint):
         self.original_prompt = None
         self.disable_constraint = False
         self.eos_string = self.tokenizer.decode(self.tokenizer.eos_token_id)
+        self.tokenized_prompt_length = None
+
 
         #Hyperparameters
         self.good_beamscore_multiplier = None
@@ -58,8 +60,9 @@ class SyllableConstraintLBL(Constraint):
     def set_special_new_line_tokens(self, special_new_line_tokens):
         self.special_new_line_tokens += special_new_line_tokens
     
-    def set_original_prompt(self, original_prompt):
+    def set_original_prompt(self, original_prompt, tokenized_prompt_length=0):
         self.original_prompt = original_prompt
+        self.tokenized_prompt_length = tokenized_prompt_length
     
     def disable(self):
         self.disable_constraint = True
@@ -136,8 +139,12 @@ class SyllableConstraintLBL(Constraint):
             if sum >=self.new_syllable_amount or last_token == self.tokenizer.eos_token_id:
                 #print('sum: ',sum, 'sentence: ', sentences[len(self.original_prompt):])
                 result.append(True)
+            elif input.shape[-1] - self.tokenized_prompt_length > 50:
+                result.append(True)
             else:
                 result.append(False)
+            
+            
         
         # if (len([x for x in result if x]) == len(result)):
         #     return True

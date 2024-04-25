@@ -205,6 +205,8 @@ def cleanup_line(line):
     line = line.lower()
     if line.startswith("i "):
         line = line.replace("i ", "I ")
+    if line.endswith(" i"):
+        line = line.replace(" i", " I")
     line= line.replace(" i ", " I ")
     line = line.replace(" i'", " I'")
     line = line.replace("i'", "I'")
