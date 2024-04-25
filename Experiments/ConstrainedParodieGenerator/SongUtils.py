@@ -321,23 +321,30 @@ def count_syllables(word):
         return 0
     try:
         result =  [len(list(y for y in x if y[-1].isdigit())) for x in d[word.lower()]][0]
+        if result == 0:
+            result = count_syllables_hard(word)
     except KeyError:
         # if word not found in cmudict
         result =  count_syllables_hard(word)
     return result
+
+
 def count_syllables_hard(word):
     word = word.lower()
-    count = 0
-    vowels = "aeiouy"
-    if word[0] in vowels:
-        count += 1
-    for index in range(1, len(word)):
-        if word[index] in vowels and word[index - 1] not in vowels:
-            count += 1
-    if word.endswith("e"):
-        count -= 1
-    if count == 0:
-        count += 1
+    pron = get_pronounciation_of_unknown_word(word)
+    count = len([x for x in pron if x[-1].isdigit()])
+
+    # count = 0
+    # vowels = "aeiouy"
+    # if word[0] in vowels:
+    #     count += 1
+    # for index in range(1, len(word)):
+    #     if word[index] in vowels and word[index - 1] not in vowels:
+    #         count += 1
+    # if word.endswith("e"):
+    #     count -= 1
+    # if count == 0:
+    #     count += 1
     return count
 
 def get_syllable_count_of_sentence(sentence):
@@ -1058,9 +1065,9 @@ if __name__ == "__main__":
     # print(pron_1, pron_2)
 
     # print(do_two_end_phon_seq_near_rhyme(pron_1, pron_2))
-    print(get_perfect_rhyming_words("ought"))
+    #print(get_perfect_rhyming_words("ought"))
     #print(get_pos_tags_of_line("It is "))
-    #print(get_syllable_count_of_sentence("thepie"))
+    print(get_syllable_count_of_sentence("Mmm, mmm, mmm, mmm"))
     
     # print(_do_two_words_rhyme("dream", "ims", "assonant"))
     #print(get_assonant_rhyming_words("Great"))
