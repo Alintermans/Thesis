@@ -28,7 +28,7 @@ utils.logging.set_verbosity_error()
 
 AVAILABLE_LMS = {'GPT2': GPT2, 'Gemma2BIt': Gemma2BIt, 'Gemma2B': Gemma2B, 'Gemma7B': Gemma7B, 'Gemma7BIt': Gemma7BIt, 'Llama2_7B': Llama2_7B, 'Llama2_7BChat': Llama2_7BChat, 'Llama2_70B': Llama2_70B, 'Llama2_70BChat': Llama2_70BChat, 'Mistral7BV01': Mistral7BV01, 'Mistral7BItV02': Mistral7BItV02, 'Mistral8x7BV01': Mistral8x7BV01, 'Mistral8x7BItV01': Mistral8x7BItV01}
 
-folder_path_for_generated_parodies = "Experiments/ConstrainedParodieGenerator/GeneratedParodies/NoConstraints/"
+folder_path_for_generated_parodies = os.environ["VSC_DATA"] +"NoConstraints/"
 
 ############### Variables ###############
 lm = None
@@ -138,20 +138,25 @@ if(__name__ == '__main__'):
     context_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/"+prompt_version+"/context_prompt.txt"
     assistant_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/"+prompt_version+"/assistant_prompt.txt"
 
-    for song in os.listdir("Songs/json/"):
-        song_file_path = "Songs/json/" + song
+    LMs = ['Llama2_7BChat', 'Llama2_70BChat', 'Mistral7BItV02', 'Mistral8x7BItV01']
 
-        generate_parody(song_file_path= song_file_path, 
-                system_prompt = system_prompt, 
-                context_prompt = context_prompt, 
-                assistant_prompt = assistant_prompt,
-                language_model = language_model,
-                use_cuda=True,
-                use_quantization=True,
-                do_sample=True, 
-                top_p=0.9, 
-                temperature=0.75, 
-                #temperature=float(2),
-                num_beams=5, 
-                seed=42
-                )
+    for lm in LMs:
+        language_model = lm
+        for song in os.listdir("Songs/json/"):
+            song_file_path = "Songs/json/" + song
+
+            generate_parody(song_file_path= song_file_path, 
+                    system_prompt = system_prompt, 
+                    context_prompt = context_prompt, 
+                    assistant_prompt = assistant_prompt,
+                    language_model = language_model,
+                    use_cuda=True,
+                    use_quantization=True,
+                    do_sample=True, 
+                    top_p=0.9, 
+                    temperature=0.75, 
+                    #temperature=float(2),
+                    num_beams=5, 
+                    seed=42
+                    )
+            
