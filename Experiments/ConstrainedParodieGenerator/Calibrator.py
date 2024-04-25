@@ -126,7 +126,7 @@ def calibrate_rhyming_constraint(song_file_path, prompt_nb, language_model, beam
     context_prompt = CONTEXT_PROMPTS[prompt_nb]
     assistant_prompt = ASSISTANT_PROMPTS[prompt_nb]
 
-    index = 1 + beam_index
+    index = 1 + beam_index*6
 
     for num_beams in POSSIBLE_NUM_BEAMS:
         for rhyme_type in possible_rhyme_types:
@@ -200,7 +200,7 @@ def calibrate_pos_constraint(song_file_path, prompt_nb, language_model, beam_ind
     context_prompt = CONTEXT_PROMPTS[prompt_nb]
     assistant_prompt = ASSISTANT_PROMPTS[prompt_nb]
 
-    index = 1 + beam_index
+    index = 1 + beam_index*6
 
     for num_beams in POSSIBLE_NUM_BEAMS:
         for top_k_tokens_to_consider in top_k_tokens_to_consider_for_pos:
