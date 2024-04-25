@@ -115,7 +115,7 @@ def calibrate_rhyming_constraint(song_file_path, prompt_nb, language_model, beam
     good_rhyming_token_multipliers = [ 0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
     max_possible_syllable_counts = [3]
 
-    syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.5, top_k_tokens_to_consider=30, all_beams_have_syllable_amount=False)
+    syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.9, top_k_tokens_to_consider=200, all_beams_have_syllable_amount=False)
 
     folder_path_for_generated_parodies = START_FOLDER + "RhymingConstraint/" + str(prompt_nb)+"/"
 
@@ -189,7 +189,7 @@ def calibrate_pos_constraint(song_file_path, prompt_nb, language_model, beam_ind
     good_token_multipliers = [ 0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
     limits_of_pos_similarity_to_satisfy_constraint = [0.5]
 
-    syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.5, top_k_tokens_to_consider=30, all_beams_have_syllable_amount=False)
+    syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.9, top_k_tokens_to_consider=200, all_beams_have_syllable_amount=False)
 
     folder_path_for_generated_parodies = START_FOLDER + "PosConstraint/" + str(prompt_nb)+"/"
 
