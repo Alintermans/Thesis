@@ -383,7 +383,7 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
                 num_beams = kwargs['num_beams'],
                 seed = kwargs['seed'],
                 duration = generation_duration,
-                language_model_name = lm.get_name(),
+                language_model_name = lm.name,
                 state = state,
                 way_of_generation = "Line by Line",
                 decoding_method = decoding_method)
