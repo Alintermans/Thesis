@@ -110,7 +110,7 @@ def generate_parody(**kwargs):
                 chosen_hyper_parameters ={},
                 num_beams = kwargs['num_beams'],
                 seed = kwargs['seed'],
-                language_model_name = lm.get_name(),
+                language_model_name = lm.name,
                 state = state,
                 way_of_generation = "No Constraints",
                 decoding_method = decoding_method)
