@@ -261,6 +261,7 @@ def calibrate_pos_constraint(song_file_path, prompt_nb, language_model, beam_ind
 
 def generate(constraint, language_model, song_nb):
     songs = os.listdir(SONG_DIR)
+    print(songs)
     beam_index = 0
     song_nb = int(song_nb) -1
     if constraint == 'rhyming' or constraint == 'pos':
