@@ -14,6 +14,7 @@ from LanguageModels.Mistral8x7BItV01 import Mistral8x7BItV01
 from SongUtils import read_song, divide_song_into_paragraphs, get_syllable_count_of_sentence, write_song, forbidden_charachters_to_tokens, get_final_word_of_line,get_pos_tags_of_line, replace_content_for_prompts, cleanup_line, get_song_structure, process_parody
 from SongEvaluator import count_same_nb_lines_and_return_same_paragraphs, count_syllable_difference_per_line, count_nb_line_pairs_match_rhyme_scheme, calculate_pos_tag_similarity
 import os
+import time
 
 
 from transformers import (
@@ -79,13 +80,13 @@ def generate_parody(**kwargs):
     parodie = ""
     state = "Finished Correctly"
     try:
-
+        start_time = time.time()
         prepared_system_prompt, prepared_context_prompt, prepared_assistant_prompt = replace_content_for_prompts(system_prompt, context_prompt, assistant_prompt, parodie, song, "", "", 0, "")
         prompt, tokenized_prompt = lm.prepare_prompt(prepared_system_prompt, prepared_context_prompt, prepared_assistant_prompt)
         tokenized_prompt = tokenized_prompt.to(model.device)
         parodie = model.generate(tokenized_prompt, do_sample=kwargs['do_sample'], top_p=kwargs['top_p'], temperature=kwargs['temperature'], num_beams=kwargs['num_beams'],repetition_penalty=1.2, max_length=4096, pad_token_id=tokenizer.pad_token_id, use_cache=True)
         parodie = tokenizer.decode(parodie[0], skip_special_tokens=True)[len(prompt):]
-
+        duration = time.time() - start_time
 
 
     except Exception as e:
@@ -113,6 +114,7 @@ def generate_parody(**kwargs):
                 language_model_name = lm.name,
                 state = state,
                 way_of_generation = "No Constraints",
+                duration = duration,
                 decoding_method = decoding_method)
 
 
