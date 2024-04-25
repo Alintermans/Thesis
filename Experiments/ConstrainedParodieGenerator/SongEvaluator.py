@@ -6,9 +6,9 @@ from evaluate import load
 
 
 ################# Init #################
-perplexity = load("perplexity", module_type="metric")
+perplexity = load("perplexity", module_type="metric", num_processes=4)
 load_rhyming_dicts()
-
+TOKENIZERS_PARALLELISM = True
 
 ################# Evaluation functions #################
 

@@ -11,6 +11,7 @@ from Constraints.PosConstraint.PosConstraintLBL import PosConstraintLBL
 import platform
 import os 
 import ray
+from tqdm import tqdm
 from SongEvaluator import evaluate as evaluate_song
 
 
@@ -280,6 +281,7 @@ def generate(constraint, language_model, song_nb):
 
 
 def evaluate(constraint, language_model, folder_path):
+    ray.init(log_to_driver=False)
     language_model_name = AVAILABLE_LMS[language_model].get_name()
     if not folder_path.endswith("/"):
         folder_path += "/"
@@ -294,6 +296,11 @@ def evaluate(constraint, language_model, folder_path):
 
         
 
+@ray.remote
+def calculate_results_syllable(file, folder_path):
+    results = evaluate_song(folder_path + file)
+    return results
+
 
 def evaluate_syllable(language_model_name, folder_path):
     possible_good_beamscore_multipliers_syllable = [0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
@@ -302,8 +309,9 @@ def evaluate_syllable(language_model_name, folder_path):
     avg_syllable_differences = []
     avg_mean_deviation_syllable_count = []
 
+    print("Evaluating Syllable Constraint")
     constraint_folder_path = "Syllable_Constraint_|_/"
-    for index in range(len(possible_good_beamscore_multipliers_syllable)):
+    for index in tqdm(range(len(possible_good_beamscore_multipliers_syllable))):
         temp_folder_path = folder_path + str(index + 1) + "/" + language_model_name + "/" + constraint_folder_path +"/json/"
         if os.path.isdir(temp_folder_path):
             perplexities = []
@@ -313,11 +321,12 @@ def evaluate_syllable(language_model_name, folder_path):
             if len(os.listdir(temp_folder_path)) != 20:
                 raise Exception("Not all songs have been generated only " + str(len(os.listdir(temp_folder_path))))
 
-            for file in os.listdir(temp_folder_path):
-                results = evaluate_song(temp_folder_path + file)
-                perplexities.append(results["parody_song_perplexity"])
-                syllable_differences.append(results["avg_syllable_count_difference"])
-                mean_deviation_syllable_count.append(results["mean_deviation_syllable_count"])
+            results = ray.get([calculate_results_syllable.remote(file, temp_folder_path) for file in os.listdir(temp_folder_path)])
+            for result in results:
+                perplexities.append(result["parody_song_perplexity"])
+                syllable_differences.append(result["avg_syllable_count_difference"])
+                mean_deviation_syllable_count.append(result["mean_deviation_syllable_count"])
+
             avg_perplexities.append(sum(perplexities)/len(perplexities))
             avg_syllable_differences.append(sum(syllable_differences)/len(syllable_differences))
             avg_mean_deviation_syllable_count.append(sum(mean_deviation_syllable_count)/len(mean_deviation_syllable_count))
@@ -325,29 +334,32 @@ def evaluate_syllable(language_model_name, folder_path):
     print("Syllable Differences: ", avg_syllable_differences)
     print("Mean Deviation Syllable Count: ", avg_mean_deviation_syllable_count)
 
-    plt.figure(figsize=(10, 6))
-    plt.plot(possible_good_beamscore_multipliers_syllable, avg_perplexities, marker='o', linestyle='-', color='b')
-    plt.title('Perplexity vs. Good Beamscore Multiplier')
-    plt.xlabel('Good Beamscore Multiplier')
-    plt.ylabel('Perplexity')
-    plt.grid(True)
-    plt.savefig('Experiments/ConstrainedParodieGenerator/CalibrationResults/SyllableConstraint/'+language_model_name.replace(" ", '_')+'/perplexity.png', dpi=300)
+    plot_results(
+        possible_good_beamscore_multipliers_syllable,
+        avg_perplexities,
+        'Good Beamscore Multiplier',
+        'Perplexity',
+        'Perplexity vs. Good Beamscore Multiplier',
+        'Experiments/ConstrainedParodieGenerator/CalibrationResults/SyllableConstraint/'+language_model_name.replace(" ", '_')+'/perplexity.png'
+    )
 
-    plt.figure(figsize=(10, 6))
-    plt.plot(possible_good_beamscore_multipliers_syllable, avg_syllable_differences, marker='o', linestyle='-', color='b')
-    plt.title('Syllable Differences vs. Good Beamscore Multiplier')
-    plt.xlabel('Good Beamscore Multiplier')
-    plt.ylabel('Syllable Differences')
-    plt.grid(True)
-    plt.savefig('Experiments/ConstrainedParodieGenerator/CalibrationResults/SyllableConstraint/'+language_model_name.replace(" ", '_')+'/syllable_differences.png', dpi=300)
+    plot_results(
+        possible_good_beamscore_multipliers_syllable,
+        avg_syllable_differences,
+        'Good Beamscore Multiplier',
+        'Syllable Differences',
+        'Syllable Differences vs. Good Beamscore Multiplier',
+        'Experiments/ConstrainedParodieGenerator/CalibrationResults/SyllableConstraint/'+language_model_name.replace(" ", '_')+'/syllable_differences.png'
+    )
 
-    plt.figure(figsize=(10, 6))
-    plt.plot(possible_good_beamscore_multipliers_syllable, avg_mean_deviation_syllable_count, marker='o', linestyle='-', color='b')
-    plt.title('Mean Deviation Syllable Count vs. Good Beamscore Multiplier')
-    plt.xlabel('Good Beamscore Multiplier')
-    plt.ylabel('Mean Deviation Syllable Count')
-    plt.grid(True)
-    plt.savefig('Experiments/ConstrainedParodieGenerator/CalibrationResults/SyllableConstraint/'+language_model_name.replace(" ", '_')+'/mean_deviation_syllable_count.png', dpi=300)
+    plot_results(
+        possible_good_beamscore_multipliers_syllable,
+        avg_mean_deviation_syllable_count,
+        'Good Beamscore Multiplier',
+        'Mean Deviation Syllable Count',
+        'Mean Deviation Syllable Count vs. Good Beamscore Multiplier',
+        'Experiments/ConstrainedParodieGenerator/CalibrationResults/SyllableConstraint/'+language_model_name.replace(" ", '_')+'/mean_deviation_syllable_count.png'
+    )
 
 
 
@@ -388,7 +400,14 @@ if __name__ == '__main__':
     
     
     
-
+def plot_results(x_data, y_data, xlabel, ylabel, title, file_name):
+    plt.figure(figsize=(10, 6))
+    plt.plot(x_data, y_data, marker='o', linestyle='-', color='b')
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.grid(True)
+    plt.savefig(file_name, dpi=300)
 
 
 
