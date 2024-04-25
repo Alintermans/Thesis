@@ -136,18 +136,20 @@ if(__name__ == '__main__'):
     context_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/"+prompt_version+"/context_prompt.txt"
     assistant_prompt = "Experiments/ConstrainedParodieGenerator/PromptTexts/"+prompt_version+"/assistant_prompt.txt"
 
+    for song in os.listdir("Songs/json/"):
+        song_file_path = "Songs/json/" + song
 
-    generate_parody(song_file_path= song_file_path, 
-            system_prompt = system_prompt, 
-            context_prompt = context_prompt, 
-            assistant_prompt = assistant_prompt,
-            language_model = language_model,
-            use_cuda=True,
-            use_quantization=False,
-            do_sample=True, 
-            top_p=0.9, 
-            temperature=0.75, 
-            #temperature=float(2),
-            num_beams=2, 
-            seed=42
-            )
+        generate_parody(song_file_path= song_file_path, 
+                system_prompt = system_prompt, 
+                context_prompt = context_prompt, 
+                assistant_prompt = assistant_prompt,
+                language_model = language_model,
+                use_cuda=True,
+                use_quantization=False,
+                do_sample=True, 
+                top_p=0.9, 
+                temperature=0.75, 
+                #temperature=float(2),
+                num_beams=5, 
+                seed=42
+                )
