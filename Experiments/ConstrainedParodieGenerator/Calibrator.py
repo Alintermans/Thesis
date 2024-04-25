@@ -11,6 +11,7 @@ from Constraints.PosConstraint.PosConstraintLBL import PosConstraintLBL
 import platform
 import os 
 import ray
+from SongEvaluator import evaluate as evaluate_song
 
 
 ## Constants
@@ -124,7 +125,7 @@ def calibrate_rhyming_constraint(song_file_path, prompt_nb, language_model, beam
     context_prompt = CONTEXT_PROMPTS[prompt_nb]
     assistant_prompt = ASSISTANT_PROMPTS[prompt_nb]
 
-    index = 1
+    index = 1 + beam_index
 
     for num_beams in POSSIBLE_NUM_BEAMS:
         for rhyme_type in possible_rhyme_types:
@@ -198,7 +199,7 @@ def calibrate_pos_constraint(song_file_path, prompt_nb, language_model, beam_ind
     context_prompt = CONTEXT_PROMPTS[prompt_nb]
     assistant_prompt = ASSISTANT_PROMPTS[prompt_nb]
 
-    index = 1
+    index = 1 + beam_index
 
     for num_beams in POSSIBLE_NUM_BEAMS:
         for top_k_tokens_to_consider in top_k_tokens_to_consider_for_pos:
@@ -278,6 +279,79 @@ def generate(constraint, language_model, song_nb):
         calibrate_pos_constraint(song_file_path, prompt_nb, language_model, beam_index)
 
 
+def evaluate(constraint, language_model, folder_path):
+    language_model_name = AVAILABLE_LMS[language_model].get_name()
+    if not folder_path.endswith("/"):
+        folder_path += "/"
+    if constraint == "syllable":
+        evaluate_syllable(language_model_name, folder_path)
+    elif constraint == "rhyming":
+        constraint_folder_path = "Syllable_Constraint_|_Rhyming_Constraint_|_"
+    elif constraint == "pos":
+        constraint_folder_path = "Syllable_Constraint_|_POS_Constraint_|_"
+    elif constraint == "all":
+        constraint_folder_path = "Syllable_Constraint_|_Rhyming_Constraint_|_POS Constraint_|_"
+
+        
+
+
+def evaluate_syllable(language_model_name, folder_path):
+    possible_good_beamscore_multipliers_syllable = [0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
+
+    avg_perplexities = []
+    avg_syllable_differences = []
+    avg_mean_deviation_syllable_count = []
+
+    constraint_folder_path = "Syllable_Constraint_|_/"
+    for index in range(len(possible_good_beamscore_multipliers_syllable)):
+        temp_folder_path = folder_path + str(index + 1) + "/" + language_model_name + "/" + constraint_folder_path +"/json/"
+        if os.path.isdir(temp_folder_path):
+            perplexities = []
+            syllable_differences = []
+            mean_deviation_syllable_count = []
+
+            if len(os.listdir(temp_folder_path)) != 20:
+                raise Exception("Not all songs have been generated only " + str(len(os.listdir(temp_folder_path))))
+
+            for file in os.listdir(temp_folder_path):
+                results = evaluate_song(temp_folder_path + file)
+                perplexities.append(results["parody_song_perplexity"])
+                syllable_differences.append(results["avg_syllable_count_difference"])
+                mean_deviation_syllable_count.append(results["mean_deviation_syllable_count"])
+            avg_perplexities.append(sum(perplexities)/len(perplexities))
+            avg_syllable_differences.append(sum(syllable_differences)/len(syllable_differences))
+            avg_mean_deviation_syllable_count.append(sum(mean_deviation_syllable_count)/len(mean_deviation_syllable_count))
+    print("Perplexities: ", avg_perplexities)
+    print("Syllable Differences: ", avg_syllable_differences)
+    print("Mean Deviation Syllable Count: ", avg_mean_deviation_syllable_count)
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(possible_good_beamscore_multipliers_syllable, avg_perplexities, marker='o', linestyle='-', color='b')
+    plt.title('Perplexity vs. Good Beamscore Multiplier')
+    plt.xlabel('Good Beamscore Multiplier')
+    plt.ylabel('Perplexity')
+    plt.grid(True)
+    plt.savefig('Experiments/ConstrainedParodieGenerator/CalibrationResults/SyllableConstraint/'+language_model_name.replace(" ", '_')+'/perplexity.png', dpi=300)
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(possible_good_beamscore_multipliers_syllable, avg_syllable_differences, marker='o', linestyle='-', color='b')
+    plt.title('Syllable Differences vs. Good Beamscore Multiplier')
+    plt.xlabel('Good Beamscore Multiplier')
+    plt.ylabel('Syllable Differences')
+    plt.grid(True)
+    plt.savefig('Experiments/ConstrainedParodieGenerator/CalibrationResults/SyllableConstraint/'+language_model_name.replace(" ", '_')+'/syllable_differences.png', dpi=300)
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(possible_good_beamscore_multipliers_syllable, avg_mean_deviation_syllable_count, marker='o', linestyle='-', color='b')
+    plt.title('Mean Deviation Syllable Count vs. Good Beamscore Multiplier')
+    plt.xlabel('Good Beamscore Multiplier')
+    plt.ylabel('Mean Deviation Syllable Count')
+    plt.grid(True)
+    plt.savefig('Experiments/ConstrainedParodieGenerator/CalibrationResults/SyllableConstraint/'+language_model_name.replace(" ", '_')+'/mean_deviation_syllable_count.png', dpi=300)
+
+
+
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print("Usage: python3 Calibrator.py <mode> \n mode = generate/evaluate ")
@@ -293,8 +367,18 @@ if __name__ == '__main__':
         language_model = sys.argv[3]
         song_nb = sys.argv[4]
         generate(constraint, language_model, song_nb)
-    # elif mode == "evaluate":
-    #     if len(sys.argv) < 2:
+    elif mode == "evaluate":
+        if len(sys.argv) < 5:
+            print("Usage: python3 Calibrator.py evaluate <constraint> <language_model> <folder_path>")
+            sys.exit(1)
+        
+        constraint = sys.argv[2]
+        language_model = sys.argv[3]
+        folder_path = sys.argv[4]
+        evaluate(constraint, language_model, folder_path)
+    else:
+        print("Usage: python3 Calibrator.py <mode> \n mode = generate/evaluate ")
+        sys.exit(1)
 
     
     

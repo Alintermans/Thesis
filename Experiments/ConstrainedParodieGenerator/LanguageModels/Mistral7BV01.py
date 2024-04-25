@@ -16,8 +16,8 @@ class Mistral7BV01(LM):
     def get_model(self):
         return self.model
     
-    def get_name(self):
-        return self.name
+    def get_name():
+        return 'Mistral 7B Instruct v0.2'
     
     def prepare_prompt(self, system_prompt, context_prompt, assistant_prompt):
 

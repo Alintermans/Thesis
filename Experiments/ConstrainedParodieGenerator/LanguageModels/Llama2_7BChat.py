@@ -20,8 +20,8 @@ class Llama2_7BChat(LM):
     def get_model(self):
         return self.model
     
-    def get_name(self):
-        return self.name
+    def get_name():
+        return 'Llama 2 7B Chat'
     
     def prepare_prompt(self, system_prompt, context_prompt, assistant_prompt):
         messages = [
