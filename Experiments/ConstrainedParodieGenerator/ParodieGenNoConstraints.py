@@ -28,7 +28,7 @@ utils.logging.set_verbosity_error()
 
 AVAILABLE_LMS = {'GPT2': GPT2, 'Gemma2BIt': Gemma2BIt, 'Gemma2B': Gemma2B, 'Gemma7B': Gemma7B, 'Gemma7BIt': Gemma7BIt, 'Llama2_7B': Llama2_7B, 'Llama2_7BChat': Llama2_7BChat, 'Llama2_70B': Llama2_70B, 'Llama2_70BChat': Llama2_70BChat, 'Mistral7BV01': Mistral7BV01, 'Mistral7BItV02': Mistral7BItV02, 'Mistral8x7BV01': Mistral8x7BV01, 'Mistral8x7BItV01': Mistral8x7BItV01}
 
-folder_path_for_generated_parodies = os.environ["VSC_DATA"] +"NoConstraints/"
+folder_path_for_generated_parodies = os.environ["VSC_DATA"] +"/NoConstraints/"
 
 ############### Variables ###############
 lm = None
