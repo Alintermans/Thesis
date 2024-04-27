@@ -2,6 +2,7 @@ from Constraints.SyllableConstraint.SyllableConstraintLBL import SyllableConstra
 from Constraints.RhymingConstraint.RhymingConstraintLBL import RhymingConstraintLBL
 from Constraints.PosConstraint.PosConstraintLBL import PosConstraintLBL
 from Constraints.OptimizedConstraint import OptimizedConstraint
+from NewLineStoppingCriteria import NewLineStoppingCriteria
 from Constraint import ConstraintList
 from PostProcessor import PostProcessor
 from BeamSearchScorerConstrained import BeamSearchScorerConstrained
@@ -61,6 +62,7 @@ eos_token_id = None
 pad_token_id = None
 post_processor = None
 optimized_constraint = None
+new_line_stopping_criteria = None
 
 ########## Constants ##########
 
@@ -105,6 +107,7 @@ def set_constraints():
     global logits_processor_list
     global post_processor
     global optimized_constraint
+    global new_line_stopping_criteria
     syllable_constraint = SyllableConstraintLBL(tokenizer, start_token=start_token)
     syllable_constraint.set_special_new_line_tokens(lm.special_new_line_tokens())
 
@@ -112,11 +115,13 @@ def set_constraints():
 
     pos_constraint = PosConstraintLBL(tokenizer, start_token=start_token)
 
-    forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '/', '_', '——', '.' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?', '\n', '\n\n']
+    forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '/', '_', '——', '.' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?']
     forbidden_tokens = forbidden_charachters_to_tokens(tokenizer, forbidden_charachters)
     forbidden_tokens_logit_processor = NoBadWordsLogitsProcessor(forbidden_tokens, eos_token_id=tokenizer.eos_token_id)
 
     repetition_penalty_logits_processor = RepetitionPenaltyLogitsProcessor(1.2)
+
+    new_line_stopping_criteria = NewLineStoppingCriteria(tokenizer)
 
 
     ## Combine Constraints
@@ -124,7 +129,7 @@ def set_constraints():
 
     optimized_constraint = OptimizedConstraint(constraints, tokenizer, top_k=100)
 
-    stopping_criteria_list = constraints.get_stopping_criteria_list() + []
+    stopping_criteria_list = constraints.get_stopping_criteria_list() + [new_line_stopping_criteria.stopping_criteria]
     stopping_criteria = StoppingCriteriaList(stopping_criteria_list)
     logits_processor_list = constraints.get_logits_processor_list() + [repetition_penalty_logits_processor, forbidden_tokens_logit_processor]
     #logits_processor_list = [optimized_constraint] + [repetition_penalty_logits_processor, forbidden_tokens_logit_processor]
@@ -261,6 +266,8 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
     set_seed(kwargs['seed'])
     set_num_beams(kwargs['num_beams'])
 
+    
+
     ## Config constraints
     set_constraints()
     if kwargs.get('syllable_constrained') is None or kwargs['syllable_constrained'] == False:
@@ -280,6 +287,9 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
     else:
         pos_constraint.enable()
         pos_constraint.set_hyperparameters(kwargs['pos_constraint_hyperparameters'])
+    
+    if kwargs.get('use_new_line_stop_criteria', False):
+        new_line_stopping_criteria.disable = False
     
     song = read_song(song_file_path) #expects a json file, where the lyrics is stored in the key 'lyrics'
     song_in_paragraphs = divide_song_into_paragraphs(song)
@@ -332,7 +342,7 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
                 prompt, tokenized_prompt = lm.prepare_prompt(prepared_system_prompt, prepared_context_prompt, prepared_assistant_prompt)
                 #prompt = system_prompt + context_prompt + "ORIGINAL SONG : \n\n" + song + "\n\nAlready generated PARODIE: \n\n" + parodie
                 syllable_constraint.set_original_prompt(prompt, tokenized_prompt.shape[-1])
-                optimized_constraint.set_prompt_length(len(prompt))
+                new_line_stopping_criteria.set_prompt_length(len(prompt))
                 ##Generate new line
                 
                 new_line = generate_line(prompt, tokenized_prompt, new_syllable_amount=syllable_amount, rhyming_word=rhyming_word, pos_tags=pos_tags, **kwargs)
@@ -365,6 +375,9 @@ def generate_parody(song_file_path, system_prompt, context_prompt, assistant_pro
     if kwargs.get('pos_constrained') is not None and kwargs['pos_constrained'] == True:
         constraints_used += "POS Constraint | "
         chosen_hyper_parameters.update(pos_constraint.get_hyperparameters_in_dict())
+    
+    if constraints_used == "":
+        constraints_used = "None"
 
     generation_duration = round(time.time() - start_time, 2)
 
@@ -449,7 +462,8 @@ if(__name__ == '__main__'):
         pos_constrained = True,
         syllable_constraint_hyperparameters=syllable_constraint_hyperparameters,
         rhyming_constraint_hyperparameters=rhyming_constraint_hyperparameters, 
-        pos_constraint_hyperparameters=pos_constraint_hyperparameters
+        pos_constraint_hyperparameters=pos_constraint_hyperparameters,
+        use_new_line_stop_criteria=False
         )
 
     
