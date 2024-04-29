@@ -549,8 +549,11 @@ def get_pronounciation_of_unknown_word(word):
 
 
     files = {'wordfile': ('wordfile', word_bytes)}
-    request = requests.post(url, files=files)
-    request.raise_for_status()
+    try:
+        request = requests.post(url, files=files)
+        request.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        return []
     matches = re.findall(r'\<!-- DICT .*?\  -->', request.text)
     url_dict = ""
     if len(matches) >0:

@@ -1,0 +1,34 @@
+{
+    "original_song_title": "Revenge",
+    "original_song_artist": "XXXTENTACION",
+    "language_model_name": "Mistral 7B Instruct v0.2",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Intro]\nI think I, I think I finally\nFound a way to forgive myself\nFor the mistakes I made in my past\nI think that's the first step, right?\nYou agree?\n\n[Verse]\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\n\n[Chorus]\nIn my grave, I'll rot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\n[Outro]\nIn my grave, I'll rot\nI'll rot, I'll rot, I'll rot\nIs my pain your freedom?\nIs all of my pain your freedom?\nEnjoy [/INST]\nParody:\n[Intro]\nI think I've made a grave mistake or\nplaced a fruit on a dish that's a\npineapple on a pizza error\npineapple's not a savvy\ncomposer\n\n[Verse]\nI've ordered pies with ham and pe\nppers and olives galore but now I see austerity\noh pineapple pie in paradise\nif I could take it back I'd hide it from your\neyes oh man what a world the things\nwe put on our pies if I could act on my dislike\nand remove it from your slice it's not a\ndelight it's not a spice it's not a nice surprise oh man what\na world the things we dolecki\nfruit on our pies and you'd have thought that I wassily\nwould let it be but no iodice\nit's not a garnish it's not a basehore\npineapple on a hotaling\nbreaks the taste fast and I don't wanna let pincerlike\nclaws tear it off so in myopia\nI'll rot it out I'll rot it out I'll rot it out elliott\n\n[Chorus]\nin my grave I'll rot\nin my cypriot\nin my grave I'll rot rot rot\nin my kennecott\nin my grave I wonnacott\nin my ocelot\n\n[Outro]\nin my grave I'll rot\nI'll rot rot kennecott\nis my taste your freedom\nis all of my taste buddhism\n",
+    "constraints_used": "Syllable Constraint | Rhyming Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "RhymingConstraintLBL": {
+            "max_possible_syllable_count": 3,
+            "good_beamscore_multiplier_same_rhyme_type": 0.4,
+            "good_rhyming_token_multiplier": 0.99,
+            "top_k_rhyme_words": 10,
+            "rhyme_type": "perfect",
+            "frequent_words": false
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.9 | temperature: 0.75",
+    "state": "Finished Correctly",
+    "date": "26-04-2024",
+    "time": "11h-23m-40s",
+    "generation_duration": 255.95,
+    "parodie": "[Intro]\nI think I've made a grave mistake or\nplaced a fruit on a dish that's a\npineapple on a pizza error\npineapple's not a savvy\ncomposer\n\n[Verse]\nI've ordered pies with ham and pe\nppers and olives galore but now I see austerity\noh pineapple pie in paradise\nif I could take it back I'd hide it from your\neyes oh man what a world the things\nwe put on our pies if I could act on my dislike\nand remove it from your slice it's not a\ndelight it's not a spice it's not a nice surprise oh man what\na world the things we dolecki\nfruit on our pies and you'd have thought that I wassily\nwould let it be but no iodice\nit's not a garnish it's not a basehore\npineapple on a hotaling\nbreaks the taste fast and I don't wanna let pincerlike\nclaws tear it off so in myopia\nI'll rot it out I'll rot it out I'll rot it out elliott\n\n[Chorus]\nin my grave I'll rot\nin my cypriot\nin my grave I'll rot rot rot\nin my kennecott\nin my grave I wonnacott\nin my ocelot\n\n[Outro]\nin my grave I'll rot\nI'll rot rot kennecott\nis my taste your freedom\nis all of my taste buddhism\nyour new\n"
+}

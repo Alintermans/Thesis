@@ -1,0 +1,34 @@
+{
+    "original_song_title": "Revenge",
+    "original_song_artist": "XXXTENTACION",
+    "language_model_name": "Mistral 7B Instruct v0.2",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Intro]\nI think I, I think I finally\nFound a way to forgive myself\nFor the mistakes I made in my past\nI think that's the first step, right?\nYou agree?\n\n[Verse]\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\n\n[Chorus]\nIn my grave, I'll rot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\n[Outro]\nIn my grave, I'll rot\nI'll rot, I'll rot, I'll rot\nIs my pain your freedom?\nIs all of my pain your freedom?\nEnjoy [/INST]\nParody:\n[Intro]\nI think I've made a grave mistake or\nplaced a fruit on a dish that's a\npineapple on a pizza error\npineapple's not a savvy\ntopper for\n\n[Verse]\nI've ordered pies with pineapple\ncan't pretend that I'm a gourmet eater leaving you\nin disbelief and awe of this cul\ntural blunder oh man what a world the things\nI've tasted if I could act on\nmy disdain no would I add this fruit to my plate again\npineapple on a pizza causes a\ndivide and I don't wanna compromise so in my heart\nI'll pine for the days ofarrell\nI'll pine for the days ofarrell oh man what aerial\nthe things I've tasted if I could act\non my disdain no would I add this fruit to\nmy plate again pineapple on\na pizza causes a divide and I don't wanna\ncompromise so in my heart I'll pine for\nthe days of old where pizzas were pure and bold without pineap\n\n[Chorus]\nin my heart I'll pine\nin my heart I'll pine\nin my heart I'll pine pine pine\nin my heart I'll pine\nin my heart I'll pine pine pine\nin my heart I'll pine\n\n[Outro]\nin my heart I'll pine\nI'll pine pine pine I'll pine\nis my preference your\ndelight is all of my dismore\n",
+    "constraints_used": "Syllable Constraint | Rhyming Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "RhymingConstraintLBL": {
+            "max_possible_syllable_count": 3,
+            "good_beamscore_multiplier_same_rhyme_type": 0.2,
+            "good_rhyming_token_multiplier": 0.2,
+            "top_k_rhyme_words": 10,
+            "rhyme_type": "perfect",
+            "frequent_words": false
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.9 | temperature: 0.75",
+    "state": "Finished Correctly",
+    "date": "26-04-2024",
+    "time": "10h-57m-40s",
+    "generation_duration": 278.19,
+    "parodie": "[Intro]\nI think I've made a grave mistake or\nplaced a fruit on a dish that's a\npineapple on a pizza error\npineapple's not a savvy\ntopper for\n\n[Verse]\nI've ordered pies with pineapple\ncan't pretend that I'm a gourmet eater leaving you\nin disbelief and awe of this cul\ntural blunder oh man what a world the things\nI've tasted if I could act on\nmy disdain no would I add this fruit to my plate again\npineapple on a pizza causes a\ndivide and I don't wanna compromise so in my heart\nI'll pine for the days ofarrell\nI'll pine for the days ofarrell oh man what aerial\nthe things I've tasted if I could act\non my disdain no would I add this fruit to\nmy plate again pineapple on\na pizza causes a divide and I don't wanna\ncompromise so in my heart I'll pine for\nthe days of old where pizzas were pure and bold without pineap\n\n[Chorus]\nin my heart I'll pine\nin my heart I'll pine\nin my heart I'll pine pine pine\nin my heart I'll pine\nin my heart I'll pine pine pine\nin my heart I'll pine\n\n[Outro]\nin my heart I'll pine\nI'll pine pine pine I'll pine\nis my preference your\ndelight is all of my dismore\nyour joy\n"
+}

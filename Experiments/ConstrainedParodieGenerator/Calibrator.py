@@ -12,8 +12,13 @@ import platform
 import os 
 import ray
 from tqdm import tqdm
+from tqdm.asyncio import tqdm as atqdm
 from SongEvaluator import evaluate as evaluate_song
-
+import numpy as np
+import seaborn as sns
+import asyncio
+import aiofiles.os
+import aiofiles
 
 ## Constants
 GLOBAL_SEED = 42
@@ -289,7 +294,7 @@ def evaluate(constraint, language_model, folder_path):
     if constraint == "syllable":
         evaluate_syllable(language_model_name, folder_path)
     elif constraint == "rhyming":
-        constraint_folder_path = "Syllable_Constraint_|_Rhyming_Constraint_|_"
+        asyncio.run(evaluate_rhyming(language_model_name, folder_path))
     elif constraint == "pos":
         constraint_folder_path = "Syllable_Constraint_|_POS_Constraint_|_"
     elif constraint == "all":
@@ -298,7 +303,7 @@ def evaluate(constraint, language_model, folder_path):
         
 
 @ray.remote
-def calculate_results_syllable(file, folder_path):
+def calculate_song_evaluation(file, folder_path):
     results = evaluate_song(folder_path + file)
     return results
 
@@ -310,6 +315,32 @@ def plot_results(x_data, y_data, xlabel, ylabel, title, file_name):
     plt.ylabel(ylabel)
     plt.grid(True)
     plt.savefig(file_name, dpi=300)
+
+def plot_2d_heatmap(x_data, y_data, z_data, xlabel, ylabel, zlabel, title, file_name):
+    n_x = len(np.unique(x_data))
+    n_y = len(np.unique(y_data))
+    
+    z_grid = np.array(z_data).reshape(n_x, n_y)
+    
+    #mirror y 
+    y_data = y_data[::-1]
+    z_grid = z_grid[::-1]
+
+    # Plotting
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(z_grid, cmap='coolwarm', cbar_kws={'label': zlabel}, annot=True, xticklabels=x_data, yticklabels=y_data)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
+
+    folder_path = "/".join(file_name.split("/")[:-1])
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+    
+    # Save the plot
+    plt.savefig(file_name, dpi=300)
+    
+
 
 
 def evaluate_syllable(language_model_name, folder_path):
@@ -333,7 +364,7 @@ def evaluate_syllable(language_model_name, folder_path):
             if len(os.listdir(temp_folder_path)) != 20:
                 raise Exception("Not all songs have been generated only " + str(len(os.listdir(temp_folder_path))))
 
-            results = ray.get([calculate_results_syllable.remote(file, temp_folder_path) for file in os.listdir(temp_folder_path)])
+            results = ray.get([calculate_song_evaluation.remote(file, temp_folder_path) for file in os.listdir(temp_folder_path)])
             for result in results:
                 perplexities.append(result["parody_song_perplexity"])
                 syllable_differences.append(result["avg_syllable_count_difference"])
@@ -401,6 +432,232 @@ def evaluate_syllable(language_model_name, folder_path):
         'Experiments/ConstrainedParodieGenerator/CalibrationResults/SyllableConstraint/'+language_model_name.replace(" ", "_")+'/correct_syllable_count.png'
     )
 
+# def evaluate_rhyming(language_model_name, folder_path):
+#     rhyming_folder = 'Experiments/ConstrainedParodieGenerator/CalibrationResults/RhymingConstraint/'
+
+    
+#     if platform.system() == 'Linux':
+#         rhyming_folder = os.environ["VSC_DATA"] + "/CallibrationExperiments/RhymingConstraint/"
+
+
+
+#     possible_good_beamscore_multipliers_rhyme = [0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
+#     good_rhyming_token_multipliers = [0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
+#     possible_rhyme_types = ['perfect']
+#     top_k_rhyme_words = [10]
+#     max_possible_syllable_counts = [3]
+
+#     avg_perplexities = []
+#     avg_correct_rhyme = []
+#     avg_syllable_differences = []
+#     avg_mean_deviation_syllable_count = []
+#     avg_correct_syllable_count = []
+
+#     print("Evaluating Rhyming Constraint for " + language_model_name)
+#     constraint_folder_path = "Syllable_Constraint_|_Rhyming_Constraint_|_/"
+#     for index_beam in tqdm(range(len(possible_good_beamscore_multipliers_rhyme))):
+#         avg_perplexities_per_beam = []
+#         avg_correct_rhyme_per_beam = []
+#         avg_syllable_differences_per_beam = []
+#         avg_mean_deviation_syllable_count_per_beam = []
+#         avg_correct_syllable_count_per_beam = []
+
+#         for index_token in tqdm(range(len(good_rhyming_token_multipliers))):
+#             temp_folder_path = folder_path + str(index_beam + index_token + 1) + "/" + language_model_name + "/" + constraint_folder_path +"/json/"
+#             if os.path.isdir(temp_folder_path):
+#                 perplexities = []
+#                 correct_rhyme = []
+#                 syllable_differences = []
+#                 mean_deviation_syllable_count = []
+#                 correct_syllale_count = []
+
+
+#                 if len(os.listdir(temp_folder_path)) != 20:
+#                     raise Exception("Not all songs have been generated only " + str(len(os.listdir(temp_folder_path))))
+
+#                 results = ray.get([calculate_song_evaluation.remote(file, temp_folder_path) for file in os.listdir(temp_folder_path)])
+#                 for result in results:
+#                     perplexities.append(result["parody_song_perplexity"])
+#                     correct_rhyme.append(result["nb_matching_rhyme_pairs"]/result["nb_expected_rhyming_pairs"])
+#                     syllable_differences.append(result["avg_syllable_count_difference"])
+#                     mean_deviation_syllable_count.append(result["mean_deviation_syllable_count"])
+#                     correct_syllale_count.append(result["nb_lines_correct_syllable_count"]/result["correct_nb_lines"])
+
+#                 avg_perplexities_per_beam.append(sum(perplexities)/len(perplexities))
+#                 avg_correct_rhyme_per_beam.append(sum(correct_rhyme)/len(correct_rhyme))
+#                 avg_syllable_differences_per_beam.append(sum(syllable_differences)/len(syllable_differences))
+#                 avg_mean_deviation_syllable_count_per_beam.append(sum(mean_deviation_syllable_count)/len(mean_deviation_syllable_count))
+#                 avg_correct_syllable_count_per_beam.append(sum(correct_syllale_count)/len(correct_syllale_count))
+
+#         avg_perplexities.append(avg_perplexities_per_beam)
+#         avg_correct_rhyme.append(avg_correct_rhyme_per_beam)
+#         avg_syllable_differences.append(avg_syllable_differences_per_beam)
+#         avg_mean_deviation_syllable_count.append(avg_mean_deviation_syllable_count_per_beam)
+#         avg_correct_syllable_count.append(avg_correct_syllable_count_per_beam)
+
+#     print("Perplexities: ", avg_perplexities)
+#     print("Correct Rhyme: ", avg_correct_rhyme)
+#     print("Syllable Differences: ", avg_syllable_differences)
+#     print("Mean Deviation Syllable Count: ", avg_mean_deviation_syllable_count)
+#     print("Correct Syllable Count: ", avg_correct_syllable_count)
+
+#     if os.path.isdir(rhyming_folder) == False:
+#         os.makedirs(rhyming_folder)
+    
+#     if os.path.isdir(rhyming_folder+language_model_name.replace(" ", "_")) == False:
+#         os.makedirs(rhyming_folder+language_model_name.replace(" ", "_"))
+    
+#     #save results
+#     with open(rhyming_folder+language_model_name.replace(" ", "_")+"/results.json", "w") as f:
+#         json.dump({
+#             "good_beamscore_multipliers_rhyme": possible_good_beamscore_multipliers_rhyme,
+#             "good_rhyming_token_multipliers": good_rhyming_token_multipliers,
+#             "avg_perplexities": avg_perplexities,
+#             "avg_correct_rhyme": avg_correct_rhyme,
+#             "avg_syllable_differences": avg_syllable_differences,
+#             "avg_mean_deviation_syllable_count": avg_mean_deviation_syllable_count,
+#             "avg_correct_syllable_count": avg_correct_syllable_count
+#         }, f, indent=4)
+    
+#     plot_2d_heatmap(
+#         possible_good_beamscore_multipliers_rhyme,
+#         good_rhyming_token_multipliers,
+#         avg_perplexities,
+#         'Good Beamscore Multiplier',
+#         'Good Rhyming Token Multiplier',
+#         'Perplexity',
+#         'Perplexity vs. Good Beamscore Multiplier and Good Rhyming Token Multiplier',
+#         rhyming_folder+language_model_name.replace(" ", "_")+'/perplexity.png'
+#     )
+
+#     plot_2d_heatmap(
+#         possible_good_beamscore_multipliers_rhyme,
+#         good_rhyming_token_multipliers,
+#         avg_correct_rhyme,
+#         'Good Beamscore Multiplier',
+#         'Good Rhyming Token Multiplier',
+#         'Correct Rhyme',
+#         'Correct Rhyme vs. Good Beamscore Multiplier and Good Rhyming Token Multiplier',
+#         rhyming_folder+language_model_name.replace(" ", "_")+'/correct_rhyme.png'
+#     )
+
+#     plot_2d_heatmap(
+#         possible_good_beamscore_multipliers_rhyme,
+#         good_rhyming_token_multipliers,
+#         avg_syllable_differences,
+#         'Good Beamscore Multiplier',
+#         'Good Rhyming Token Multiplier',
+#         'Syllable Differences',
+#         'Syllable Differences vs. Good Beamscore Multiplier and Good Rhyming Token Multiplier',
+#         rhyming_folder+language_model_name.replace(" ", "_")+'/syllable_differences.png'
+#     )
+
+#     plot_2d_heatmap(
+#         possible_good_beamscore_multipliers_rhyme,
+#         good_rhyming_token_multipliers,
+#         avg_mean_deviation_syllable_count,
+#         'Good Beamscore Multiplier',
+#         'Good Rhyming Token Multiplier',
+#         'Mean Deviation Syllable Count',
+#         'Mean Deviation Syllable Count vs. Good Beamscore Multiplier and Good Rhyming Token Multiplier',
+#         rhyming_folder+language_model_name.replace(" ", "_")+'/mean_deviation_syllable_count.png'
+#     )
+
+#     plot_2d_heatmap(
+#         possible_good_beamscore_multipliers_rhyme,
+#         good_rhyming_token_multipliers,
+#         avg_correct_syllable_count,
+#         'Good Beamscore Multiplier',
+#         'Good Rhyming Token Multiplier',
+#         'Correct Syllable Count',
+#         'Correct Syllable Count vs. Good Beamscore Multiplier and Good Rhyming Token Multiplier',
+#         rhyming_folder+language_model_name.replace(" ", "_")+'/correct_syllable_count.png'
+#     )
+
+async def evaluate_rhyming(language_model_name, folder_path):
+    rhyming_folder = 'Experiments/ConstrainedParodieGenerator/CalibrationResults/RhymingConstraint/'
+
+    if platform.system() == 'Linux':
+        rhyming_folder = os.environ["VSC_DATA"] + "/CallibrationExperiments/RhymingConstraint/"
+
+    possible_good_beamscore_multipliers_rhyme = [0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
+    good_rhyming_token_multipliers = [0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
+    possible_rhyme_types = ['perfect']
+    top_k_rhyme_words = [10]
+    max_possible_syllable_counts = [3]
+
+    avg_perplexities = []
+    avg_correct_rhyme = []
+    avg_syllable_differences = []
+    avg_mean_deviation_syllable_count = []
+    avg_correct_syllable_count = []
+
+    print("Evaluating Rhyming Constraint for " + language_model_name)
+    constraint_folder_path = "Syllable_Constraint_|_Rhyming_Constraint_|_/"
+    async for index_beam in atqdm(range(len(possible_good_beamscore_multipliers_rhyme))):
+        avg_perplexities_per_beam = []
+        avg_correct_rhyme_per_beam = []
+        avg_syllable_differences_per_beam = []
+        avg_mean_deviation_syllable_count_per_beam = []
+        avg_correct_syllable_count_per_beam = []
+
+        async for index_token in atqdm(range(len(good_rhyming_token_multipliers))):
+            temp_folder_path = folder_path + str(index_beam + index_token + 1) + "/" + language_model_name + "/" + constraint_folder_path +"/json/"
+            if await aiofiles.os.path.isdir(temp_folder_path):
+                perplexities = []
+                correct_rhyme = []
+                syllable_differences = []
+                mean_deviation_syllable_count = []
+                correct_syllale_count = []
+
+                dir_list = await aiofiles.os.listdir(temp_folder_path)
+                if len(dir_list) != 20:
+                    raise Exception("Not all songs have been generated only " + str(len(dir_list)))
+
+                results = ray.get([calculate_song_evaluation.remote(file, temp_folder_path) for file in dir_list])
+                for result in results:
+                    perplexities.append(result["parody_song_perplexity"])
+                    correct_rhyme.append(result["nb_matching_rhyme_pairs"]/result["nb_expected_rhyming_pairs"])
+                    syllable_differences.append(result["avg_syllable_count_difference"])
+                    mean_deviation_syllable_count.append(result["mean_deviation_syllable_count"])
+                    correct_syllale_count.append(result["nb_lines_correct_syllable_count"]/result["correct_nb_lines"])
+
+                avg_perplexities_per_beam.append(sum(perplexities)/len(perplexities))
+                avg_correct_rhyme_per_beam.append(sum(correct_rhyme)/len(correct_rhyme))
+                avg_syllable_differences_per_beam.append(sum(syllable_differences)/len(syllable_differences))
+                avg_mean_deviation_syllable_count_per_beam.append(sum(mean_deviation_syllable_count)/len(mean_deviation_syllable_count))
+                avg_correct_syllable_count_per_beam.append(sum(correct_syllale_count)/len(correct_syllale_count))
+
+        avg_perplexities.append(avg_perplexities_per_beam)
+        avg_correct_rhyme.append(avg_correct_rhyme_per_beam)
+        avg_syllable_differences.append(avg_syllable_differences_per_beam)
+        avg_mean_deviation_syllable_count.append(avg_mean_deviation_syllable_count_per_beam)
+        avg_correct_syllable_count.append(avg_correct_syllable_count_per_beam)
+
+    # More async file operations for saving and plotting results
+    if not await aiofiles.os.path.isdir(rhyming_folder):
+        await aiofiles.os.makedirs(rhyming_folder)
+    
+    model_folder = rhyming_folder + language_model_name.replace(" ", "_")
+    if not await aiofiles.os.path.isdir(model_folder):
+        await aiofiles.os.makedirs(model_folder)
+    
+    async with aiofiles.open(model_folder + "/results.json", "w") as f:
+        await f.write(json.dumps({
+            "good_beamscore_multipliers_rhyme": possible_good_beamscore_multipliers_rhyme,
+            "good_rhyming_token_multipliers": good_rhyming_token_multipliers,
+            "avg_perplexities": avg_perplexities,
+            "avg_correct_rhyme": avg_correct_rhyme,
+            "avg_syllable_differences": avg_syllable_differences,
+            "avg_mean_deviation_syllable_count": avg_mean_deviation_syllable_count,
+            "avg_correct_syllable_count": avg_correct_syllable_count
+        }, indent=4))
+    
+
+
+def test():
+    plot_2d_heatmap([1, 2, 3, 4, 5, 6], [0.2, 0.4, 0.6, 0.8, 0.9, 0.99], [[10,3,4,2,3,8],[1,9,5,9,7,9], [4,5,6,7,8,9], [1,2,3,4,5,6], [2,3,4,5,6,7], [3,4,5,6,7,8]], "Prompt Number", "Good Beamscore Multiplier", "Perplexity", "Title", "Experiments/ConstrainedParodieGenerator/CalibrationResults/test/test.png")
+
 
 
 
@@ -428,6 +685,8 @@ if __name__ == '__main__':
         language_model = sys.argv[3]
         folder_path = sys.argv[4]
         evaluate(constraint, language_model, folder_path)
+    elif mode == "test":
+        test()
     else:
         print("Usage: python3 Calibrator.py <mode> \n mode = generate/evaluate ")
         sys.exit(1)

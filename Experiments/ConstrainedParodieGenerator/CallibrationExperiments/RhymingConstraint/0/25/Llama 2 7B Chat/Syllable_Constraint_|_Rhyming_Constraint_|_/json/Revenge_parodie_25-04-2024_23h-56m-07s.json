@@ -1,0 +1,34 @@
+{
+    "original_song_title": "Revenge",
+    "original_song_artist": "XXXTENTACION",
+    "language_model_name": "Llama 2 7B Chat",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] <<SYS>>\nYou're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. \n<</SYS>>\n\nWrite a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Intro]\nI think I, I think I finally\nFound a way to forgive myself\nFor the mistakes I made in my past\nI think that's the first step, right?\nYou agree?\n\n[Verse]\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\n\n[Chorus]\nIn my grave, I'll rot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\n[Outro]\nIn my grave, I'll rot\nI'll rot, I'll rot, I'll rot\nIs my pain your freedom?\nIs all of my pain your freedom?\nEnjoy [/INST]\nParody:\n[Intro]\nI think I've found a reason why oh\npineapple should never be on\na pizza pie oh no oh no oh\nI think I've found a reason\npineapple\n\n[Verse]\nit's sweet and juicy and oh so\ntropical and oh so bold oh no oh no ohio\nbut on a pizza it just doesn't\nbelong oh no oh no ohio oh no\nit's like a fruit salad on a\nhot dog oh no oh no ohio oh no ohio\nit's just not right oh no oh no oh oh\npineapple on a pizza is a sin oh no oh no oh\nit's like a crime against human\nity oh no oh no ohio oh no ohio\npineapple on a pigmentation\noh no oh no ohio oh nobuo\nit's just not pizza ohara\noh no oh no ohio oh no ohio oh no\npineapple on a pizza is aho\nno no no no no no no no no no no no noverco\n\n[Chorus]\npineapple on a\npizza noxema\npineapple on a pizza\nno no nobriga\npineapple onondaga\nno no nobrega\n\n[Outro]\npineapple on a\npizza no morea\npineapple on a pie\nno no no more oh no oh no\n",
+    "constraints_used": "Syllable Constraint | Rhyming Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "RhymingConstraintLBL": {
+            "max_possible_syllable_count": 3,
+            "good_beamscore_multiplier_same_rhyme_type": 0.9,
+            "good_rhyming_token_multiplier": 0.2,
+            "top_k_rhyme_words": 10,
+            "rhyme_type": "perfect",
+            "frequent_words": false
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.9 | temperature: 0.75",
+    "state": "Finished Correctly",
+    "date": "25-04-2024",
+    "time": "23h-56m-07s",
+    "generation_duration": 286.58,
+    "parodie": "[Intro]\nI think I've found a reason why oh\npineapple should never be on\na pizza pie oh no oh no oh\nI think I've found a reason\npineapple\n\n[Verse]\nit's sweet and juicy and oh so\ntropical and oh so bold oh no oh no ohio\nbut on a pizza it just doesn't\nbelong oh no oh no ohio oh no\nit's like a fruit salad on a\nhot dog oh no oh no ohio oh no ohio\nit's just not right oh no oh no oh oh\npineapple on a pizza is a sin oh no oh no oh\nit's like a crime against human\nity oh no oh no ohio oh no ohio\npineapple on a pigmentation\noh no oh no ohio oh nobuo\nit's just not pizza ohara\noh no oh no ohio oh no ohio oh no\npineapple on a pizza is aho\nno no no no no no no no no no no no noverco\n\n[Chorus]\npineapple on a\npizza noxema\npineapple on a pizza\nno no nobriga\npineapple onondaga\nno no nobrega\n\n[Outro]\npineapple on a\npizza no morea\npineapple on a pie\nno no no more oh no oh no\npineapp\n"
+}

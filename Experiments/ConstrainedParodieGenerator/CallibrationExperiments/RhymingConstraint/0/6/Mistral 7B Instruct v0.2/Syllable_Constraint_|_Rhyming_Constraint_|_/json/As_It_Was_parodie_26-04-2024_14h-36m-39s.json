@@ -1,0 +1,34 @@
+{
+    "original_song_title": "As It Was",
+    "original_song_artist": "Harry Styles",
+    "language_model_name": "Mistral 7B Instruct v0.2",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Intro]\nCome on, Harry, we wanna say goodnight to you\n\n[Verse 1]\nHoldin' me back\nGravity's holdin' me back\nI want you to hold out the palm of your hand\nWhy don't we leave it at that?\nNothin' to say\nWhen everything gets in the way\nSeems you cannot be replaced\nAnd I'm the one who will stay, oh-oh-oh\n\n[Chorus]\nIn this world, it's just us\nYou know it's not the same as it was\nIn this world, it's just us\nYou know it's not the same as it was\nAs it was, as it was\nYou know it's not the same\n\n[Verse 2]\nAnswer the phone\n\"Harry, you're no good alone\nWhy are you sitting at home on the floor?\nWhat kind of pills are you on?\"\nRingin' the bell\nAnd nobody's coming to help\nYour daddy lives by himself\nHe just wants to know that you're well, oh-oh-oh\n[Chorus]\nIn this world, it's just us\nYou know it's not the same as it was\nIn this world, it's just us\nYou know it's not the same as it was\nAs it was, as it was\nYou know it's not the same\n\n[Bridge]\nGo home, get ahead, light-speed internet\nI don't wanna talk about the way that it was\nLeave America, two kids follow her\nI don't wanna talk about who's doin' it first\n\n[Outro]\n(Hey)\nAs it was\nYou know it's not the same as it was\nAs it was, as it was [/INST]\nParody:\n[Intro]\ncome on folks gather round and let me say this true\n\n[Verse 1]\npineapple on\npizza's flavor marathon\nI want you to hold out the line and refuse\nwhy don't we leave it alone\nno place for taste\nwhen texture clashes interlaced\nit seems you cannot be first\nand I'm the one who'll protest oh oh oh\n\n[Chorus]\nin this world of food we\nknow it's not the same as it used to\nin this world ofc\nknow it's not the same asamera\nas it was piechota\nyou know it's not the same\n\n[Verse 2]\nanswer the call\npineapple lovers mayall\nwhy are you insisting on this allure\nwhat kind of palate are you\nringing the bell\nand pizza purists come to help\nyour taste buds live alone they\njust want to know that their meal's well oh oh oh\n\n[Bridge]\ngo home try new dishes fast internet\nI don't wanna talk about the way that it was\nleave tradition behind two chefs follow\nI don't wanna talk about who's innovating\n\n[Outro]\nhe\nas it was\nyou know it's not the same ohara\n",
+    "constraints_used": "Syllable Constraint | Rhyming Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "RhymingConstraintLBL": {
+            "max_possible_syllable_count": 3,
+            "good_beamscore_multiplier_same_rhyme_type": 0.2,
+            "good_rhyming_token_multiplier": 0.99,
+            "top_k_rhyme_words": 10,
+            "rhyme_type": "perfect",
+            "frequent_words": false
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.9 | temperature: 0.75",
+    "state": "Finished Correctly",
+    "date": "26-04-2024",
+    "time": "14h-36m-39s",
+    "generation_duration": 167.07,
+    "parodie": "[Intro]\ncome on folks gather round and let me say this true\n\n[Verse 1]\npineapple on\npizza's flavor marathon\nI want you to hold out the line and refuse\nwhy don't we leave it alone\nno place for taste\nwhen texture clashes interlaced\nit seems you cannot be first\nand I'm the one who'll protest oh oh oh\n\n[Chorus]\nin this world of food we\nknow it's not the same as it used to\nin this world ofc\nknow it's not the same asamera\nas it was piechota\nyou know it's not the same\n\n[Verse 2]\nanswer the call\npineapple lovers mayall\nwhy are you insisting on this allure\nwhat kind of palate are you\nringing the bell\nand pizza purists come to help\nyour taste buds live alone they\njust want to know that their meal's well oh oh oh\n\n[Chorus]\nin this world of food we\nknow it's not the same as it used to\nin this world ofc\nknow it's not the same asamera\nas it was piechota\nyou know it's not the same\n\n[Bridge]\ngo home try new dishes fast internet\nI don't wanna talk about the way that it was\nleave tradition behind two chefs follow\nI don't wanna talk about who's innovating\n\n[Outro]\nhe\nas it was\nyou know it's not the same ohara\nas it was ohara\n"
+}

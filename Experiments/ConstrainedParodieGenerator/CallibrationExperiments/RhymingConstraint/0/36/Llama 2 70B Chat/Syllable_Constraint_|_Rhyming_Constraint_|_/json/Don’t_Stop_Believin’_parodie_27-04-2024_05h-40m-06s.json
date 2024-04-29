@@ -1,0 +1,34 @@
+{
+    "original_song_title": "Don\u2019t Stop Believin\u2019",
+    "original_song_artist": "Journey",
+    "language_model_name": "Llama 2 70B Chat",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] <<SYS>>\nYou're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. \n<</SYS>>\n\nWrite a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Verse 1]\nJust a small-town girl, livin' in a lonely world\nShe took the midnight train goin' anywhere\nJust a city boy, born and raised in South Detroit\nHe took the midnight train goin' anywhere\n\n[Verse 2]\nA singer in a smoky room\nThe smell of wine and cheap perfume\nFor a smile, they can share the night\nIt goes on and on and on and on\n\n[Pre-Chorus]\nStrangers waitin'\nUp and down the boulevard\nTheir shadows searchin' in the night\nStreetlights, people\nLivin' just to find emotion\nHidin' somewhere in the night\n\n[Verse 3]\nWorkin' hard to get my fill\nEverybody wants a thrill\nPayin' anything to roll the dice\nJust one more time\n[Verse 4]\nSome will win, some will lose\nSome are born to sing the blues\nOh, the movie never ends\nIt goes on and on and on and on\n\n[Pre-Chorus]\nStrangers waitin'\nUp and down the boulevard\nTheir shadows searchin' in the night\nStreetlights, people\nLivin' just to find emotion\nHidin' somewhere in the night\n\n[Guitar Solo]\n\n[Chorus]\nDon't stop believin'\nHold on to that feelin'\nStreetlights, people\nDon't stop believin'\nHold on\nStreetlights, people\nDon't stop believin'\nHold on to that feelin'\nStreetlights, people [/INST]\nParody:\n[Verse 1]\njust a pizza pie in the oven baking liv\nin a kitchen where the flavors are making\na culinary delight that's oh so divine\nbut then they added pineapple aven\n\n[Verse 2]\na fruit that's sweet and juicy too\nbut it don't belong on a\npizza that's just not what to do\nit's a sin it's a crime it's a trav\n\n[Pre-Chorus]\ntoppings that don\nt belong together they\njust don't mix they're like oil and\nwater they'll just\nseparate forever and e\nver and e ver egeland\n\n[Verse 3]\npepperoni and sausage\nyes they're a great cooperage\nmushrooms onions and peppers too yes\nthey're all good for\n\n[Verse 4]\nbut pineapple oh no\nit's a fruit that justino\nbelongs on a pizza it\n's a crime it's a sin it's a travi\n\n[Guitar Solo]\n\n[Chorus]\ndon't stop believin\nhold on to that feelin\ntoppings that don\n't belong together won\n't make a\ngood pettijohn\ndon't stop discretion\nhold on to aherin\n",
+    "constraints_used": "Syllable Constraint | Rhyming Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "RhymingConstraintLBL": {
+            "max_possible_syllable_count": 3,
+            "good_beamscore_multiplier_same_rhyme_type": 0.99,
+            "good_rhyming_token_multiplier": 0.99,
+            "top_k_rhyme_words": 10,
+            "rhyme_type": "perfect",
+            "frequent_words": false
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.9 | temperature: 0.75",
+    "state": "Finished Correctly",
+    "date": "27-04-2024",
+    "time": "05h-40m-06s",
+    "generation_duration": 252.77,
+    "parodie": "[Verse 1]\njust a pizza pie in the oven baking liv\nin a kitchen where the flavors are making\na culinary delight that's oh so divine\nbut then they added pineapple aven\n\n[Verse 2]\na fruit that's sweet and juicy too\nbut it don't belong on a\npizza that's just not what to do\nit's a sin it's a crime it's a trav\n\n[Pre-Chorus]\ntoppings that don\nt belong together they\njust don't mix they're like oil and\nwater they'll just\nseparate forever and e\nver and e ver egeland\n\n[Verse 3]\npepperoni and sausage\nyes they're a great cooperage\nmushrooms onions and peppers too yes\nthey're all good for\n\n[Verse 4]\nbut pineapple oh no\nit's a fruit that justino\nbelongs on a pizza it\n's a crime it's a sin it's a travi\n\n[Pre-Chorus]\ntoppings that don\nt belong together they\njust don't mix they're like oil and\nwater they'll just\nseparate forever and e\nver and e ver egeland\n\n[Guitar Solo]\n\n\n[Chorus]\ndon't stop believin\nhold on to that feelin\ntoppings that don\n't belong together won\n't make a\ngood pettijohn\ndon't stop discretion\nhold on to aherin\nto pantheon\n"
+}

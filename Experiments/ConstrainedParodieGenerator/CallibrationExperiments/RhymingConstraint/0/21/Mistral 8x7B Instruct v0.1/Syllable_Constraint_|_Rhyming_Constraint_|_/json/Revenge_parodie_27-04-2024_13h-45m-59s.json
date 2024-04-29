@@ -1,0 +1,34 @@
+{
+    "original_song_title": "Revenge",
+    "original_song_artist": "XXXTENTACION",
+    "language_model_name": "Mistral 8x7B Instruct v0.1",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Intro]\nI think I, I think I finally\nFound a way to forgive myself\nFor the mistakes I made in my past\nI think that's the first step, right?\nYou agree?\n\n[Verse]\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\n\n[Chorus]\nIn my grave, I'll rot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\n[Outro]\nIn my grave, I'll rot\nI'll rot, I'll rot, I'll rot\nIs my pain your freedom?\nIs all of my pain your freedom?\nEnjoy [/INST]\nParody:\n[Intro]\nI think I've had my fill of that sweet\npineapple on pizza dish we\nonce shared with glee and laughter now a\nghastly memory I can\nnever un\n\n[Verse]\nI've sliced two pies for us before\nbut now I see the error of my ways for sure stanmore\noh pineapple on pizza floor what\na sight to see and never want to see no\nmore some like it hot some like it\nnot but you'd have thought I'd give it a go and take a bite\nwell now I know it's just not right so in\nmy fridge it'll stay and rot away I say no more to pine\napple on my pizza tray no\nmore I've sliced two pies for us before but now I see the\nerror of my ways for sure stanmore\noh pineapple on pizza floor what austro\nbacio of disappointment it\nbrings to me no more I say no more I'll rot away in\nmy fridge it'll stay and rot away in\nmy fridge it'll stay and rot away in my fridge it'll stay\n\n[Chorus]\nin my fridge it'll\nrot rotational\nin my fridge it'll rot rot\nin my fraternal\nin my fridge it'll rot rot\nin my fridge it'll\n\n[Outro]\nin my fridge it'll\nrot rot rotational\nis my pain your freedom\nis all of my pain your freedom\n",
+    "constraints_used": "Syllable Constraint | Rhyming Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "RhymingConstraintLBL": {
+            "max_possible_syllable_count": 3,
+            "good_beamscore_multiplier_same_rhyme_type": 0.8,
+            "good_rhyming_token_multiplier": 0.6,
+            "top_k_rhyme_words": 10,
+            "rhyme_type": "perfect",
+            "frequent_words": false
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.9 | temperature: 0.75",
+    "state": "Finished Correctly",
+    "date": "27-04-2024",
+    "time": "13h-45m-59s",
+    "generation_duration": 372.17,
+    "parodie": "[Intro]\nI think I've had my fill of that sweet\npineapple on pizza dish we\nonce shared with glee and laughter now a\nghastly memory I can\nnever un\n\n[Verse]\nI've sliced two pies for us before\nbut now I see the error of my ways for sure stanmore\noh pineapple on pizza floor what\na sight to see and never want to see no\nmore some like it hot some like it\nnot but you'd have thought I'd give it a go and take a bite\nwell now I know it's just not right so in\nmy fridge it'll stay and rot away I say no more to pine\napple on my pizza tray no\nmore I've sliced two pies for us before but now I see the\nerror of my ways for sure stanmore\noh pineapple on pizza floor what austro\nbacio of disappointment it\nbrings to me no more I say no more I'll rot away in\nmy fridge it'll stay and rot away in\nmy fridge it'll stay and rot away in my fridge it'll stay\n\n[Chorus]\nin my fridge it'll\nrot rotational\nin my fridge it'll rot rot\nin my fraternal\nin my fridge it'll rot rot\nin my fridge it'll\n\n[Outro]\nin my fridge it'll\nrot rot rotational\nis my pain your freedom\nis all of my pain your freedom\nenjoy\n"
+}
