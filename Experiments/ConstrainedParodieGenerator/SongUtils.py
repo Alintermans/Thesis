@@ -566,7 +566,7 @@ def get_pronounciation_of_unknown_word(word):
     try:
         pron_dict = pron_dict_request.text.split("\n")[0]
         pron = pron_dict.split('\t')[1].split(" ")
-    except IndexError:
+    except requests.exceptions.HTTPError as err:
         return []
 
     #add stress
