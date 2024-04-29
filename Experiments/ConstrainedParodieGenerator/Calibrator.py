@@ -652,7 +652,7 @@ async def evaluate_rhyming(language_model_name, folder_path):
     rhyming_folder = 'Experiments/ConstrainedParodieGenerator/CalibrationResults/RhymingConstraint/'
 
     if platform.system() == 'Linux':
-        rhyming_folder = os.environ["VSC_DATA"] + "/CallibrationExperiments/RhymingConstraint/"
+        rhyming_folder = os.environ["VSC_DATA"] + "/CalibrationResults/RhymingConstraint/"
 
     possible_good_beamscore_multipliers_rhyme = [0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
     good_rhyming_token_multipliers = [0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
