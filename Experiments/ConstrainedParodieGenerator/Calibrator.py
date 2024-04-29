@@ -666,6 +666,12 @@ async def evaluate_rhyming(language_model_name, folder_path):
     avg_mean_deviation_syllable_count = []
     avg_correct_syllable_count = []
 
+    original_perplexities = []
+    original_correct_rhyme = []
+    original_syllable_differences = []
+    original_mean_deviation_syllable_count = []
+    original_correct_syllable_count = []
+
     print("Evaluating Rhyming Constraint for " + language_model_name)
     constraint_folder_path = "Syllable_Constraint_|_Rhyming_Constraint_|_/"
     async for index_beam in atqdm(range(len(possible_good_beamscore_multipliers_rhyme))):
@@ -674,6 +680,13 @@ async def evaluate_rhyming(language_model_name, folder_path):
         avg_syllable_differences_per_beam = []
         avg_mean_deviation_syllable_count_per_beam = []
         avg_correct_syllable_count_per_beam = []
+        original_perplexities_per_beam = []
+        original_correct_rhyme_per_beam = []
+        original_syllable_differences_per_beam = []
+        original_mean_deviation_syllable_count_per_beam = []
+        original_correct_syllable_count_per_beam = []
+
+
 
         async for index_token in atqdm(range(len(good_rhyming_token_multipliers))):
             temp_folder_path = folder_path + str(index_beam*6 + index_token + 1) + "/" + language_model_name + "/" + constraint_folder_path +"/json/"
@@ -702,11 +715,26 @@ async def evaluate_rhyming(language_model_name, folder_path):
                 avg_mean_deviation_syllable_count_per_beam.append(sum(mean_deviation_syllable_count)/len(mean_deviation_syllable_count))
                 avg_correct_syllable_count_per_beam.append(sum(correct_syllale_count)/len(correct_syllale_count))
 
+                original_perplexities_per_beam.append(perplexities)
+                original_correct_rhyme_per_beam.append(correct_rhyme)
+                original_syllable_differences_per_beam.append(syllable_differences)
+                original_mean_deviation_syllable_count_per_beam.append(mean_deviation_syllable_count)
+                original_correct_syllable_count_per_beam.append(correct_syllale_count)
+
+
+
         avg_perplexities.append(avg_perplexities_per_beam)
         avg_correct_rhyme.append(avg_correct_rhyme_per_beam)
         avg_syllable_differences.append(avg_syllable_differences_per_beam)
         avg_mean_deviation_syllable_count.append(avg_mean_deviation_syllable_count_per_beam)
         avg_correct_syllable_count.append(avg_correct_syllable_count_per_beam)
+
+        original_perplexities.append(original_perplexities_per_beam)
+        original_correct_rhyme.append(original_correct_rhyme_per_beam)
+        original_syllable_differences.append(original_syllable_differences_per_beam)
+        original_mean_deviation_syllable_count.append(original_mean_deviation_syllable_count_per_beam)
+        original_correct_syllable_count.append(original_correct_syllable_count_per_beam)
+
 
     # More async file operations for saving and plotting results
     if not await aiofiles.os.path.isdir(rhyming_folder):
@@ -724,15 +752,20 @@ async def evaluate_rhyming(language_model_name, folder_path):
             "avg_correct_rhyme": avg_correct_rhyme,
             "avg_syllable_differences": avg_syllable_differences,
             "avg_mean_deviation_syllable_count": avg_mean_deviation_syllable_count,
-            "avg_correct_syllable_count": avg_correct_syllable_count
+            "avg_correct_syllable_count": avg_correct_syllable_count,
+            "original_perplexities": original_perplexities,
+            "original_correct_rhyme": original_correct_rhyme,
+            "original_syllable_differences": original_syllable_differences,
+            "original_mean_deviation_syllable_count": original_mean_deviation_syllable_count,
+            "original_correct_syllable_count": original_correct_syllable_count
         }, indent=4))
     
     plot_2d_heatmap(
         possible_good_beamscore_multipliers_rhyme,
         good_rhyming_token_multipliers,
         avg_perplexities,
-        'Good Beamscore Multiplier',
         'Good Rhyming Token Multiplier',
+        'Good Beamscore Multiplier',
         'Perplexity',
         'Perplexity vs. Good Beamscore Multiplier and Good Rhyming Token Multiplier',
         rhyming_folder+language_model_name.replace(" ", "_")+'/perplexity.png'
@@ -742,8 +775,8 @@ async def evaluate_rhyming(language_model_name, folder_path):
         possible_good_beamscore_multipliers_rhyme,
         good_rhyming_token_multipliers,
         avg_correct_rhyme,
-        'Good Beamscore Multiplier',
         'Good Rhyming Token Multiplier',
+        'Good Beamscore Multiplier',
         'Correct Rhyme',
         'Correct Rhyme vs. Good Beamscore Multiplier and Good Rhyming Token Multiplier',
         rhyming_folder+language_model_name.replace(" ", "_")+'/correct_rhyme.png'
@@ -753,8 +786,8 @@ async def evaluate_rhyming(language_model_name, folder_path):
         possible_good_beamscore_multipliers_rhyme,
         good_rhyming_token_multipliers,
         avg_syllable_differences,
-        'Good Beamscore Multiplier',
         'Good Rhyming Token Multiplier',
+        'Good Beamscore Multiplier',
         'Syllable Differences',
         'Syllable Differences vs. Good Beamscore Multiplier and Good Rhyming Token Multiplier',
         rhyming_folder+language_model_name.replace(" ", "_")+'/syllable_differences.png'
@@ -764,8 +797,8 @@ async def evaluate_rhyming(language_model_name, folder_path):
         possible_good_beamscore_multipliers_rhyme,
         good_rhyming_token_multipliers,
         avg_mean_deviation_syllable_count,
-        'Good Beamscore Multiplier',
         'Good Rhyming Token Multiplier',
+        'Good Beamscore Multiplier',
         'Mean Deviation Syllable Count',
         'Mean Deviation Syllable Count vs. Good Beamscore Multiplier and Good Rhyming Token Multiplier',
         rhyming_folder+language_model_name.replace(" ", "_")+'/mean_deviation_syllable_count.png'
