@@ -561,12 +561,16 @@ def get_pronounciation_of_unknown_word(word):
         url_dict = re.sub(r'\<!-- DICT ', '', match)
         url_dict = re.sub(r'  -->', '', url_dict)
 
-    pron_dict_request = requests.get(url_dict)
-    pron_dict_request.raise_for_status()
+
+    try:
+        pron_dict_request = requests.get(url_dict)
+        pron_dict_request.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        return []
     try:
         pron_dict = pron_dict_request.text.split("\n")[0]
         pron = pron_dict.split('\t')[1].split(" ")
-    except requests.exceptions.HTTPError as err:
+    except IndexError:
         return []
 
     #add stress
@@ -1070,7 +1074,7 @@ if __name__ == "__main__":
     # print(do_two_end_phon_seq_near_rhyme(pron_1, pron_2))
     #print(get_perfect_rhyming_words("ought"))
     #print(get_pos_tags_of_line("It is "))
-    print(get_syllable_count_of_sentence("Mmm, mmm, mmm, mmm"))
+    print(get_pronounciation_of_unknown_word("Mmm"))
     
     # print(_do_two_words_rhyme("dream", "ims", "assonant"))
     #print(get_assonant_rhyming_words("Great"))
