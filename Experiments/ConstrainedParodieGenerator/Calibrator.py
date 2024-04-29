@@ -19,6 +19,7 @@ import seaborn as sns
 import asyncio
 import aiofiles.os
 import aiofiles
+from concurrent.futures import ThreadPoolExecutor
 
 ## Constants
 GLOBAL_SEED = 42
@@ -262,6 +263,77 @@ def calibrate_pos_constraint(song_file_path, prompt_nb, language_model, beam_ind
 
                     index += 1
 
+async def calibrate_pos_constraint_async(song_file_path, prompt_nb, language_model, beam_index):
+    top_k_tokens_to_consider_for_pos = [200]
+    good_beamscore_multipliers_pos = [0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
+    good_token_multipliers = [0.2, 0.4, 0.6, 0.8, 0.9, 0.99]
+    limits_of_pos_similarity_to_satisfy_constraint = [0.5]
+
+    syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(
+        good_beamscore_multiplier=0.9, top_k_tokens_to_consider=200, all_beams_have_syllable_amount=False
+    )
+
+    folder_path_for_generated_parodies = START_FOLDER + "PosConstraint_async/" + str(prompt_nb) + "/"
+
+    if not await aiofiles.os.path.exists(folder_path_for_generated_parodies):
+        await aiofiles.os.makedirs(folder_path_for_generated_parodies)
+
+    system_prompt = SYSTEM_PROMPTS[prompt_nb]
+    context_prompt = CONTEXT_PROMPTS[prompt_nb]
+    assistant_prompt = ASSISTANT_PROMPTS[prompt_nb]
+
+    index = 1 + beam_index * 6
+
+    executor = ThreadPoolExecutor()
+    loop = asyncio.get_running_loop()
+
+    tasks = []
+    for num_beams in POSSIBLE_NUM_BEAMS:
+        for top_k_tokens_to_consider in top_k_tokens_to_consider_for_pos:
+            for good_token_multiplier in good_token_multipliers:
+                for limit_of_pos_similarity_to_satisfy_constraint in limits_of_pos_similarity_to_satisfy_constraint:
+                    good_beamscore_multiplier_pos = good_beamscore_multipliers_pos[beam_index]
+                    pos_constraint_hyperparameters = PosConstraintLBL.hyperparameters_config(
+                        good_beamscore_multiplier=good_beamscore_multiplier_pos,
+                        good_token_multiplier=good_token_multiplier,
+                        limit_of_pos_similarity_to_satisfy_constraint=limit_of_pos_similarity_to_satisfy_constraint,
+                        top_k_tokens_to_consider=top_k_tokens_to_consider
+                    )
+
+                    parody_path = folder_path_for_generated_parodies + str(index) + "/"
+
+                    task = loop.run_in_executor(
+                        executor,
+                        ray.get,
+                        generate_parody_with_ray.remote(
+                            song_file_path=song_file_path,
+                            system_prompt=system_prompt,
+                            context_prompt=context_prompt,
+                            assistant_prompt=assistant_prompt,
+                            language_model=language_model,
+                            folder_path_for_generated_parodies=parody_path,
+                            use_cuda=True,
+                            use_quantization=True,
+                            do_sample=True,
+                            top_p=0.95,
+                            temperature=0.7,
+                            num_beams=num_beams,
+                            seed=GLOBAL_SEED,
+                            syllable_constrained=True,
+                            rhyming_constrained=False,
+                            pos_constrained=True,
+                            pos_constraint_hyperparameters=pos_constraint_hyperparameters,
+                            syllable_constraint_hyperparameters=syllable_constraint_hyperparameters,
+                            use_backtracking=False
+                        )
+                    )
+
+                    tasks.append(task)
+                    index += 1
+
+    # Await all tasks to complete
+    await asyncio.gather(*tasks)
+
 
 
 def generate(constraint, language_model, song_nb):
@@ -284,6 +356,8 @@ def generate(constraint, language_model, song_nb):
         calibrate_rhyming_constraint(song_file_path, prompt_nb, language_model, beam_index)
     elif constraint == "pos":
         calibrate_pos_constraint(song_file_path, prompt_nb, language_model, beam_index)
+    elif constraint == "pos_async":
+        asyncio.run(calibrate_pos_constraint_async(song_file_path, prompt_nb, language_model, beam_index))
 
 
 def evaluate(constraint, language_model, folder_path):
