@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#SBATCH --time=04:30:00
+#SBATCH --time=05:30:00
 module load cluster/wice/gpu_h100
 module load Python/3.10.8-GCCcore-12.2.0
 
