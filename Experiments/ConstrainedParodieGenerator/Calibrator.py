@@ -676,7 +676,7 @@ async def evaluate_rhyming(language_model_name, folder_path):
         avg_correct_syllable_count_per_beam = []
 
         async for index_token in atqdm(range(len(good_rhyming_token_multipliers))):
-            temp_folder_path = folder_path + str(index_beam + index_token + 1) + "/" + language_model_name + "/" + constraint_folder_path +"/json/"
+            temp_folder_path = folder_path + str(index_beam*6 + index_token + 1) + "/" + language_model_name + "/" + constraint_folder_path +"/json/"
             if await aiofiles.os.path.isdir(temp_folder_path):
                 perplexities = []
                 correct_rhyme = []
@@ -726,6 +726,61 @@ async def evaluate_rhyming(language_model_name, folder_path):
             "avg_mean_deviation_syllable_count": avg_mean_deviation_syllable_count,
             "avg_correct_syllable_count": avg_correct_syllable_count
         }, indent=4))
+    
+    plot_2d_heatmap(
+        possible_good_beamscore_multipliers_rhyme,
+        good_rhyming_token_multipliers,
+        avg_perplexities,
+        'Good Beamscore Multiplier',
+        'Good Rhyming Token Multiplier',
+        'Perplexity',
+        'Perplexity vs. Good Beamscore Multiplier and Good Rhyming Token Multiplier',
+        rhyming_folder+language_model_name.replace(" ", "_")+'/perplexity.png'
+    )
+
+    plot_2d_heatmap(
+        possible_good_beamscore_multipliers_rhyme,
+        good_rhyming_token_multipliers,
+        avg_correct_rhyme,
+        'Good Beamscore Multiplier',
+        'Good Rhyming Token Multiplier',
+        'Correct Rhyme',
+        'Correct Rhyme vs. Good Beamscore Multiplier and Good Rhyming Token Multiplier',
+        rhyming_folder+language_model_name.replace(" ", "_")+'/correct_rhyme.png'
+    )
+
+    plot_2d_heatmap(
+        possible_good_beamscore_multipliers_rhyme,
+        good_rhyming_token_multipliers,
+        avg_syllable_differences,
+        'Good Beamscore Multiplier',
+        'Good Rhyming Token Multiplier',
+        'Syllable Differences',
+        'Syllable Differences vs. Good Beamscore Multiplier and Good Rhyming Token Multiplier',
+        rhyming_folder+language_model_name.replace(" ", "_")+'/syllable_differences.png'
+    )
+
+    plot_2d_heatmap(
+        possible_good_beamscore_multipliers_rhyme,
+        good_rhyming_token_multipliers,
+        avg_mean_deviation_syllable_count,
+        'Good Beamscore Multiplier',
+        'Good Rhyming Token Multiplier',
+        'Mean Deviation Syllable Count',
+        'Mean Deviation Syllable Count vs. Good Beamscore Multiplier and Good Rhyming Token Multiplier',
+        rhyming_folder+language_model_name.replace(" ", "_")+'/mean_deviation_syllable_count.png'
+    )
+
+    plot_2d_heatmap(
+        possible_good_beamscore_multipliers_rhyme,
+        good_rhyming_token_multipliers,
+        avg_correct_syllable_count,
+        'Good Beamscore Multiplier',
+        'Good Rhyming Token Multiplier',
+        'Correct Syllable Count',
+        'Correct Syllable Count vs. Good Beamscore Multiplier and Good Rhyming Token Multiplier',
+        rhyming_folder+language_model_name.replace(" ", "_")+'/correct_syllable_count.png'
+    )
     
 
 
