@@ -587,26 +587,31 @@ def get_pronounciation_of_word(word):
         return get_pronounciation_of_unkown_word(word)
 
 def get_rhyme_ending(word, rhyme_type = "perfect"):
-    if rhyme_type == "perfect":
-        try:
-            return PERF_RHYMES_DICT[word]
-        except KeyError:
-            pron = get_pronounciation_of_unknown_word(word)
-            return get_perfect_rhyme_ending_from_pron(pron)
-    elif rhyme_type == "assonant":
-        try:
-            return ASSONANT_RHYMES_DICT[word]
-        except KeyError:
-            pron = get_pronounciation_of_unknown_word(word)
-            return get_assonant_rhyme_ending_from_pron(pron)
-    else:
+    try:
+        if rhyme_type == "perfect":
+            try:
+                return PERF_RHYMES_DICT[word]
+            except KeyError:
+                
+                pron = get_pronounciation_of_unknown_word(word)
+                return get_perfect_rhyme_ending_from_pron(pron)
+        elif rhyme_type == "assonant":
+            try:
+                return ASSONANT_RHYMES_DICT[word]
+            except KeyError:
+                pron = get_pronounciation_of_unknown_word(word)
+                return get_assonant_rhyme_ending_from_pron(pron)
+        else:
+            return ""
+    except Exception as e:
         return ""
 
 
 def get_perfect_rhyme_ending_from_pron(pron):
     index = -1
+
     for i in reversed(range(len(pron))):
-        if pron[i][-1].isdigit():
+        if pron[i] != '' and pron[i][-1].isdigit():
             index = i
             break
     if index == -1:
@@ -618,7 +623,7 @@ def get_perfect_rhyme_ending_from_pron(pron):
 def get_assonant_rhyme_ending_from_pron(pron):
     index = -1
     for i in reversed(range(len(pron))):
-        if pron[i][-1].isdigit():
+        if pron[i] != '' and pron[i][-1].isdigit():
             index = i
             break
     if index == -1:
@@ -641,6 +646,10 @@ def do_two_end_phon_seq_near_rhyme(phon_seq1, phon_seq2):
         ['NG', 'L'],
 
              ]
+
+    #filter out all empty strings
+    phon_seq1 = [x for x in phon_seq1 if x != '']
+    phon_seq2 = [x for x in phon_seq2 if x != '']
 
     #The end sequence starts with the last vowel and goes to the end of the word
     if len(phon_seq1) == 0 or len(phon_seq2) == 0:
@@ -1074,7 +1083,7 @@ if __name__ == "__main__":
     # print(do_two_end_phon_seq_near_rhyme(pron_1, pron_2))
     #print(get_perfect_rhyming_words("ought"))
     #print(get_pos_tags_of_line("It is "))
-    print(get_pronounciation_of_unknown_word(".."))
+    print(do_two_words_rhyme_perfectly("hello","meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"))
     
     # print(_do_two_words_rhyme("dream", "ims", "assonant"))
     #print(get_assonant_rhyming_words("Great"))
