@@ -1,6 +1,7 @@
 #!/bin/bash -l
 #SBATCH --time=03:00:00
 module load cluster/wice/gpu_h100
+module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
 

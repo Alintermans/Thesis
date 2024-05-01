@@ -801,7 +801,7 @@ def evaluate_syllable(language_model_name, folder_path):
 
             results = ray.get([calculate_song_evaluation.remote(file, temp_folder_path) for file in os.listdir(temp_folder_path)])
             
-            for file in os.listdir(temp_folder_path):
+            for file, i in zip(os.listdir(temp_folder_path), range(len(results))):
                 with open(temp_folder_path + file, "r") as f:
                     data = json.load(f)
                     results[i]["original_parody_settings"] = data
@@ -3016,6 +3016,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py generate backtracki
 #!/bin/bash -l
 #SBATCH --time=05:45:00
 module load cluster/wice/gpu_h100
+module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
 
@@ -3030,6 +3031,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py generate all_non_ch
 #!/bin/bash -l
 #SBATCH --time=05:45:00
 module load cluster/wice/gpu_h100
+module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
 
@@ -3044,6 +3046,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py generate all_chat N
 #!/bin/bash -l
 #SBATCH --time=03:00:00
 module load cluster/wice/gpu_h100
+module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
 
@@ -3077,6 +3080,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate syllable L
 #SBATCH --time=01:30:00
 
 module load cluster/genius/gpu_v100
+module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
 
@@ -3092,6 +3096,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate syllable L
 #SBATCH --time=01:30:00
 
 module load cluster/genius/gpu_v100
+module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
 
@@ -3107,6 +3112,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate syllable M
 #SBATCH --time=01:30:00
 
 module load cluster/genius/gpu_v100
+module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
 
@@ -3218,6 +3224,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate pos Llama2
 #SBATCH --time=01:30:00
 
 module load cluster/genius/gpu_v100
+module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
 
@@ -3233,6 +3240,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate pos Mistra
 #SBATCH --time=01:30:00
 
 module load cluster/genius/gpu_v100
+module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
 
@@ -3328,6 +3336,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate all_non_ch
 #SBATCH --time=01:30:00
 
 module load cluster/genius/gpu_v100
+module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
 
