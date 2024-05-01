@@ -1,0 +1,16 @@
+{
+    "avg_correct_paragraphs": 0.9011935286935288,
+    "avg_correct_lines": 0.9765816135283023,
+    "avg_perplexities": 287.73872866438825,
+    "avg_perplexities_difference": -13.23052733867102,
+    "avg_syllable_differences": 0.8517694212850818,
+    "avg_mean_deviation_syllable_count": 0.9343404950921024,
+    "avg_correct_syllable_count": 0.5927857787659898,
+    "avg_duration": 31.673813045024872,
+    "avg_correct_rhymes": 0.7755207455578553,
+    "avg_pos_similarity": 0.9232027830592504,
+    "avg_mean_deviation_pos_similarity": 0.08905010260179269,
+    "avg_correct_pos_lines": 0.6179526801553883,
+    "avg_overlap": 0.6853095567016567,
+    "avg_repetition_difference": -0.0010607563860200258
+}
