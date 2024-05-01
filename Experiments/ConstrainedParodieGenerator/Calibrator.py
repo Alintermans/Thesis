@@ -3061,9 +3061,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py generate no_constra
 #### syllable Llama2_7BChat ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3077,9 +3077,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate syllable L
 #### syllable Llama2_70BChat ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3093,9 +3093,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate syllable L
 #### syllable Mistral7BItV02 ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3109,9 +3109,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate syllable M
 #### syllable Mistral8x7BItV01 ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3125,9 +3125,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate syllable M
 #### rhyming Llama2_7BChat ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3141,9 +3141,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate rhyming Ll
 #### rhyming Llama2_70BChat ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3157,9 +3157,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate rhyming Ll
 #### rhyming Mistral7BItV02 ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3173,9 +3173,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate rhyming Mi
 #### rhyming Mistral8x7BItV01 ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3189,9 +3189,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate rhyming Mi
 #### pos Llama2_7BChat ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3205,9 +3205,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate pos Llama2
 #### pos Llama2_70BChat ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3221,9 +3221,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate pos Llama2
 #### pos Mistral7BItV02 ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3237,9 +3237,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate pos Mistra
 #### pos Mistral8x7BItV01 ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3253,9 +3253,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate pos Mistra
 #### prompt ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3269,9 +3269,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate prompt Non
 #### rhymin frequency ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3285,9 +3285,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate rhymin_fre
 #### rhyming types ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3301,9 +3301,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate rhyming_ty
 #### backtracking ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3317,9 +3317,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate backtracki
 #### all non chat ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3333,9 +3333,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate all_non_ch
 #### all chat ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3349,9 +3349,9 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate all_chat N
 #### no constraints with guardrails ####
 
 #!/bin/bash -l
-#SBATCH --time=01:30:00
+#SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/wice/batch_sapphirerapids
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
