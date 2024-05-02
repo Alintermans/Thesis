@@ -1188,7 +1188,7 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
 
 
 
-        for result_token in result_beamms:
+        for result_token in result_beams:
             perplexities = []
             perplexities_difference = []
             syllable_differences = []
