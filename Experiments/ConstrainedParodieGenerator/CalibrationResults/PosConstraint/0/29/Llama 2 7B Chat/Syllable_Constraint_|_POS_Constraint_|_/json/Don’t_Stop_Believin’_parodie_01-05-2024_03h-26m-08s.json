@@ -1,0 +1,32 @@
+{
+    "original_song_title": "Don\u2019t Stop Believin\u2019",
+    "original_song_artist": "Journey",
+    "language_model_name": "Llama 2 7B Chat",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] <<SYS>>\nYou're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. \n<</SYS>>\n\nWrite a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Verse 1]\nJust a small-town girl, livin' in a lonely world\nShe took the midnight train goin' anywhere\nJust a city boy, born and raised in South Detroit\nHe took the midnight train goin' anywhere\n\n[Verse 2]\nA singer in a smoky room\nThe smell of wine and cheap perfume\nFor a smile, they can share the night\nIt goes on and on and on and on\n\n[Pre-Chorus]\nStrangers waitin'\nUp and down the boulevard\nTheir shadows searchin' in the night\nStreetlights, people\nLivin' just to find emotion\nHidin' somewhere in the night\n\n[Verse 3]\nWorkin' hard to get my fill\nEverybody wants a thrill\nPayin' anything to roll the dice\nJust one more time\n[Verse 4]\nSome will win, some will lose\nSome are born to sing the blues\nOh, the movie never ends\nIt goes on and on and on and on\n\n[Pre-Chorus]\nStrangers waitin'\nUp and down the boulevard\nTheir shadows searchin' in the night\nStreetlights, people\nLivin' just to find emotion\nHidin' somewhere in the night\n\n[Guitar Solo]\n\n[Chorus]\nDon't stop believin'\nHold on to that feelin'\nStreetlights, people\nDon't stop believin'\nHold on\nStreetlights, people\nDon't stop believin'\nHold on to that feelin'\nStreetlights, people [/INST]\nParody:\n[Verse 1]\nhow could pineapple possibly fit on a pie\nits sweetness would battle with the cheese in a\nvery no audience deserves to see try if\nwe put all hopes waste messiness away please\n\n[Verse 2]\na canvas without any frame\nno orderlinesses upon\nfor every tastebud its\nyour should in but at but without but\n\n[Pre-Chorus]\nunitarers\ncooktimes and around each\nthey order want to around the\nroom get hangar\nlife to now out must everything\ntry to when before any\n\n[Verse 3]\npieceinventerzestwithal\nohoh tryed some\ncrimebuttwebreakupitisreal\ndowntherewhere\n\n[Verse 4]\nthe can shouldstainedon\nnooth should break up is an ed\noh no pieceesloneony\nits got asough but past but past but\n\n[Guitar Solo]\n\n[Chorus]\nsave pineally island\ntake as to another\nave e\nsavedaledited\nsave\ndifferentgen\nsavesavesaveyed\nsavepeniseded\n",
+    "constraints_used": "Syllable Constraint | POS Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "PosConstraintLBL": {
+            "top_k_tokens_to_consider": 200,
+            "good_beamscore_multiplier": 0.9,
+            "good_token_multiplier": 0.9,
+            "limit_of_pos_similarity_to_satisfy_constraint": 0.5
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.95 | temperature: 0.7",
+    "state": "Finished Correctly",
+    "date": "01-05-2024",
+    "time": "03h-26m-08s",
+    "generation_duration": 241.43,
+    "parodie": "[Verse 1]\nhow could pineapple possibly fit on a pie\nits sweetness would battle with the cheese in a\nvery no audience deserves to see try if\nwe put all hopes waste messiness away please\n\n[Verse 2]\na canvas without any frame\nno orderlinesses upon\nfor every tastebud its\nyour should in but at but without but\n\n[Pre-Chorus]\nunitarers\ncooktimes and around each\nthey order want to around the\nroom get hangar\nlife to now out must everything\ntry to when before any\n\n[Verse 3]\npieceinventerzestwithal\nohoh tryed some\ncrimebuttwebreakupitisreal\ndowntherewhere\n\n[Verse 4]\nthe can shouldstainedon\nnooth should break up is an ed\noh no pieceesloneony\nits got asough but past but past but\n\n[Pre-Chorus]\nunitarers\ncooktimes and around each\nthey order want to around the\nroom get hangar\nlife to now out must everything\ntry to when before any\n\n[Guitar Solo]\n\n\n[Chorus]\nsave pineally island\ntake as to another\nave e\nsavedaledited\nsave\ndifferentgen\nsavesavesaveyed\nsavepeniseded\nvariatileh\n"
+}

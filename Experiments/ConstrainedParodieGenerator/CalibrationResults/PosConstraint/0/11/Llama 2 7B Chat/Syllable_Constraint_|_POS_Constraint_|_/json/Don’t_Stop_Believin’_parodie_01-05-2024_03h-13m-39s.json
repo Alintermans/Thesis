@@ -1,0 +1,32 @@
+{
+    "original_song_title": "Don\u2019t Stop Believin\u2019",
+    "original_song_artist": "Journey",
+    "language_model_name": "Llama 2 7B Chat",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] <<SYS>>\nYou're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. \n<</SYS>>\n\nWrite a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Verse 1]\nJust a small-town girl, livin' in a lonely world\nShe took the midnight train goin' anywhere\nJust a city boy, born and raised in South Detroit\nHe took the midnight train goin' anywhere\n\n[Verse 2]\nA singer in a smoky room\nThe smell of wine and cheap perfume\nFor a smile, they can share the night\nIt goes on and on and on and on\n\n[Pre-Chorus]\nStrangers waitin'\nUp and down the boulevard\nTheir shadows searchin' in the night\nStreetlights, people\nLivin' just to find emotion\nHidin' somewhere in the night\n\n[Verse 3]\nWorkin' hard to get my fill\nEverybody wants a thrill\nPayin' anything to roll the dice\nJust one more time\n[Verse 4]\nSome will win, some will lose\nSome are born to sing the blues\nOh, the movie never ends\nIt goes on and on and on and on\n\n[Pre-Chorus]\nStrangers waitin'\nUp and down the boulevard\nTheir shadows searchin' in the night\nStreetlights, people\nLivin' just to find emotion\nHidin' somewhere in the night\n\n[Guitar Solo]\n\n[Chorus]\nDon't stop believin'\nHold on to that feelin'\nStreetlights, people\nDon't stop believin'\nHold on\nStreetlights, people\nDon't stop believin'\nHold on to that feelin'\nStreetlights, people [/INST]\nParody:\n[Verse 1]\nhow could pineapple ever be on a pizza\nits sweetness clashes with the savory to\nsoon the whole bums get icky icky icky oh\nits got no pla sositive flow down pasta\n\n[Verse 2]\na fusion of flavors creates\nan italy at messiness\nlike an episode of keeping\nits got ough but after and on and\n\n[Pre-Chorus]\npizza prefer\nupsiders and in all kind\nthey ad know the of the peeling\nneopolis\ndon to so down get feet upses\nwarmin down when like an amb\n\n[Verse 3]\ntrykinjstomeeoffavefind\naindthey jusheddownorene\niwo off try to hide all night din\ndowntherewhere\n\n[Verse 4]\na is made a be done\nno be wontoinneeded to\noh an thee too is done go\nyour done at or out or on either\n\n[Guitar Solo]\n\n[Chorus]\nget ively thinking\nkeep that feeling anoth\nstr length keeps night\nkeep ively seeing\ngetting\nstrands people night\nkeep independently\ndo for to all lifef\n",
+    "constraints_used": "Syllable Constraint | POS Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "PosConstraintLBL": {
+            "top_k_tokens_to_consider": 200,
+            "good_beamscore_multiplier": 0.4,
+            "good_token_multiplier": 0.9,
+            "limit_of_pos_similarity_to_satisfy_constraint": 0.5
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.95 | temperature: 0.7",
+    "state": "Finished Correctly",
+    "date": "01-05-2024",
+    "time": "03h-13m-39s",
+    "generation_duration": 307.52,
+    "parodie": "[Verse 1]\nhow could pineapple ever be on a pizza\nits sweetness clashes with the savory to\nsoon the whole bums get icky icky icky oh\nits got no pla sositive flow down pasta\n\n[Verse 2]\na fusion of flavors creates\nan italy at messiness\nlike an episode of keeping\nits got ough but after and on and\n\n[Pre-Chorus]\npizza prefer\nupsiders and in all kind\nthey ad know the of the peeling\nneopolis\ndon to so down get feet upses\nwarmin down when like an amb\n\n[Verse 3]\ntrykinjstomeeoffavefind\naindthey jusheddownorene\niwo off try to hide all night din\ndowntherewhere\n\n[Verse 4]\na is made a be done\nno be wontoinneeded to\noh an thee too is done go\nyour done at or out or on either\n\n[Pre-Chorus]\npizza prefer\nupsiders and in all kind\nthey ad know the of the peeling\nneopolis\ndon to so down get feet upses\nwarmin down when like an amb\n\n[Guitar Solo]\n\n\n[Chorus]\nget ively thinking\nkeep that feeling anoth\nstr length keeps night\nkeep ively seeing\ngetting\nstrands people night\nkeep independently\ndo for to all lifef\nstr kinds life way\n"
+}

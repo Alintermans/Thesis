@@ -1,0 +1,32 @@
+{
+    "original_song_title": "Smells Like Teen Spirit",
+    "original_song_artist": "Nirvana",
+    "language_model_name": "Llama 2 7B Chat",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] <<SYS>>\nYou're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. \n<</SYS>>\n\nWrite a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Verse 1]\nLoad up on guns, bring your friends\nIt's fun to lose and to pretend\nShe's over-bored and self-assured\nOh no, I know a dirty word\n\n[Pre-Chorus]\nHello, hello, hello, how low\nHello, hello, hello, how low\nHello, hello, hello, how low\nHello, hello, hello\n\n[Chorus]\nWith the lights out, it's less dangerous\nHere we are now, entertain us\nI feel stupid and contagious\nHere we are now, entertain us\nA mulatto, an albino\nA mosquito, my libido\n\n[Post-Chorus]\nYeah, hey, yay\n\n[Verse 2]\nI'm worse at what I do best\nAnd for this gift, I feel blessed\nOur little group has always been\nAnd always will until the end\n[Pre-Chorus]\nHello, hello, hello, how low\nHello, hello, hello, how low\nHello, hello, hello, how low\nHello, hello, hello\n\n[Chorus]\nWith the lights out, it's less dangerous\nHere we are now, entertain us\nI feel stupid and contagious\nHere we are now, entertain us\nA mulatto, an albino\nA mosquito, my libido\n\n[Post-Chorus]\nYeah, hey, yay\n\n[Guitar Solo]\n\n[Verse 3]\nAnd I forget just why I taste\nOh yeah, I guess it makes me smile\nI found it hard, it's hard to find\nOh well, whatever, never mind\n\n[Pre-Chorus]\nHello, hello, hello, how low\nHello, hello, hello, how low\nHello, hello, hello, how low\nHello, hello, hello\n[Chorus]\nWith the lights out, it's less dangerous\nHere we are now, entertain us\nI feel stupid and contagious\nHere we are now, entertain us\nA mulatto, an albino\nA mosquito, my libido\n\n[Outro]\nA denial, a denial\nA denial, a denial\nA denial, a denial\nA denial, a denial\nA denial [/INST]\nParody:\n[Verse 1]\npipecies toff in island\nit make burn to fancy and to\nher got legs nd got go indify self\noh no its be an import com\n\n[Pre-Chorus]\nhi pipece come how ican low\noh plant have ican low ican\nhi sand be why highlow ican\nyes dayo plan ican low\n\n[Chorus]\nwithout ics outis under ican\nhow our is ore is I us\nmy can ican ican low low\never our ican ican\nthe sky ican loose icawas\nthe birds I ices ices iced\n\n[Post-Chorus]\nyes day way\n\n[Verse 2]\nmy can bad at myself me\nand than any getters her\nour ional group get tooher ize\nand so icy icy icy\n\n[Guitar Solo]\n\n[Verse 3]\nand my have why not my having\noh yes they set my getting them\nits getting my giving my be\noh so icy so icy too\n\n[Outro]\nwhich iwaysiis there b reasons\nan imports that causes ica\nall timehigher every\nall things all iresasons day\n",
+    "constraints_used": "Syllable Constraint | POS Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "PosConstraintLBL": {
+            "top_k_tokens_to_consider": 200,
+            "good_beamscore_multiplier": 0.8,
+            "good_token_multiplier": 0.9,
+            "limit_of_pos_similarity_to_satisfy_constraint": 0.5
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.95 | temperature: 0.7",
+    "state": "Finished Correctly",
+    "date": "01-05-2024",
+    "time": "02h-45m-55s",
+    "generation_duration": 302.65,
+    "parodie": "[Verse 1]\npipecies toff in island\nit make burn to fancy and to\nher got legs nd got go indify self\noh no its be an import com\n\n[Pre-Chorus]\nhi pipece come how ican low\noh plant have ican low ican\nhi sand be why highlow ican\nyes dayo plan ican low\n\n[Chorus]\nwithout ics outis under ican\nhow our is ore is I us\nmy can ican ican low low\never our ican ican\nthe sky ican loose icawas\nthe birds I ices ices iced\n\n[Post-Chorus]\nyes day way\n\n[Verse 2]\nmy can bad at myself me\nand than any getters her\nour ional group get tooher ize\nand so icy icy icy\n\n[Pre-Chorus]\nhi pipece come how ican low\noh plant have ican low ican\nhi sand be why highlow ican\nyes dayo plan ican low\n\n[Chorus]\nwithout ics outis under ican\nhow our is ore is I us\nmy can ican ican low low\never our ican ican\nthe sky ican loose icawas\nthe birds I ices ices iced\n\n[Post-Chorus]\nyes day way\n\n[Guitar Solo]\n\n\n[Verse 3]\nand my have why not my having\noh yes they set my getting them\nits getting my giving my be\noh so icy so icy too\n\n[Pre-Chorus]\nhi pipece come how ican low\noh plant have ican low ican\nhi sand be why highlow ican\nyes dayo plan ican low\n\n[Chorus]\nwithout ics outis under ican\nhow our is ore is I us\nmy can ican ican low low\never our ican ican\nthe sky ican loose icawas\nthe birds I ices ices iced\n\n[Outro]\nwhich iwaysiis there b reasons\nan imports that causes ica\nall timehigher every\nall things all iresasons day\nevery sing\n"
+}

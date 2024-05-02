@@ -1,0 +1,32 @@
+{
+    "original_song_title": "Revenge",
+    "original_song_artist": "XXXTENTACION",
+    "language_model_name": "Llama 2 7B Chat",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] <<SYS>>\nYou're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. \n<</SYS>>\n\nWrite a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Intro]\nI think I, I think I finally\nFound a way to forgive myself\nFor the mistakes I made in my past\nI think that's the first step, right?\nYou agree?\n\n[Verse]\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\n\n[Chorus]\nIn my grave, I'll rot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\n[Outro]\nIn my grave, I'll rot\nI'll rot, I'll rot, I'll rot\nIs my pain your freedom?\nIs all of my pain your freedom?\nEnjoy [/INST]\nParody:\n[Intro]\nI wish they they let me never so\nof that bitterweetness up in\nin that burning they are over their\nmy is this would some other\nyou make want\n\n[Verse]\nyour is beaming with excitement\nmolden so beating in your does new name is my like ra\noh yes it there dreamers there icy\nlike my does yours if you something no can they\nno should the is any may they\nnor my is love must about his be might your give but know\nwhen be something should night never find out\nor he think so tell up has they know always near you something\nyour said would one something like what\nothello when will of our does same icy icy\ngirl nice who which icy icy cold\nof my says would than him icsicles icy\nno is no says icy icy\nor her makes icy icy icy icy icy iced\ndown are something is ety icy iced\nand my were very says icy iced icy says so icy\n\n[Chorus]\nbecause icy ic\nthat I ices iced\nbecause it iceiceicy\nthat you icesies\nthat I iceslices iced\nwith they fingers you\n\n[Outro]\non I lies icy\nmy is see icylic\nseen they ices icy\nis a on they fingers you iced\n",
+    "constraints_used": "Syllable Constraint | POS Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "PosConstraintLBL": {
+            "top_k_tokens_to_consider": 200,
+            "good_beamscore_multiplier": 0.9,
+            "good_token_multiplier": 0.9,
+            "limit_of_pos_similarity_to_satisfy_constraint": 0.5
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.95 | temperature: 0.7",
+    "state": "Finished Correctly",
+    "date": "30-04-2024",
+    "time": "14h-01m-08s",
+    "generation_duration": 384.48,
+    "parodie": "[Intro]\nI wish they they let me never so\nof that bitterweetness up in\nin that burning they are over their\nmy is this would some other\nyou make want\n\n[Verse]\nyour is beaming with excitement\nmolden so beating in your does new name is my like ra\noh yes it there dreamers there icy\nlike my does yours if you something no can they\nno should the is any may they\nnor my is love must about his be might your give but know\nwhen be something should night never find out\nor he think so tell up has they know always near you something\nyour said would one something like what\nothello when will of our does same icy icy\ngirl nice who which icy icy cold\nof my says would than him icsicles icy\nno is no says icy icy\nor her makes icy icy icy icy icy iced\ndown are something is ety icy iced\nand my were very says icy iced icy says so icy\n\n[Chorus]\nbecause icy ic\nthat I ices iced\nbecause it iceiceicy\nthat you icesies\nthat I iceslices iced\nwith they fingers you\n\n[Outro]\non I lies icy\nmy is see icylic\nseen they ices icy\nis a on they fingers you iced\nly ice\n"
+}

@@ -1,0 +1,32 @@
+{
+    "original_song_title": "Revenge",
+    "original_song_artist": "XXXTENTACION",
+    "language_model_name": "Llama 2 7B Chat",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] <<SYS>>\nYou're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. \n<</SYS>>\n\nWrite a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Intro]\nI think I, I think I finally\nFound a way to forgive myself\nFor the mistakes I made in my past\nI think that's the first step, right?\nYou agree?\n\n[Verse]\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\n\n[Chorus]\nIn my grave, I'll rot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\n[Outro]\nIn my grave, I'll rot\nI'll rot, I'll rot, I'll rot\nIs my pain your freedom?\nIs all of my pain your freedom?\nEnjoy [/INST]\nParody:\n[Intro]\noh no pineapple on my pizza\nthat's a topping I can't ab\nin my grave I know I'll go fervent\nmy will the will all good things\nI refuse\n\n[Verse]\nI searchedhigh and low for a\nhaircareproduct so dope that its gone disappear yo\ncuz pineapple don't belong on\nthat's a topping I just can't ignore yo\nthe was a be a be I ad\nbut your was left be on my led be your are and yo you\nhow can anything sweet sound when talking\nabout pineapple on my pizza that goes against the law\nmy be wentfrom zero tonight\nzero again were on our might we nights ight my in\nzero again were on our might\nas my went got near we nights ight get my he\nan ended every ending\nand my was torn would by your being hurted my will and\nhow can thing bright fill why are out when still\nand my will never borned back be your be never near me\n\n[Chorus]\ndown my ear its went\nin my ear its gone\nin me hairearsounditson\nin they years its be\nin she voice its gone be gone\nin he wings its gone\n\n[Outro]\nin he face we say\nmy says went his way say\ncan we something you ad\ncan we something I ad you ad\n",
+    "constraints_used": "Syllable Constraint | POS Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "PosConstraintLBL": {
+            "top_k_tokens_to_consider": 200,
+            "good_beamscore_multiplier": 0.2,
+            "good_token_multiplier": 0.9,
+            "limit_of_pos_similarity_to_satisfy_constraint": 0.5
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.95 | temperature: 0.7",
+    "state": "Finished Correctly",
+    "date": "30-04-2024",
+    "time": "13h-16m-47s",
+    "generation_duration": 379.48,
+    "parodie": "[Intro]\noh no pineapple on my pizza\nthat's a topping I can't ab\nin my grave I know I'll go fervent\nmy will the will all good things\nI refuse\n\n[Verse]\nI searchedhigh and low for a\nhaircareproduct so dope that its gone disappear yo\ncuz pineapple don't belong on\nthat's a topping I just can't ignore yo\nthe was a be a be I ad\nbut your was left be on my led be your are and yo you\nhow can anything sweet sound when talking\nabout pineapple on my pizza that goes against the law\nmy be wentfrom zero tonight\nzero again were on our might we nights ight my in\nzero again were on our might\nas my went got near we nights ight get my he\nan ended every ending\nand my was torn would by your being hurted my will and\nhow can thing bright fill why are out when still\nand my will never borned back be your be never near me\n\n[Chorus]\ndown my ear its went\nin my ear its gone\nin me hairearsounditson\nin they years its be\nin she voice its gone be gone\nin he wings its gone\n\n[Outro]\nin he face we say\nmy says went his way say\ncan we something you ad\ncan we something I ad you ad\nsomething\n"
+}

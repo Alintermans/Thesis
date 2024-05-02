@@ -1,0 +1,32 @@
+{
+    "original_song_title": "Revenge",
+    "original_song_artist": "XXXTENTACION",
+    "language_model_name": "Mistral 7B Instruct v0.2",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Intro]\nI think I, I think I finally\nFound a way to forgive myself\nFor the mistakes I made in my past\nI think that's the first step, right?\nYou agree?\n\n[Verse]\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\n\n[Chorus]\nIn my grave, I'll rot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\n[Outro]\nIn my grave, I'll rot\nI'll rot, I'll rot, I'll rot\nIs my pain your freedom?\nIs all of my pain your freedom?\nEnjoy [/INST]\nParody:\n[Intro]\nI ate a pie filled with surprise once\npineapple on top was the unw\nelcome guest at my dinner table\nmy beloved pizza lost its\nallure and\n\n[Verse]\ntwo flavors clash in harmony\nI just can't abide the sight of pineapple near me\noh sourness reigns wherever meets the\neye if I could forgo that bite no lie we\ncrave diversity in our\ndiets but this blend crossed the line is it mine or is it\nyours pineapple on pizza puts aside\nand our taste buds collide love died our amity now\nour combined hatred grows night\nbye together we'll rot in our graveside eyes I can\nno longer bear to see pineapple\non my beloved pizza pie I yearn to rev\noke this decision and undo\nbut I don't have the power to undo our shared\nbereavement pineapple on pizza put\naside our amity now love died our happiness\n\n[Chorus]\nin our pizza\ngraveside in our\ngraveside in our graveside\nin our pizza\ngraveside in our pizza\nin our pepper\n\n[Outro]\nin our pizza\nour shared beloved we\ncan't share it peace till\ncan this injustice be revers\n",
+    "constraints_used": "Syllable Constraint | POS Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "PosConstraintLBL": {
+            "top_k_tokens_to_consider": 200,
+            "good_beamscore_multiplier": 0.6,
+            "good_token_multiplier": 0.8,
+            "limit_of_pos_similarity_to_satisfy_constraint": 0.5
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.95 | temperature: 0.7",
+    "state": "Finished Correctly",
+    "date": "01-05-2024",
+    "time": "17h-12m-52s",
+    "generation_duration": 309.15,
+    "parodie": "[Intro]\nI ate a pie filled with surprise once\npineapple on top was the unw\nelcome guest at my dinner table\nmy beloved pizza lost its\nallure and\n\n[Verse]\ntwo flavors clash in harmony\nI just can't abide the sight of pineapple near me\noh sourness reigns wherever meets the\neye if I could forgo that bite no lie we\ncrave diversity in our\ndiets but this blend crossed the line is it mine or is it\nyours pineapple on pizza puts aside\nand our taste buds collide love died our amity now\nour combined hatred grows night\nbye together we'll rot in our graveside eyes I can\nno longer bear to see pineapple\non my beloved pizza pie I yearn to rev\noke this decision and undo\nbut I don't have the power to undo our shared\nbereavement pineapple on pizza put\naside our amity now love died our happiness\n\n[Chorus]\nin our pizza\ngraveside in our\ngraveside in our graveside\nin our pizza\ngraveside in our pizza\nin our pepper\n\n[Outro]\nin our pizza\nour shared beloved we\ncan't share it peace till\ncan this injustice be revers\ned oh\n"
+}
