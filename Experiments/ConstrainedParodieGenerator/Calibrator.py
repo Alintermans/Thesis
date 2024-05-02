@@ -1138,6 +1138,16 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
     else:
         folder = pos_folder
     
+    dest_folder = ""
+    if constraint_type == "rhyming":
+        dest_folder = "Experiments/ConstrainedParodieGenerator/CalibrationResults/RhymingConstraint/"
+        if platform.system() == 'Linux':
+            dest_folder = os.environ["VSC_DATA"] + "/CalibrationResults/RhymingConstraint/"
+    else:
+        dest_folder = "Experiments/ConstrainedParodieGenerator/CalibrationResults/PosConstraint/"
+        if platform.system() == 'Linux':
+            dest_folder = os.environ["VSC_DATA"] + "/CalibrationResults/PosConstraint/"
+    
     data = None
     with open(folder+language_model_name.replace(" ", "_")+"/results.json", "r") as f:
         data = json.load(f)
