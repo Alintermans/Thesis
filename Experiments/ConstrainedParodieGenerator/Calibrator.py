@@ -1159,15 +1159,15 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
     y_label = None
 
     if constraint_type == "rhyming":
-        x_data = data["good_beamscore_multipliers_rhyme"]
-        y_data = data["good_rhyming_token_multipliers"]
-        x_label = "Good Beamscore Multiplier"
-        y_label = "Good Rhyming Token Multiplier"
+        y_data = data["good_beamscore_multipliers_rhyme"]
+        x_data = data["good_rhyming_token_multipliers"]
+        y_label = "Good Beamscore Multiplier"
+        x_label = "Good Rhyming Token Multiplier"
     else:
-        x_data = data["good_beamscore_multipliers_pos"]
-        y_data = data["good_token_multipliers"]
-        x_label = "Good Beamscore Multiplier"
-        y_label = "Good Token Multiplier"
+        y_data = data["good_beamscore_multipliers_pos"]
+        x_data = data["good_token_multipliers"]
+        y_label = "Good Beamscore Multiplier"
+        x_label = "Good Token Multiplier"
     
     avg_perplexities = []
     avg_perplexities_difference = []
