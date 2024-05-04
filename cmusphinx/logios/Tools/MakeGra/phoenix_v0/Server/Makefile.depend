@@ -1,1 +1,0 @@
-$(TRUE_OBJDIR)phoenix_serv.o: phoenix_serv.c
