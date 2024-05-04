@@ -5,6 +5,9 @@ import os
 import json
 from datetime import date, datetime
 import platform
+from g2p_en import G2p
+
+g2P = G2p()
 
 ################################################## Global Parameters ################################################
 if platform.system() == 'Linux':
@@ -536,47 +539,54 @@ def load_rhyming_dicts(use_frequent_words = False):
 
 
 def get_pronounciation_of_unknown_word(word):
+    #remove special characters
+    word = word.replace("’", "'")
+    word = ''.join(e for e in word if e.isalnum() or e in ["'", "-"])
+
+    return g2P(word)
+
+
     #We use the legois tool from CMU
-    from io import BytesIO
-    import re
-    url = "http://www.speech.cs.cmu.edu/cgi-bin/tools/logios/lextool2.pl"
+    # from io import BytesIO
+    # import re
+    # url = "http://www.speech.cs.cmu.edu/cgi-bin/tools/logios/lextool2.pl"
 
-    #filter word for special characters
-    word = re.sub(r'[^A-Za-z]', '', word)
+    # #filter word for special characters
+    # word = re.sub(r'[^A-Za-z]', '', word)
 
-    word = word.upper()
-    word_bytes=BytesIO(word.encode('utf-8'))
-
-
-    files = {'wordfile': ('wordfile', word_bytes)}
-    try:
-        request = requests.post(url, files=files)
-        request.raise_for_status()
-    except requests.exceptions.HTTPError as err:
-        return []
-    matches = re.findall(r'\<!-- DICT .*?\  -->', request.text)
-    url_dict = ""
-    if len(matches) >0:
-        match = matches[0]
-        url_dict = re.sub(r'\<!-- DICT ', '', match)
-        url_dict = re.sub(r'  -->', '', url_dict)
+    # word = word.upper()
+    # word_bytes=BytesIO(word.encode('utf-8'))
 
 
-    try:
-        pron_dict_request = requests.get(url_dict)
-        pron_dict_request.raise_for_status()
-    except requests.exceptions.HTTPError as err:
-        return []
-    try:
-        pron_dict = pron_dict_request.text.split("\n")[0]
-        pron = pron_dict.split('\t')[1].split(" ")
-    except IndexError:
-        return []
+    # files = {'wordfile': ('wordfile', word_bytes)}
+    # try:
+    #     request = requests.post(url, files=files)
+    #     request.raise_for_status()
+    # except requests.exceptions.HTTPError as err:
+    #     return []
+    # matches = re.findall(r'\<!-- DICT .*?\  -->', request.text)
+    # url_dict = ""
+    # if len(matches) >0:
+    #     match = matches[0]
+    #     url_dict = re.sub(r'\<!-- DICT ', '', match)
+    #     url_dict = re.sub(r'  -->', '', url_dict)
 
-    #add stress
-    for i in range(len(pron)):
-        if pron[i] in phonemic_vowels:
-            pron[i] = pron[i] + "1"
+
+    # try:
+    #     pron_dict_request = requests.get(url_dict)
+    #     pron_dict_request.raise_for_status()
+    # except requests.exceptions.HTTPError as err:
+    #     return []
+    # try:
+    #     pron_dict = pron_dict_request.text.split("\n")[0]
+    #     pron = pron_dict.split('\t')[1].split(" ")
+    # except IndexError:
+    #     return []
+
+    # #add stress
+    # for i in range(len(pron)):
+    #     if pron[i] in phonemic_vowels:
+    #         pron[i] = pron[i] + "1"
     return pron
     
 
@@ -1081,9 +1091,9 @@ if __name__ == "__main__":
     # print(pron_1, pron_2)
 
     # print(do_two_end_phon_seq_near_rhyme(pron_1, pron_2))
-    #print(get_perfect_rhyming_words("ought"))
+    print(get_perfect_rhyming_words("aapple"))
     #print(get_pos_tags_of_line("It is "))
-    print(do_two_words_rhyme_perfectly("hello","meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"))
+   #print(do_two_words_rhyme_perfectly("hello","meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"))
     
     # print(_do_two_words_rhyme("dream", "ims", "assonant"))
     #print(get_assonant_rhyming_words("Great"))

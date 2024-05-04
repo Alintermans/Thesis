@@ -15,7 +15,7 @@ source ThesisEnv/bin/activate
 # Install Python libraries
 #pip install --upgrade https://github.com/Alintermans/transformers/tree/main
 pip install git+https://github.com/Alintermans/transformers.git
-pip install accelerate bitsandbytes sentencepiece evaluate torch nltk pronouncing matplotlib ray aiofiles
+pip install accelerate bitsandbytes sentencepiece evaluate torch nltk pronouncing matplotlib ray aiofiles g2p_en
 
 # Download the code
 git clone https://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@github.com/Alintermans/Thesis.git
