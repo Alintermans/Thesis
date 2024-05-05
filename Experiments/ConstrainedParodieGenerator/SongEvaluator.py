@@ -69,7 +69,7 @@ def count_nb_line_pairs_match_rhyme_scheme(original_song_paragraph, parody_song_
                     matching_rhyme_pairs += 1
     if len(rhyme_words_lengths) == 0:
         return matching_rhyme_pairs, expected_rhyming_pairs, 0
-    return matching_rhyme_pairs, expected_rhyming_pairs, rhyme_words_lengths/len(rhyme_words_lengths)
+    return matching_rhyme_pairs, expected_rhyming_pairs, sum(rhyme_words_lengths)/len(rhyme_words_lengths)
     
 
 
