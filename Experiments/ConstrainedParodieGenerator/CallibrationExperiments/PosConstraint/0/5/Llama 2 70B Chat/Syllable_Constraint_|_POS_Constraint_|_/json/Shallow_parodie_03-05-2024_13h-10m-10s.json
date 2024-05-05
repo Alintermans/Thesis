@@ -1,0 +1,32 @@
+{
+    "original_song_title": "Shallow",
+    "original_song_artist": "Lady Gaga & Bradley Cooper",
+    "language_model_name": "Llama 2 70B Chat",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] <<SYS>>\nYou're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. \n<</SYS>>\n\nWrite a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Verse 1: Bradley Cooper]\nTell me somethin', girl\nAre you happy in this modern world?\nOr do you need more?\nIs there somethin' else you're searchin' for?\n\n[Refrain: Bradley Cooper]\nI'm fallin'\nIn all the good times, I find myself longin'\nFor change\nAnd, in the bad times, I fear myself\n\n[Verse 2: Lady Gaga]\nTell me something, boy\nAren't you tired tryna fill that void?\nOr do you need more?\nAin't it hard keepin' it so hardcore?\n\n[Refrain: Lady Gaga]\nI'm falling\nIn all the good times, I find myself longing\nFor change\nAnd, in the bad times, I fear myself\n\n[Chorus: Lady Gaga]\nI'm off the deep end, watch as I dive in\nI'll never meet the ground\nCrash through the surface where they can't hurt us\nWe're far from the shallow now\n[Post-Chorus: Lady Gaga & Bradley Cooper]\nIn the sha-ha, sha-hallow\nIn the sha-ha, sha-la-la-la-low\nIn the sha-ha, sha-hallow\nWe're far from the shallow now\n\n[Bridge: Lady Gaga]\nOh, ha, ah, ha\nOh-ah, ha\n\n[Chorus: Lady Gaga]\nI'm off the deep end, watch as I dive in\nI'll never meet the ground\nCrash through the surface where they can't hurt us\nWe're far from the shallow now\n\n[Post-Chorus: Lady Gaga & Bradley Cooper]\nIn the sha-ha, shallow\nIn the sha-ha, sha-la-la-la-low\nIn the sha-ha, shallow\nWe're far from the shallow now [/INST]\nParody:\n[Verse 1: Bradley Cooper]\ntired of toppings\ndragula what do you want modern\nworld pineapple on\nmake just right don't you know better\n\n[Refrain: Bradley Cooper]\nits growing\nfor a pizza full of flavorful changing\nthat I\nfear my stomach won't be able\n\n[Verse 2: Lady Gaga]\ndo you thing baby\ncan't you see that putting pineapple\non a pizza is\nkeeping too hardcore I warriors to\n\n[Refrain: Lady Gaga]\nmy falling\nfor a pizza full of flavorfully made\nbecause\nfear my stomach won't be able\n\n[Chorus: Lady Gaga]\nI will never eat it watch me toss it\nit hit the can it'll\nforevers at the start together our\nyour canned now in another\n\n[Post-Chorus: Lady Gaga & Bradley Cooper]\nat the beginning deeper\nof the garbage look throw I r right\non the ground rounding till we\nour shallow completely\n\n[Bridge: Lady Gaga]\noh ha cut cut\nha buy yours\n\n[Post-Chorus: Lady Gaga & Bradley Cooper]\noutside no hand icy\noutside no fancy romay fancy\noutside no one telling\n",
+    "constraints_used": "Syllable Constraint | POS Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "PosConstraintLBL": {
+            "top_k_tokens_to_consider": 200,
+            "good_beamscore_multiplier": 0.2,
+            "good_token_multiplier": 0.9,
+            "limit_of_pos_similarity_to_satisfy_constraint": 0.5
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.95 | temperature: 0.7",
+    "state": "Finished Correctly",
+    "date": "03-05-2024",
+    "time": "13h-10m-10s",
+    "generation_duration": 600.68,
+    "parodie": "[Verse 1: Bradley Cooper]\ntired of toppings\ndragula what do you want modern\nworld pineapple on\nmake just right don't you know better\n\n[Refrain: Bradley Cooper]\nits growing\nfor a pizza full of flavorful changing\nthat I\nfear my stomach won't be able\n\n[Verse 2: Lady Gaga]\ndo you thing baby\ncan't you see that putting pineapple\non a pizza is\nkeeping too hardcore I warriors to\n\n[Refrain: Lady Gaga]\nmy falling\nfor a pizza full of flavorfully made\nbecause\nfear my stomach won't be able\n\n[Chorus: Lady Gaga]\nI will never eat it watch me toss it\nit hit the can it'll\nforevers at the start together our\nyour canned now in another\n\n[Post-Chorus: Lady Gaga & Bradley Cooper]\nat the beginning deeper\nof the garbage look throw I r right\non the ground rounding till we\nour shallow completely\n\n[Bridge: Lady Gaga]\noh ha cut cut\nha buy yours\n\n[Chorus: Lady Gaga]\nI will never eat it watch me toss it\nit hit the can it'll\nforevers at the start together our\nyour canned now in another\n\n[Post-Chorus: Lady Gaga & Bradley Cooper]\noutside no hand icy\noutside no fancy romay fancy\noutside no one telling\nmy can still icy all cra\n"
+}

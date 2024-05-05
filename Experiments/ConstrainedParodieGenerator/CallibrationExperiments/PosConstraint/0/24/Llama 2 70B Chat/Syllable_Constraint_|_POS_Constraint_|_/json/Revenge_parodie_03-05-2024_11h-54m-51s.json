@@ -1,0 +1,32 @@
+{
+    "original_song_title": "Revenge",
+    "original_song_artist": "XXXTENTACION",
+    "language_model_name": "Llama 2 70B Chat",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] <<SYS>>\nYou're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. \n<</SYS>>\n\nWrite a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Intro]\nI think I, I think I finally\nFound a way to forgive myself\nFor the mistakes I made in my past\nI think that's the first step, right?\nYou agree?\n\n[Verse]\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\n\n[Chorus]\nIn my grave, I'll rot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\n[Outro]\nIn my grave, I'll rot\nI'll rot, I'll rot, I'll rot\nIs my pain your freedom?\nIs all of my pain your freedom?\nEnjoy [/INST]\nParody:\n[Intro]\nmy pined she my can my not not not\nfor all choices off go he his\nas both log my will in I things things\nmy can the did a first step\nmy agreed\n\n[Verse]\nit fruit find two usaid for\npine so rested by his can poor heart'unsentenceences\noh fruit they all seaonseses that world\nat my am leting if them hersensesces\nno be those kill any be them\nand her had can gave for my given give my given and\nwhen does home gets sees reven give over\nand he had more goes out get its been faster than them hersins\nit soso shall one minever\nburyed too us in my gives n yesheartheythey arehe\nc ouldth I some actanssoninsens\nin my is geting de I insresiesres\nno is these shall an do him thing\nand my is geted goting over his giving given\nonly knowin giveover do part then\nand its gave more have over gives his gets rather of me yours\n\n[Chorus]\nunder they hersons\non what illusion\nthat we insisesences\non we others he\nthat her eyes my given give\nin they watersons\n\n[Outro]\nlike you watersions\nits gone say our gives\nknow my waysidesins\nwill the as I choicesonsors\n",
+    "constraints_used": "Syllable Constraint | POS Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "PosConstraintLBL": {
+            "top_k_tokens_to_consider": 200,
+            "good_beamscore_multiplier": 0.8,
+            "good_token_multiplier": 0.99,
+            "limit_of_pos_similarity_to_satisfy_constraint": 0.5
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.95 | temperature: 0.7",
+    "state": "Finished Correctly",
+    "date": "03-05-2024",
+    "time": "11h-54m-51s",
+    "generation_duration": 812.83,
+    "parodie": "[Intro]\nmy pined she my can my not not not\nfor all choices off go he his\nas both log my will in I things things\nmy can the did a first step\nmy agreed\n\n[Verse]\nit fruit find two usaid for\npine so rested by his can poor heart'unsentenceences\noh fruit they all seaonseses that world\nat my am leting if them hersensesces\nno be those kill any be them\nand her had can gave for my given give my given and\nwhen does home gets sees reven give over\nand he had more goes out get its been faster than them hersins\nit soso shall one minever\nburyed too us in my gives n yesheartheythey arehe\nc ouldth I some actanssoninsens\nin my is geting de I insresiesres\nno is these shall an do him thing\nand my is geted goting over his giving given\nonly knowin giveover do part then\nand its gave more have over gives his gets rather of me yours\n\n[Chorus]\nunder they hersons\non what illusion\nthat we insisesences\non we others he\nthat her eyes my given give\nin they watersons\n\n[Outro]\nlike you watersions\nits gone say our gives\nknow my waysidesins\nwill the as I choicesonsors\npine mind\n"
+}
