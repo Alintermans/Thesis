@@ -1231,7 +1231,7 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
             overlap = []
             repetition_difference = []
             rhyme_word_length = []
-            nb_songs = 0
+            nb_songs_temp = 0
 
             for song in result_token:
                 perplexities.append(song["parody_song_perplexity"])
@@ -1247,7 +1247,7 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
                 overlap.append(song["overlap"])
                 repetition_difference.append(song["original_song_repetition_score"] - song["parody_song_repetition_score"])
                 rhyme_word_length.append(song["avg_rhyme_word_length"])
-                nb_songs += 1
+                nb_songs_temp += 1
             
             perplexities_per_beam.append(statistics.median(perplexities))
             perplexities_difference_per_beam.append(statistics.median(perplexities_difference))
@@ -1262,7 +1262,7 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
             overlap_per_beam.append(statistics.median(overlap))
             repetition_difference_per_beam.append(statistics.median(repetition_difference))
             rhyme_word_length_per_beam.append(statistics.median(rhyme_word_length))
-            nb_songs_per_beam.append(nb_songs)
+            nb_songs_per_beam.append(nb_songs_temp)
 
         avg_perplexities.append(perplexities_per_beam)
         avg_perplexities_difference.append(perplexities_difference_per_beam)
