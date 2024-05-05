@@ -1084,14 +1084,14 @@ if __name__ == "__main__":
     #test_syllable_counter_functions()
     #print("All tests passed")
     #create_rhyming_dicts()
-    load_rhyming_dicts(use_frequent_words=True)
+    load_rhyming_dicts(use_frequent_words=False)
 
     # pron_1 = get_pronounciation_of_word("paddle")
     # pron_2 = get_pronounciation_of_word("mull")
     # print(pron_1, pron_2)
 
     # print(do_two_end_phon_seq_near_rhyme(pron_1, pron_2))
-    print(get_perfect_rhyming_words("aapple"))
+    print(get_perfect_rhyming_words("alone"))
     #print(get_pos_tags_of_line("It is "))
    #print(do_two_words_rhyme_perfectly("hello","meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"))
     
