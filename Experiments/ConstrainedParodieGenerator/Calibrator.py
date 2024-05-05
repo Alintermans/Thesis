@@ -842,6 +842,7 @@ def process_syllable_results(language_model_name):
     avg_correct_syllable_count = []
     avg_duration = []
     avg_correct_rhymes  = []
+    avg_rhyme_word_length = []
     avg_pos_similarity = []
     avg_mean_deviation_pos_similarity = []
     avg_correct_pos_lines = []
@@ -861,6 +862,7 @@ def process_syllable_results(language_model_name):
         correct_pos_lines = []
         overlap = []
         repetition_difference = []
+        rhyme_word_length = []
 
         for song in result:
             perplexities.append(song["parody_song_perplexity"])
@@ -875,6 +877,7 @@ def process_syllable_results(language_model_name):
             correct_pos_lines.append(song["nb_correct_pos_similarities"]/song["correct_nb_lines"])
             overlap.append(song["overlap"])
             repetition_difference.append(song["original_song_repetition_score"] - song["parody_song_repetition_score"])
+            rhyme_word_length.append(song["avg_rhyme_word_length"])
         
         avg_perplexities.append(statistics.median(perplexities))
         avg_perplexities_difference.append(statistics.median(perplexities_difference))
@@ -887,7 +890,8 @@ def process_syllable_results(language_model_name):
         avg_mean_deviation_pos_similarity.append(statistics.median(mean_deviation_pos_similarity))
         avg_correct_pos_lines.append(statistics.median(correct_pos_lines))
         avg_overlap.append(statistics.median(overlap))
-        avg_repetition_difference.append(statistics.median(repetition_difference))
+        avg_repetition_difference.append(statistics.median(repetition_difference)) 
+        avg_rhyme_word_length.append(statistics.median(rhyme_word_length))
     if not os.path.isdir(dest_folder+language_model.replace(" ", "_")):
         os.makedirs(dest_folder+language_model.replace(" ", "_"))
     with open(dest_folder+language_model_name.replace(" ", "_")+"/averages.json", "w") as f:
@@ -899,6 +903,7 @@ def process_syllable_results(language_model_name):
             "avg_correct_syllable_count": avg_correct_syllable_count,
             "avg_duration": avg_duration,
             "avg_correct_rhymes": avg_correct_rhymes,
+            "avg_rhyme_word_length": avg_rhyme_word_length,
             "avg_pos_similarity": avg_pos_similarity,
             "avg_mean_deviation_pos_similarity": avg_mean_deviation_pos_similarity,
             "avg_correct_pos_lines": avg_correct_pos_lines,
@@ -1013,6 +1018,15 @@ def process_syllable_results(language_model_name):
         'Repetition Difference with Original Song',
         'Repetition Difference with Original Song vs. Good Beamscore Multiplier',
         dest_folder+language_model_name.replace(" ", "_")+'/repetition_difference.png'
+    )
+
+    plot_results(
+        possible_good_beamscore_multipliers_syllable,
+        avg_rhyme_word_length,
+        'Good Beamscore Multiplier',
+        'Avg. Rhyme Word Length',
+        'Avg. Rhyme Word Length vs. Good Beamscore Multiplier',
+        dest_folder+language_model_name.replace(" ", "_")+'/rhyme_word_length.png'
     )
 
 
@@ -1182,6 +1196,7 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
     avg_correct_pos_lines = []
     avg_overlap = []
     avg_repetition_difference = []
+    avg_rhyme_word_length = []
 
     for result_beams in results:
         perplexities_per_beam = []
@@ -1196,6 +1211,7 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
         correct_pos_lines_per_beam = []
         overlap_per_beam = []
         repetition_difference_per_beam = []
+        rhyme_word_length_per_beam = []
 
 
 
@@ -1212,6 +1228,7 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
             correct_pos_lines = []
             overlap = []
             repetition_difference = []
+            rhyme_word_length = []
 
             for song in result_token:
                 perplexities.append(song["parody_song_perplexity"])
@@ -1226,6 +1243,7 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
                 correct_pos_lines.append(song["nb_correct_pos_similarities"]/song["correct_nb_lines"])
                 overlap.append(song["overlap"])
                 repetition_difference.append(song["original_song_repetition_score"] - song["parody_song_repetition_score"])
+                rhyme_word_length.append(song["avg_rhyme_word_length"])
             
             perplexities_per_beam.append(statistics.median(perplexities))
             perplexities_difference_per_beam.append(statistics.median(perplexities_difference))
@@ -1239,6 +1257,7 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
             correct_pos_lines_per_beam.append(statistics.median(correct_pos_lines))
             overlap_per_beam.append(statistics.median(overlap))
             repetition_difference_per_beam.append(statistics.median(repetition_difference))
+            rhyme_word_length_per_beam.append(statistics.median(rhyme_word_length))
 
         avg_perplexities.append(perplexities_per_beam)
         avg_perplexities_difference.append(perplexities_difference_per_beam)
@@ -1252,6 +1271,7 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
         avg_correct_pos_lines.append(correct_pos_lines_per_beam)
         avg_overlap.append(overlap_per_beam)
         avg_repetition_difference.append(repetition_difference_per_beam)
+        avg_rhyme_word_length.append(rhyme_word_length_per_beam)
     if not os.path.isdir(dest_folder+language_model.replace(" ", "_")):
             os.makedirs(dest_folder+language_model.replace(" ", "_"))
     with open(folder+language_model_name.replace(" ", "_")+"/averages.json", "w") as f:
@@ -1263,6 +1283,7 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
             "avg_correct_syllable_count": avg_correct_syllable_count,
             "avg_duration": avg_duration,
             "avg_correct_rhymes": avg_correct_rhymes,
+            "avg_rhyme_word_length": avg_rhyme_word_length,
             "avg_pos_similarity": avg_pos_similarity,
             "avg_mean_deviation_pos_similarity": avg_mean_deviation_pos_similarity,
             "avg_correct_pos_lines": avg_correct_pos_lines,
@@ -1270,6 +1291,7 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
             "avg_repetition_difference": avg_repetition_difference,
             "good_beamscore_multipliers_rhyme": x_data,
             "good_rhyming_token_multipliers": y_data
+
         }, f, indent=4)
     
     plot_2d_heatmap(
@@ -1403,6 +1425,17 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
         'Repetition Difference with Original Song vs. ' + x_label + ' and ' + y_label,
         folder+language_model_name.replace(" ", "_")+'/repetition_difference.png'
     )
+
+    plot_2d_heatmap(
+        x_data,
+        y_data,
+        avg_rhyme_word_length,
+        x_label,
+        y_label,
+        'Avg. Rhyme Word Length',
+        'Avg. Rhyme Word Length vs. ' + x_label + ' and ' + y_label,
+        folder+language_model_name.replace(" ", "_")+'/rhyme_word_length.png'
+    )
     
 
 async def evaluate_prompt(folder_path):
@@ -1469,6 +1502,7 @@ def process_prompt_results():
         avg_correct_pos_lines = []
         avg_overlap = []
         avg_repetition_difference = []
+        avg_rhyme_word_length = []
 
         for result in results:
             perplexities = []
@@ -1483,6 +1517,7 @@ def process_prompt_results():
             correct_pos_lines = []
             overlap = []
             repetition_difference = []
+            rhyme_word_length = []
 
             for song in result:
                 perplexities.append(song["parody_song_perplexity"])
@@ -1497,6 +1532,7 @@ def process_prompt_results():
                 correct_pos_lines.append(song["nb_correct_pos_similarities"]/song["correct_nb_lines"])
                 overlap.append(song["overlap"])
                 repetition_difference.append(song["original_song_repetition_score"] - song["parody_song_repetition_score"])
+                rhyme_word_length.append(song["avg_rhyme_word_length"])
             
             avg_perplexities.append(statistics.median(perplexities))
             avg_perplexities_difference.append(statistics.median(perplexities_difference))
@@ -1510,6 +1546,7 @@ def process_prompt_results():
             avg_correct_pos_lines.append(statistics.median(correct_pos_lines))
             avg_overlap.append(statistics.median(overlap))
             avg_repetition_difference.append(statistics.median(repetition_difference))
+            avg_rhyme_word_length.append(statistics.median(rhyme_word_length))
         if not os.path.isdir(dest_folder+language_model.replace(" ", "_")):
             os.makedirs(dest_folder+language_model.replace(" ", "_"))
         with open(dest_folder+language_model.replace(" ", "_")+"/averages.json", "w") as f:
@@ -1521,6 +1558,7 @@ def process_prompt_results():
                 "avg_correct_syllable_count": avg_correct_syllable_count,
                 "avg_duration": avg_duration,
                 "avg_correct_rhymes": avg_correct_rhymes,
+                "avg_rhyme_word_length": avg_rhyme_word_length,
                 "avg_pos_similarity": avg_pos_similarity,
                 "avg_mean_deviation_pos_similarity": avg_mean_deviation_pos_similarity,
                 "avg_correct_pos_lines": avg_correct_pos_lines,
@@ -1636,6 +1674,16 @@ def process_prompt_results():
             'Repetition Difference with Original Song vs. Prompt Number',
             dest_folder+language_model.replace(" ", "_")+'/repetition_difference.png'
         )
+
+        plot_results(
+            possible_prompts,
+            avg_rhyme_word_length,
+            'Prompt Number',
+            'Avg. Rhyme Word Length',
+            'Avg. Rhyme Word Length vs. Prompt Number',
+            dest_folder+language_model.replace(" ", "_")+'/rhyme_word_length.png'
+        )
+
             
 
 async def evaluate_rhyming_frequencies(folder_path):
@@ -1701,6 +1749,7 @@ def process_rhyming_frequencies_results():
         avg_correct_pos_lines = []
         avg_overlap = []
         avg_repetition_difference = []
+        avg_rhyme_word_length = []
 
         for result in results:
             perplexities = []
@@ -1715,6 +1764,7 @@ def process_rhyming_frequencies_results():
             correct_pos_lines = []
             overlap = []
             repetition_difference = []
+            rhyme_word_length = []
 
             for song in result:
                 perplexities.append(song["parody_song_perplexity"])
@@ -1729,6 +1779,7 @@ def process_rhyming_frequencies_results():
                 correct_pos_lines.append(song["nb_correct_pos_similarities"]/song["correct_nb_lines"])
                 overlap.append(song["overlap"])
                 repetition_difference.append(song["original_song_repetition_score"] - song["parody_song_repetition_score"])
+                rhyme_word_length.append(song["avg_rhyme_word_length"])
 
             avg_perplexities.append(statistics.median(perplexities))
             avg_perplexities_difference.append(statistics.median(perplexities_difference))
@@ -1742,6 +1793,7 @@ def process_rhyming_frequencies_results():
             avg_correct_pos_lines.append(statistics.median(correct_pos_lines))
             avg_overlap.append(statistics.median(overlap))
             avg_repetition_difference.append(statistics.median(repetition_difference))
+            avg_rhyme_word_length.append(statistics.median(rhyme_word_length))
         if not os.path.isdir(dest_folder+language_model.replace(" ", "_")):
             os.makedirs(dest_folder+language_model.replace(" ", "_"))
         with open(dest_folder+language_model.replace(" ", "_")+"/averages.json", "w") as f:
@@ -1753,6 +1805,7 @@ def process_rhyming_frequencies_results():
                 "avg_correct_syllable_count": avg_correct_syllable_count,
                 "avg_duration": avg_duration,
                 "avg_correct_rhymes": avg_correct_rhymes,
+                "avg_rhyme_word_length": avg_rhyme_word_length,
                 "avg_pos_similarity": avg_pos_similarity,
                 "avg_mean_deviation_pos_similarity": avg_mean_deviation_pos_similarity,
                 "avg_correct_pos_lines": avg_correct_pos_lines,
@@ -1869,6 +1922,15 @@ def process_rhyming_frequencies_results():
             dest_folder+language_model.replace(" ", "_")+'/repetition_difference.png'
         )
 
+        plot_results(
+            possible_top_frequent_words,
+            avg_rhyme_word_length,
+            'Top Frequent Words',
+            'Avg. Rhyme Word Length',
+            'Avg. Rhyme Word Length vs. Top Frequent Words',
+            dest_folder+language_model.replace(" ", "_")+'/rhyme_word_length.png'
+        )
+
 async def evaluate_rhyming_types(folder_path):
     dest_folder = "Experiments/ConstrainedParodieGenerator/CalibrationResults/RhymingTypes/"
     if platform.system() == 'Linux':
@@ -1933,6 +1995,7 @@ def process_rhyming_types_results():
         avg_correct_pos_lines = []
         avg_overlap = []
         avg_repetition_difference = []
+        avg_rhyme_word_length = []
 
         for result in results:
             perplexities = []
@@ -1947,6 +2010,7 @@ def process_rhyming_types_results():
             correct_pos_lines = []
             overlap = []
             repetition_difference = []
+            rhyme_word_length = []
 
             for song in result:
                 perplexities.append(song["parody_song_perplexity"])
@@ -1961,6 +2025,7 @@ def process_rhyming_types_results():
                 correct_pos_lines.append(song["nb_correct_pos_similarities"]/song["correct_nb_lines"])
                 overlap.append(song["overlap"])
                 repetition_difference.append(song["original_song_repetition_score"] - song["parody_song_repition_score"])
+                rhyme_word_length.append(song["avg_rhyme_word_length"])
 
             avg_perplexities.append(statistics.median(perplexities))
             avg_perplexities_difference.append(statistics.median(perplexities_difference))
@@ -1974,6 +2039,7 @@ def process_rhyming_types_results():
             avg_correct_pos_lines.append(statistics.median(correct_pos_lines))
             avg_overlap.append(statistics.median(overlap))
             avg_repetition_difference.append(statistics.median(repetition_difference))
+            avg_rhyme_word_length.append(statistics.median(rhyme_word_length))
         if not os.path.isdir(dest_folder+language_model.replace(" ", "_")):
             os.makedirs(dest_folder+language_model.replace(" ", "_"))
         with open(dest_folder+language_model.replace(" ", "_")+"/averages.json", "w") as f:
@@ -1985,6 +2051,7 @@ def process_rhyming_types_results():
                 "avg_correct_syllable_count": avg_correct_syllable_count,
                 "avg_duration": avg_duration,
                 "avg_correct_rhymes": avg_correct_rhymes,
+                "avg_rhyme_word_length": avg_rhyme_word_length,
                 "avg_pos_similarity": avg_pos_similarity,
                 "avg_mean_deviation_pos_similarity": avg_mean_deviation_pos_similarity,
                 "avg_correct_pos_lines": avg_correct_pos_lines,
@@ -2101,6 +2168,15 @@ def process_rhyming_types_results():
             dest_folder+language_model.replace(" ", "_")+'/repetition_difference.png'
         )
 
+        plot_results(
+            possible_rhyming_types,
+            avg_rhyme_word_length,
+            'Rhyming Type',
+            'Avg. Rhyme Word Length',
+            'Avg. Rhyme Word Length vs. Rhyming Type',
+            dest_folder+language_model.replace(" ", "_")+'/rhyme_word_length.png'
+        )
+
 
 async def evaluate_backtracking(folder_path):
     dest_folder = "Experiments/ConstrainedParodieGenerator/CalibrationResults/Backtracking/"
@@ -2165,6 +2241,7 @@ def process_backtracking_results():
         avg_correct_pos_lines = []
         avg_overlap = []
         avg_repetition_difference = []
+        avg_rhyme_word_length = []
 
         for result in results:
             perplexities = []
@@ -2179,6 +2256,7 @@ def process_backtracking_results():
             correct_pos_lines = []
             overlap = []
             repetition_difference = []
+            rhyme_word_length = []
 
             for song in result:
                 perplexities.append(song["parody_song_perplexity"])
@@ -2193,6 +2271,7 @@ def process_backtracking_results():
                 correct_pos_lines.append(song["nb_correct_pos_similarities"]/song["correct_nb_lines"])
                 overlap.append(song["overlap"])
                 repetition_difference.append(song["original_song_repetition_score"] - song["parody_song_repetition_score"])
+                rhyme_word_length.append(song["avg_rhyme_word_length"])
 
             avg_perplexities.append(statistics.median(perplexities))
             avg_perplexities_difference.append(statistics.median(perplexities_difference))
@@ -2206,6 +2285,7 @@ def process_backtracking_results():
             avg_correct_pos_lines.append(statistics.median(correct_pos_lines))
             avg_overlap.append(statistics.median(overlap))
             avg_repetition_difference.append(statistics.median(repetition_difference))
+            avg_rhyme_word_length.append(statistics.median(rhyme_word_length))
 
         if not os.path.isdir(dest_folder+language_model.replace(" ", "_")):
             os.makedirs(dest_folder+language_model.replace(" ", "_"))
@@ -2219,6 +2299,7 @@ def process_backtracking_results():
                 "avg_correct_syllable_count": avg_correct_syllable_count,
                 "avg_duration": avg_duration,
                 "avg_correct_rhymes": avg_correct_rhymes,
+                "avg_rhyme_word_length": avg_rhyme_word_length,
                 "avg_pos_similarity": avg_pos_similarity,
                 "avg_mean_deviation_pos_similarity": avg_mean_deviation_pos_similarity,
                 "avg_correct_pos_lines": avg_correct_pos_lines,
@@ -2335,6 +2416,17 @@ def process_backtracking_results():
             dest_folder+language_model.replace(" ", "_")+'/repetition_difference.png'
         )
 
+        plot_results(
+            possible_backtracking,
+            avg_rhyme_word_length,
+            'Backtracking',
+            'Avg. Rhyme Word Length',
+            'Avg. Rhyme Word Length vs. Backtracking',
+            dest_folder+language_model.replace(" ", "_")+'/rhyme_word_length.png'
+        )
+
+
+
 async def evaluate_all_non_chat(folder_path):
     dest_folder = "Experiments/ConstrainedParodieGenerator/CalibrationResults/AllNonChat/"
     if platform.system() == 'Linux':
@@ -2395,7 +2487,8 @@ def process_all_non_chat_results():
         avg_correct_pos_lines = 0
         avg_overlap = 0
         avg_repetition_difference = 0
-        result = results[i]
+        avg_rhyme_word_length = 0
+        result = results[i][0]
         
         perplexities = []
         perplexities_difference = []
@@ -2409,6 +2502,7 @@ def process_all_non_chat_results():
         correct_pos_lines = []
         overlap = []
         repetition_difference = []
+        rhyme_word_length = []
 
 
 
@@ -2425,6 +2519,7 @@ def process_all_non_chat_results():
             correct_pos_lines.append(song["nb_correct_pos_similarities"]/song["correct_nb_lines"])
             overlap.append(song["overlap"])
             repetition_difference.append(song["original_song_repetition_score"] - song["parody_song_repetition_score"])
+            rhyme_word_length.append(song["avg_rhyme_word_length"])
         
         avg_perplexities = statistics.median(perplexities)
         avg_perplexities_difference = statistics.median(perplexities_difference)
@@ -2438,6 +2533,7 @@ def process_all_non_chat_results():
         avg_correct_pos_lines = statistics.median(correct_pos_lines)
         avg_overlap = statistics.median(overlap)
         avg_repetition_difference = statistics.median(repetition_difference)
+        avg_rhyme_word_length = statistics.median(rhyme_word_length)
 
         if not os.path.isdir(dest_folder+language_model.replace(" ", "_")):
             os.makedirs(dest_folder+language_model.replace(" ", "_"))
@@ -2451,6 +2547,7 @@ def process_all_non_chat_results():
                 "avg_correct_syllable_count": avg_correct_syllable_count,
                 "avg_duration": avg_duration,
                 "avg_correct_rhymes": avg_correct_rhymes,
+                "avg_rhyme_word_length": avg_rhyme_word_length,
                 "avg_pos_similarity": avg_pos_similarity,
                 "avg_mean_deviation_pos_similarity": avg_mean_deviation_pos_similarity,
                 "avg_correct_pos_lines": avg_correct_pos_lines,
@@ -2518,7 +2615,8 @@ def process_all_chat_results():
         avg_correct_pos_lines = 0
         avg_overlap = 0
         avg_repetition_difference = 0
-        result = results[i]
+        avg_rhyme_word_length = 0
+        result = results[i][0]
         
         perplexities = []
         perplexities_difference = []
@@ -2532,6 +2630,7 @@ def process_all_chat_results():
         correct_pos_lines = []
         overlap = []
         repetition_difference = []
+        rhyme_word_length = []
 
 
 
@@ -2548,6 +2647,7 @@ def process_all_chat_results():
             correct_pos_lines.append(song["nb_correct_pos_similarities"]/song["correct_nb_lines"])
             overlap.append(song["overlap"])
             repetition_difference.append(song["original_song_repetition_score"] - song["parody_song_repetition_score"])
+            rhyme_word_length.append(song["avg_rhyme_word_length"])
         
         avg_perplexities = statistics.median(perplexities)
         avg_perplexities_difference = statistics.median(perplexities_difference)
@@ -2561,6 +2661,7 @@ def process_all_chat_results():
         avg_correct_pos_lines = statistics.median(correct_pos_lines)
         avg_overlap = statistics.median(overlap)
         avg_repetition_difference = statistics.median(repetition_difference)
+        avg_rhyme_word_length = statistics.median(rhyme_word_length)
 
         if not os.path.isdir(dest_folder+language_model.replace(" ", "_")):
             os.makedirs(dest_folder+language_model.replace(" ", "_"))
@@ -2574,6 +2675,7 @@ def process_all_chat_results():
                 "avg_correct_syllable_count": avg_correct_syllable_count,
                 "avg_duration": avg_duration,
                 "avg_correct_rhymes": avg_correct_rhymes,
+                "avg_rhyme_word_length": avg_rhyme_word_length,
                 "avg_pos_similarity": avg_pos_similarity,
                 "avg_mean_deviation_pos_similarity": avg_mean_deviation_pos_similarity,
                 "avg_correct_pos_lines": avg_correct_pos_lines,
@@ -2647,6 +2749,7 @@ def process_no_constraints_no_guardrails_results():
         avg_correct_pos_lines = 0
         avg_overlap = 0
         avg_repetition_difference = 0
+        avg_rhyme_word_length = 0
         result = results[i][0]
         
         correct_paragraphs = []
@@ -2663,6 +2766,7 @@ def process_no_constraints_no_guardrails_results():
         correct_pos_lines = []
         overlap = []
         repetition_difference = []
+        rhyme_word_length = []
 
         
 
@@ -2681,6 +2785,8 @@ def process_no_constraints_no_guardrails_results():
             correct_pos_lines.append(song["nb_correct_pos_similarities"]/song["correct_nb_lines"])
             overlap.append(song["overlap"])
             repetition_difference.append(song["original_song_repetition_score"] - song["parody_song_repetition_score"])
+            rhyme_word_length.append(song["avg_rhyme_word_length"])
+
         
 
         avg_correct_paragraphs = statistics.median(correct_paragraphs)
@@ -2697,6 +2803,7 @@ def process_no_constraints_no_guardrails_results():
         avg_correct_pos_lines = statistics.median(correct_pos_lines)
         avg_overlap = statistics.median(overlap)
         avg_repetition_difference = statistics.median(repetition_difference)
+        avg_rhyme_word_length = statistics.median(rhyme_word_length)
 
         if not os.path.isdir(dest_folder+language_model.replace(" ", "_")):
             os.makedirs(dest_folder+language_model.replace(" ", "_"))
@@ -2711,6 +2818,7 @@ def process_no_constraints_no_guardrails_results():
                 "avg_correct_syllable_count": avg_correct_syllable_count,
                 "avg_duration": avg_duration,
                 "avg_correct_rhymes": avg_correct_rhymes,
+                "avg_rhyme_word_length": avg_rhyme_word_length,
                 "avg_pos_similarity": avg_pos_similarity,
                 "avg_mean_deviation_pos_similarity": avg_mean_deviation_pos_similarity,
                 "avg_correct_pos_lines": avg_correct_pos_lines,
@@ -2778,6 +2886,7 @@ def process_no_constraints_with_guardrails_results():
         avg_correct_pos_lines = 0
         avg_overlap = 0
         avg_repetition_difference = 0
+        avg_rhyme_word_length = 0
         result = results[i][0]
         
         correct_paragraphs = []
@@ -2794,6 +2903,8 @@ def process_no_constraints_with_guardrails_results():
         correct_pos_lines = []
         overlap = []
         repetition_difference = []
+        rhyme_word_length = []
+
 
         
 
@@ -2812,6 +2923,7 @@ def process_no_constraints_with_guardrails_results():
             correct_pos_lines.append(song["nb_correct_pos_similarities"]/song["correct_nb_lines"])
             overlap.append(song["overlap"])
             repetition_difference.append(song["original_song_repetition_score"] - song["parody_song_repetition_score"])
+            rhyme_word_length.append(song["avg_rhyme_word_length"])
         
 
         avg_correct_paragraphs = statistics.median(correct_paragraphs)
@@ -2828,6 +2940,7 @@ def process_no_constraints_with_guardrails_results():
         avg_correct_pos_lines = statistics.median(correct_pos_lines)
         avg_overlap = statistics.median(overlap)
         avg_repetition_difference = statistics.median(repetition_difference)
+        avg_rhyme_word_length = statistics.median(rhyme_word_length)
 
         if not os.path.isdir(dest_folder+language_model.replace(" ", "_")):
             os.makedirs(dest_folder+language_model.replace(" ", "_"))
@@ -2842,6 +2955,7 @@ def process_no_constraints_with_guardrails_results():
                 "avg_correct_syllable_count": avg_correct_syllable_count,
                 "avg_duration": avg_duration,
                 "avg_correct_rhymes": avg_correct_rhymes,
+                "avg_rhyme_word_length": avg_rhyme_word_length,
                 "avg_pos_similarity": avg_pos_similarity,
                 "avg_mean_deviation_pos_similarity": avg_mean_deviation_pos_similarity,
                 "avg_correct_pos_lines": avg_correct_pos_lines,

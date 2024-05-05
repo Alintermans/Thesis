@@ -57,6 +57,7 @@ def count_nb_line_pairs_match_rhyme_scheme(original_song_paragraph, parody_song_
     ##Assumes that the given paragraphs have the same number of lines
     matching_rhyme_pairs = 0
     expected_rhyming_pairs = 0
+    rhyme_words_lengths = []
     for i in range(len(original_song_paragraph)):
         original_rhyming_lines = _get_rhyming_lines(original_song_paragraph[i], rhyme_type)
         parody_rhyming_lines = _get_rhyming_lines(parody_song_paragraph[i], rhyme_type)
@@ -64,8 +65,11 @@ def count_nb_line_pairs_match_rhyme_scheme(original_song_paragraph, parody_song_
             if original_rhyming_lines[j] is not None:
                 expected_rhyming_pairs += 1
                 if original_rhyming_lines[j] == parody_rhyming_lines[j]:
+                    rhyme_words_lengths.append(len(original_rhyming_lines[j].split(' ')[-1]))
                     matching_rhyme_pairs += 1
-    return matching_rhyme_pairs, expected_rhyming_pairs
+    if len(rhyme_words_lengths) == 0:
+        return matching_rhyme_pairs, expected_rhyming_pairs, 0
+    return matching_rhyme_pairs, expected_rhyming_pairs, rhyme_words_lengths/len(rhyme_words_lengths)
     
 
 
@@ -173,7 +177,7 @@ def evaluate( parody_file_path, rhyme_type='perfect'):
     mean_deviation_syllable_count = sum([abs(count - avg_syllable_count_difference) for count in syllable_count_differences]) / len(syllable_count_differences)
 
     # check the rhyming 
-    nb_matching_rhyme_pairs, nb_expected_rhyming_pairs = count_nb_line_pairs_match_rhyme_scheme(original_song_in_paragraphs, parody_song_in_paragraphs, rhyme_type)
+    nb_matching_rhyme_pairs, nb_expected_rhyming_pairs, avg_rhyme_word_length = count_nb_line_pairs_match_rhyme_scheme(original_song_in_paragraphs, parody_song_in_paragraphs, rhyme_type)
 
     # check the pos tags similarity
     pos_tag_similarities = calculate_pos_tag_similarity(original_song_in_paragraphs, parody_song_in_paragraphs)
@@ -208,6 +212,7 @@ def evaluate( parody_file_path, rhyme_type='perfect'):
         "mean_deviation_syllable_count": mean_deviation_syllable_count,
         "nb_matching_rhyme_pairs": nb_matching_rhyme_pairs,
         "nb_expected_rhyming_pairs": nb_expected_rhyming_pairs,
+        "avg_rhyme_word_length": avg_rhyme_word_length,
         "nb_correct_pos_similarities": nb_correct_pos_similarities,
         "avg_pos_tag_similarity": avg_pos_tag_similarity,
         "mean_deviation_pos_tag_similarity": mean_deviation_pos_tag_similarity,
