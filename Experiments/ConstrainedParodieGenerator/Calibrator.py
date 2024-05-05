@@ -1197,6 +1197,7 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
     avg_overlap = []
     avg_repetition_difference = []
     avg_rhyme_word_length = []
+    nb_songs = []
 
     for result_beams in results:
         perplexities_per_beam = []
@@ -1212,6 +1213,7 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
         overlap_per_beam = []
         repetition_difference_per_beam = []
         rhyme_word_length_per_beam = []
+        nb_songs_per_beam = []
 
 
 
@@ -1229,6 +1231,7 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
             overlap = []
             repetition_difference = []
             rhyme_word_length = []
+            nb_songs = 0
 
             for song in result_token:
                 perplexities.append(song["parody_song_perplexity"])
@@ -1244,6 +1247,7 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
                 overlap.append(song["overlap"])
                 repetition_difference.append(song["original_song_repetition_score"] - song["parody_song_repetition_score"])
                 rhyme_word_length.append(song["avg_rhyme_word_length"])
+                nb_songs += 1
             
             perplexities_per_beam.append(statistics.median(perplexities))
             perplexities_difference_per_beam.append(statistics.median(perplexities_difference))
@@ -1258,6 +1262,7 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
             overlap_per_beam.append(statistics.median(overlap))
             repetition_difference_per_beam.append(statistics.median(repetition_difference))
             rhyme_word_length_per_beam.append(statistics.median(rhyme_word_length))
+            nb_songs_per_beam.append(nb_songs)
 
         avg_perplexities.append(perplexities_per_beam)
         avg_perplexities_difference.append(perplexities_difference_per_beam)
@@ -1272,6 +1277,7 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
         avg_overlap.append(overlap_per_beam)
         avg_repetition_difference.append(repetition_difference_per_beam)
         avg_rhyme_word_length.append(rhyme_word_length_per_beam)
+        nb_songs.append(nb_songs_per_beam)
     if not os.path.isdir(dest_folder+language_model.replace(" ", "_")):
             os.makedirs(dest_folder+language_model.replace(" ", "_"))
     with open(folder+language_model_name.replace(" ", "_")+"/averages.json", "w") as f:
@@ -1290,7 +1296,8 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
             "avg_overlap": avg_overlap,
             "avg_repetition_difference": avg_repetition_difference,
             "good_beamscore_multipliers_rhyme": x_data,
-            "good_rhyming_token_multipliers": y_data
+            "good_rhyming_token_multipliers": y_data,
+            "nb_songs": nb_songs
 
         }, f, indent=4)
     
@@ -1436,6 +1443,19 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
         'Avg. Rhyme Word Syllable Count vs. ' + x_label + ' and ' + y_label,
         folder+language_model_name.replace(" ", "_")+'/rhyme_word_length.png'
     )
+
+    plot_2d_heatmap(
+        x_data,
+        y_data,
+        nb_songs,
+        x_label,
+        y_label,
+        'Number of Songs',
+        'Number of Songs vs. ' + x_label + ' and ' + y_label,
+        folder+language_model_name.replace(" ", "_")+'/nb_songs.png'
+    )
+
+
     
 
 async def evaluate_prompt(folder_path):
