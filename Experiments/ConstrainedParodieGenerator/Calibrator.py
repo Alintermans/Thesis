@@ -1024,8 +1024,8 @@ def process_syllable_results(language_model_name):
         possible_good_beamscore_multipliers_syllable,
         avg_rhyme_word_length,
         'Good Beamscore Multiplier',
-        'Avg. Rhyme Word Length',
-        'Avg. Rhyme Word Length vs. Good Beamscore Multiplier',
+        'Avg. Rhyme Word Syllable Count',
+        'Avg. Rhyme Word Syllable Count vs. Good Beamscore Multiplier',
         dest_folder+language_model_name.replace(" ", "_")+'/rhyme_word_length.png'
     )
 
@@ -1432,8 +1432,8 @@ def process_rhyming_or_pos_results(language_model_name, constraint_type):
         avg_rhyme_word_length,
         x_label,
         y_label,
-        'Avg. Rhyme Word Length',
-        'Avg. Rhyme Word Length vs. ' + x_label + ' and ' + y_label,
+        'Avg. Rhyme Word Syllable Count',
+        'Avg. Rhyme Word Syllable Count vs. ' + x_label + ' and ' + y_label,
         folder+language_model_name.replace(" ", "_")+'/rhyme_word_length.png'
     )
     
@@ -1679,8 +1679,8 @@ def process_prompt_results():
             possible_prompts,
             avg_rhyme_word_length,
             'Prompt Number',
-            'Avg. Rhyme Word Length',
-            'Avg. Rhyme Word Length vs. Prompt Number',
+            'Avg. Rhyme Word Syllable Count',
+            'Avg. Rhyme Word Syllable Count vs. Prompt Number',
             dest_folder+language_model.replace(" ", "_")+'/rhyme_word_length.png'
         )
 
@@ -1926,8 +1926,8 @@ def process_rhyming_frequencies_results():
             possible_top_frequent_words,
             avg_rhyme_word_length,
             'Top Frequent Words',
-            'Avg. Rhyme Word Length',
-            'Avg. Rhyme Word Length vs. Top Frequent Words',
+            'Avg. Rhyme Word Syllable Count',
+            'Avg. Rhyme Word Syllable Count vs. Top Frequent Words',
             dest_folder+language_model.replace(" ", "_")+'/rhyme_word_length.png'
         )
 
@@ -2172,8 +2172,17 @@ def process_rhyming_types_results():
             possible_rhyming_types,
             avg_rhyme_word_length,
             'Rhyming Type',
-            'Avg. Rhyme Word Length',
-            'Avg. Rhyme Word Length vs. Rhyming Type',
+            'Avg. Rhyme Word Syllable Count',
+            'Avg. Rhyme Word Syllable Count vs. Rhyming Type',
+            dest_folder+language_model.replace(" ", "_")+'/rhyme_word_length.png'
+        )
+
+        plot_results(
+            possible_rhyming_types,
+            avg_rhyme_word_length,
+            'Rhyming Type',
+            'Avg. Rhyme Word Syllable Count',
+            'Avg. Rhyme Word Syllable Count vs. Rhyming Type',
             dest_folder+language_model.replace(" ", "_")+'/rhyme_word_length.png'
         )
 
@@ -2420,8 +2429,8 @@ def process_backtracking_results():
             possible_backtracking,
             avg_rhyme_word_length,
             'Backtracking',
-            'Avg. Rhyme Word Length',
-            'Avg. Rhyme Word Length vs. Backtracking',
+            'Avg. Rhyme Word Syllable Count',
+            'Avg. Rhyme Word Syllable Count vs. Backtracking',
             dest_folder+language_model.replace(" ", "_")+'/rhyme_word_length.png'
         )
 
