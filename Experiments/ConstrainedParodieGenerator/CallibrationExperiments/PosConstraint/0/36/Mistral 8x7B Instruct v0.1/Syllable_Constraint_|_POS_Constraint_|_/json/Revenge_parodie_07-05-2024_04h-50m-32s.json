@@ -1,0 +1,32 @@
+{
+    "original_song_title": "Revenge",
+    "original_song_artist": "XXXTENTACION",
+    "language_model_name": "Mistral 8x7B Instruct v0.1",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Intro]\nI think I, I think I finally\nFound a way to forgive myself\nFor the mistakes I made in my past\nI think that's the first step, right?\nYou agree?\n\n[Verse]\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\n\n[Chorus]\nIn my grave, I'll rot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\n[Outro]\nIn my grave, I'll rot\nI'll rot, I'll rot, I'll rot\nIs my pain your freedom?\nIs all of my pain your freedom?\nEnjoy [/INST]\nParody:\n[Intro]\nour mightified \u03c0ie'self our\nperfectly placed in disgrace will\nfrom an honestpiadon\nmy saying the \u03c0\nwhat won said\n\n[Verse]\nit fruitiedgegrimesontus\nacceptaneathocebonyusayacnarthet ously be\nc urnine he an ymanethings\nat my ameing geting on I actsonsions\nthe am an am some am\nand we fpioughte have had that it walkkillsforga allowled\nso canget quickupostongtheedlebut\nbut it dews so am out be its be now into he groundion\nits aminededavedded\nncrealitiesn soily place at our caning ernietic\nc\nat our am ildasget that its\nthe can a was all is us pie\nand your amendededed orted be in\nso let iven ouldongfor art\nor your am only won ound ottedged his will ever in\n\n[Chorus]\nof I ies\nif us itiesies\non I ivesityives\nif us ility\nfor it uryriesity\nif it ortionion\n\n[Outro]\non it ication\nit is ictedneding\namcedingcedginging\nenced all in us pleasureeds\n",
+    "constraints_used": "Syllable Constraint | POS Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "PosConstraintLBL": {
+            "top_k_tokens_to_consider": 200,
+            "good_beamscore_multiplier": 0.99,
+            "good_token_multiplier": 0.99,
+            "limit_of_pos_similarity_to_satisfy_constraint": 0.5
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.95 | temperature: 0.7",
+    "state": "Finished Correctly",
+    "date": "07-05-2024",
+    "time": "04h-50m-32s",
+    "generation_duration": 644.42,
+    "parodie": "[Intro]\nour mightified \u03c0ie'self our\nperfectly placed in disgrace will\nfrom an honestpiadon\nmy saying the \u03c0\nwhat won said\n\n[Verse]\nit fruitiedgegrimesontus\nacceptaneathocebonyusayacnarthet ously be\nc urnine he an ymanethings\nat my ameing geting on I actsonsions\nthe am an am some am\nand we fpioughte have had that it walkkillsforga allowled\nso canget quickupostongtheedlebut\nbut it dews so am out be its be now into he groundion\nits aminededavedded\nncrealitiesn soily place at our caning ernietic\nc\nat our am ildasget that its\nthe can a was all is us pie\nand your amendededed orted be in\nso let iven ouldongfor art\nor your am only won ound ottedged his will ever in\n\n[Chorus]\nof I ies\nif us itiesies\non I ivesityives\nif us ility\nfor it uryriesity\nif it ortionion\n\n[Outro]\non it ication\nit is ictedneding\namcedingcedginging\nenced all in us pleasureeds\nistist\n"
+}

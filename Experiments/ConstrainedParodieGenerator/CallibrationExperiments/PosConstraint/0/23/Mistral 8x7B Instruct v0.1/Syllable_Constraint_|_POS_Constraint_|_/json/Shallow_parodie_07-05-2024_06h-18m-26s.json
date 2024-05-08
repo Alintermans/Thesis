@@ -1,0 +1,32 @@
+{
+    "original_song_title": "Shallow",
+    "original_song_artist": "Lady Gaga & Bradley Cooper",
+    "language_model_name": "Mistral 8x7B Instruct v0.1",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Verse 1: Bradley Cooper]\nTell me somethin', girl\nAre you happy in this modern world?\nOr do you need more?\nIs there somethin' else you're searchin' for?\n\n[Refrain: Bradley Cooper]\nI'm fallin'\nIn all the good times, I find myself longin'\nFor change\nAnd, in the bad times, I fear myself\n\n[Verse 2: Lady Gaga]\nTell me something, boy\nAren't you tired tryna fill that void?\nOr do you need more?\nAin't it hard keepin' it so hardcore?\n\n[Refrain: Lady Gaga]\nI'm falling\nIn all the good times, I find myself longing\nFor change\nAnd, in the bad times, I fear myself\n\n[Chorus: Lady Gaga]\nI'm off the deep end, watch as I dive in\nI'll never meet the ground\nCrash through the surface where they can't hurt us\nWe're far from the shallow now\n[Post-Chorus: Lady Gaga & Bradley Cooper]\nIn the sha-ha, sha-hallow\nIn the sha-ha, sha-la-la-la-low\nIn the sha-ha, sha-hallow\nWe're far from the shallow now\n\n[Bridge: Lady Gaga]\nOh, ha, ah, ha\nOh-ah, ha\n\n[Chorus: Lady Gaga]\nI'm off the deep end, watch as I dive in\nI'll never meet the ground\nCrash through the surface where they can't hurt us\nWe're far from the shallow now\n\n[Post-Chorus: Lady Gaga & Bradley Cooper]\nIn the sha-ha, shallow\nIn the sha-ha, sha-la-la-la-low\nIn the sha-ha, shallow\nWe're far from the shallow now [/INST]\nParody:\n[Verse 1: Bradley Cooper]\ntell me something''\nare you able to enjoy your meal\nwithout that fruit on\ndoes pineapple on pizza still feel\n\n[Refrain: Bradley Cooper]\nit tastes foul\nlike a sickness in the best of times I'' ''how\nin sor\nand in the hard timesi myself\n\n[Verse 2: Lady Gaga]\ntell me son accord\nhas too much pine pollutin'' in discord\nor do your try hard\nbeen longingly yourself hard regardsards\n\n[Refrain: Lady Gaga]\nmy falling\nin the all light onesselfs we have our\nthat I\nbut in the bad sourourmyseltself\n\n[Chorus: Lady Gaga]\nI come from no high endsby e from me\nyourself coulda surely\nbangstuffin below an acid not our\nus gone away depthat that\n\n[Post-Chorus: Lady Gaga & Bradley Cooper]\nof that slim pitino life\nfrom no o depthwe escape na b life\nthat that bitterish I taste\nwe escaped so on those shame\n\n[Bridge: Lady Gaga]\noh deep hellso\nendearin\n\n[Post-Chorus: Lady Gaga & Bradley Cooper]\nthat that superfoollow\nthat there banaleaves shame icy\non that slipitineath\n",
+    "constraints_used": "Syllable Constraint | POS Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "PosConstraintLBL": {
+            "top_k_tokens_to_consider": 200,
+            "good_beamscore_multiplier": 0.8,
+            "good_token_multiplier": 0.9,
+            "limit_of_pos_similarity_to_satisfy_constraint": 0.5
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.95 | temperature: 0.7",
+    "state": "Finished Correctly",
+    "date": "07-05-2024",
+    "time": "06h-18m-26s",
+    "generation_duration": 370.07,
+    "parodie": "[Verse 1: Bradley Cooper]\ntell me something''\nare you able to enjoy your meal\nwithout that fruit on\ndoes pineapple on pizza still feel\n\n[Refrain: Bradley Cooper]\nit tastes foul\nlike a sickness in the best of times I'' ''how\nin sor\nand in the hard timesi myself\n\n[Verse 2: Lady Gaga]\ntell me son accord\nhas too much pine pollutin'' in discord\nor do your try hard\nbeen longingly yourself hard regardsards\n\n[Refrain: Lady Gaga]\nmy falling\nin the all light onesselfs we have our\nthat I\nbut in the bad sourourmyseltself\n\n[Chorus: Lady Gaga]\nI come from no high endsby e from me\nyourself coulda surely\nbangstuffin below an acid not our\nus gone away depthat that\n\n[Post-Chorus: Lady Gaga & Bradley Cooper]\nof that slim pitino life\nfrom no o depthwe escape na b life\nthat that bitterish I taste\nwe escaped so on those shame\n\n[Bridge: Lady Gaga]\noh deep hellso\nendearin\n\n[Chorus: Lady Gaga]\nI come from no high endsby e from me\nyourself coulda surely\nbangstuffin below an acid not our\nus gone away depthat that\n\n[Post-Chorus: Lady Gaga & Bradley Cooper]\nthat that superfoollow\nthat there banaleaves shame icy\non that slipitineath\nus freeing away o a\n"
+}

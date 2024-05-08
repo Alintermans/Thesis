@@ -3,6 +3,7 @@ import datetime
 import os
 from SongUtils import divide_song_into_paragraphs, get_pos_tags_of_line, similarity_of_pos_tags_sequences, get_syllable_count_of_sentence, _get_rhyming_lines,load_rhyming_dicts
 from evaluate import load
+import statistics
 
 
 ################# Init #################
@@ -101,7 +102,10 @@ def calculate_perplexity(original_song_paragraph, parody_song_paragraph):
     original_song_perplexity = perplexity.compute(predictions=full_original_song_per_line, model_id='gpt2')
     parody_song_perplexity = perplexity.compute(predictions=full_parody_song_per_line, model_id='gpt2')
 
-    return original_song_perplexity['mean_perplexity'], parody_song_perplexity['mean_perplexity']
+    median_original_song_perplexity = statistics.median(original_song_perplexity['perplexities'])
+    median_parody_song_perplexity = statistics.median(parody_song_perplexity['perplexities'])
+
+    return median_original_song_perplexity, median_parody_song_perplexity
 
 def calculate_overlap(original_song_paragraph, parody_song_paragraph):
     #the overlap between the original song and the parodie song is calculated by counting per line how many words are similar
@@ -252,11 +256,11 @@ if __name__ == "__main__":
     # # Ask the user for the path to the parody song file (We expect the song to be in json format)
     # parody_file_path = input("Enter the path to the parodie song file in json format: ")
 
-    song_file_path = 'Songs/json/Taylor_Swift-Is_It_Over_Now_(Small_Version).json'
-    parody_file_path = 'Experiments/ConstrainedParodieGenerator/GeneratedParodies/GPT2/All/json/Is_It_Over_Now_(Small_Version)_parodie_27-03-2024_09h-15m-55s.json'
+    #song_file_path = 'Songs/json/Coldplay-Viva_La_Vida.json'
+    parody_file_path = 'Experiments/ConstrainedParodieGenerator/CallibrationExperiments/PosConstraint/0/22/Llama 2 7B Chat/Syllable_Constraint_|_POS_Constraint_|_/json/Viva_La_Vida_parodie_30-04-2024_10h-02m-26s.json'
     
     
-    evaluate(song_file_path, parody_file_path)
+    evaluate(parody_file_path)
 
 
 
