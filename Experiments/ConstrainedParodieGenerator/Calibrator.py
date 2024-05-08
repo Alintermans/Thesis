@@ -419,8 +419,8 @@ def generate_all_chat(song_file_path):
     
 
     syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.9, top_k_tokens_to_consider=200, all_beams_have_syllable_amount=False)
-    pos_constraint_hyperparameters = PosConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.9, good_token_multiplier=0.9, limit_of_pos_similarity_to_satisfy_constraint=0.5, top_k_tokens_to_consider=200)
-    rhyming_constraint_hyperparameters = RhymingConstraintLBL.hyperparameters_config(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.9, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=10, rhyme_type='perfect')
+    pos_constraint_hyperparameters = PosConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.6, good_token_multiplier=0.6, limit_of_pos_similarity_to_satisfy_constraint=0.5, top_k_tokens_to_consider=200)
+    rhyming_constraint_hyperparameters = RhymingConstraintLBL.hyperparameters_config(max_possible_syllable_count=2, good_beamscore_multiplier_same_rhyme_type=0.9, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=10, rhyme_type='perfect')
     folder_path_for_generated_parodies = START_FOLDER + "AllChat/"
 
     if not os.path.exists(folder_path_for_generated_parodies):
@@ -451,7 +451,7 @@ def generate_all_chat(song_file_path):
                 syllable_constraint_hyperparameters=syllable_constraint_hyperparameters,
                 rhyming_constraint_hyperparameters=rhyming_constraint_hyperparameters,
                 pos_constraint_hyperparameters=pos_constraint_hyperparameters,
-                use_backtracking = False
+                use_backtracking = True
                 ))
             else:
                 generate_parody_without_ray(
@@ -3217,7 +3217,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py generate no_constra
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3233,7 +3233,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate syllable L
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3249,7 +3249,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate syllable L
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3265,7 +3265,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate syllable M
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3281,7 +3281,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate syllable M
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3297,7 +3297,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate rhyming Ll
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3313,7 +3313,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate rhyming Ll
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3329,7 +3329,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate rhyming Mi
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3345,7 +3345,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate rhyming Mi
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3361,7 +3361,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate pos Llama2
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3377,7 +3377,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate pos Llama2
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3393,7 +3393,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate pos Mistra
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3409,7 +3409,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate pos Mistra
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3425,7 +3425,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate prompt Non
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3441,7 +3441,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate rhymin_fre
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3457,7 +3457,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate rhyming_ty
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3473,7 +3473,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate backtracki
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3489,7 +3489,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate all_non_ch
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
@@ -3505,7 +3505,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate all_chat N
 #!/bin/bash -l
 #SBATCH --time=02:30:00
 
-module load cluster/genius/gpu_v100
+module load cluster/genius/gpu_p100
 module load Python/3.10.8-GCCcore-12.2.0
 
 cd $VSC_SCRATCH
