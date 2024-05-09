@@ -3110,7 +3110,7 @@ slurm_jobs ="""
 #### prompt ####
 
 #!/bin/bash -l
-#SBATCH --time=05:45:00
+#SBATCH --time=08:00:00
 module load cluster/wice/gpu_h100
 module load Python/3.10.8-GCCcore-12.2.0
 
@@ -3138,7 +3138,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py generate rhymin_fre
 #### rhyming types ####
 
 #!/bin/bash -l
-#SBATCH --time=05:45:00
+#SBATCH --time=08:00:00
 module load cluster/wice/gpu_h100
 module load Python/3.10.8-GCCcore-12.2.0
 
@@ -3153,7 +3153,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py generate rhyming_ty
 #### backtracking ####
 
 #!/bin/bash -l
-#SBATCH --time=05:45:00
+#SBATCH --time=08:00:00
 module load cluster/wice/gpu_h100
 module load Python/3.10.8-GCCcore-12.2.0
 
@@ -3168,7 +3168,7 @@ python Experiments/ConstrainedParodieGenerator/Calibrator.py generate backtracki
 #### all non chat ####
 
 #!/bin/bash -l
-#SBATCH --time=05:45:00
+#SBATCH --time=08:00:00
 module load cluster/wice/gpu_h100
 module load Python/3.10.8-GCCcore-12.2.0
 
