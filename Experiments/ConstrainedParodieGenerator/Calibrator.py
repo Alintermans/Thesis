@@ -94,13 +94,13 @@ def calibrate_prompt(song_file_path):
                     temperature=0.75, 
                     num_beams=num_beams, 
                     seed=GLOBAL_SEED, 
-                    syllable_constrained = False,
-                    rhyming_constrained = False,
-                    pos_constrained = False,
+                    syllable_constrained = True,
+                    rhyming_constrained = True,
+                    pos_constrained = True,
                     syllable_constraint_hyperparameters=syllable_constraint_hyperparameters,
                     rhyming_constraint_hyperparameters=rhyming_constraint_hyperparameters,
                     pos_constraint_hyperparameters=pos_constraint_hyperparameters,
-                    use_backtracking = False
+                    use_backtracking = True
                     ))
                 else:
                     generate_parody_without_ray(
