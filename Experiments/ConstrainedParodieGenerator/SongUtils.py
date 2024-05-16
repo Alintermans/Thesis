@@ -336,7 +336,7 @@ def count_syllables_hard(word):
     word = word.lower()
     # pron = get_pronounciation_of_unknown_word(word)
     # count = len([x for x in pron if x[-1].isdigit()])
-
+    # The following code comes from https://stackoverflow.com/questions/46759492/syllable-count-in-python
     count = 0
     vowels = "aeiouy"
     if word[0] in vowels:
