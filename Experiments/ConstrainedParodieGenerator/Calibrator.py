@@ -1473,7 +1473,7 @@ async def evaluate_prompt(folder_path):
         original_results_per_model = []
         language_model = AVAILABLE_LMS[language_model].get_name()
         async for index in atqdm(range(len(possible_prompts))):
-            temp_folder_path = folder_path + str(index + 1) + "/" + language_model + constraint_folder_path +"json/"
+            temp_folder_path = folder_path + str(index) + "/" + language_model + '/' +constraint_folder_path +"json/"
             if await aiofiles.os.path.isdir(temp_folder_path):
 
                 dir_list = await aiofiles.os.listdir(temp_folder_path)
@@ -1966,7 +1966,7 @@ async def evaluate_rhyming_types(folder_path):
         original_results_per_model = []
         language_model = AVAILABLE_LMS[language_model].get_name()
         async for index in atqdm(range(len(possible_rhyming_types))):
-            temp_folder_path = folder_path + str(index + 1) + "/" + language_model + constraint_folder_path + "json/"
+            temp_folder_path = folder_path + str(index + 1) + "/" + language_model + '/' + constraint_folder_path + "json/"
             if await aiofiles.os.path.isdir(temp_folder_path):
 
                 dir_list = await aiofiles.os.listdir(temp_folder_path)
@@ -2222,7 +2222,7 @@ async def evaluate_backtracking(folder_path):
         original_results_per_model = []
         language_model = AVAILABLE_LMS[language_model].get_name()
         async for index in atqdm(range(len(possible_backtracking))):
-            temp_folder_path = folder_path + str(index) + "/" + language_model + constraint_folder_path + "json/"
+            temp_folder_path = folder_path + str(index +1) + "/" + language_model + '/' + constraint_folder_path + "json/"
             if await aiofiles.os.path.isdir(temp_folder_path):
 
                 dir_list = await aiofiles.os.listdir(temp_folder_path)
