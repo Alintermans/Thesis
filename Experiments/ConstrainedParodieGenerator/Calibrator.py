@@ -2502,7 +2502,7 @@ def process_all_non_chat_results():
         data = json.load(f)
     results = data["results"]
 
-    for i in range(len(LANGUAGE_MODELS_NON_CHAT)):
+    for i in range(len(LANGUAGE_MODELS_NON_CHAT)-1):
         language_model = LANGUAGE_MODELS_NON_CHAT[i]
         avg_perplexities = 0
         avg_perplexities_difference = 0

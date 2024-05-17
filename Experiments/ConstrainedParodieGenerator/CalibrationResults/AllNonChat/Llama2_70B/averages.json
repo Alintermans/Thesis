@@ -1,0 +1,15 @@
+{
+    "avg_perplexities": 410.062744140625,
+    "avg_perplexities_difference": 294.39586639404297,
+    "avg_syllable_differences": 0.0,
+    "avg_mean_deviation_syllable_count": 0.0,
+    "avg_correct_syllable_count": 1.0,
+    "avg_duration": 1368.15,
+    "avg_correct_rhymes": 0.7894736842105263,
+    "avg_rhyme_word_length": 2.5384615384615383,
+    "avg_pos_similarity": 0.8231061993764286,
+    "avg_mean_deviation_pos_similarity": 0.12500777958981166,
+    "avg_correct_pos_lines": 0.2553191489361702,
+    "avg_overlap": 0.481981981981982,
+    "avg_repetition_difference": 0.04438334642576591
+}
