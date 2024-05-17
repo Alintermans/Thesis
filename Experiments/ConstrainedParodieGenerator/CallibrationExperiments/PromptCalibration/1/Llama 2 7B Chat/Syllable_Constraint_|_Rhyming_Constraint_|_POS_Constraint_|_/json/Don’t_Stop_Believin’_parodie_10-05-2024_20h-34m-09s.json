@@ -1,0 +1,40 @@
+{
+    "original_song_title": "Don\u2019t Stop Believin\u2019",
+    "original_song_artist": "Journey",
+    "language_model_name": "Llama 2 7B Chat",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. \nAlso make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. \nYou will write the parody verse by verse, the user will give you the original song as well as part of the parody that already has been generated. You have to start writing the line directly, and don't add anything else except the next verse. So your answer only consists of one line of the parody.",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. Can you make sure to keep the same format as the original song?\nOriginal song:\n{{$SONG}}\nAlready generated parody:\n{{$PARODY}}",
+    "assistant_prompt": "Sure here it is:",
+    "prompt": "[INST] <<SYS>>\nYou're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. \nAlso make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. \nYou will write the parody verse by verse, the user will give you the original song as well as part of the parody that already has been generated. You have to start writing the line directly, and don't add anything else except the next verse. So your answer only consists of one line of the parody.\n<</SYS>>\n\nWrite a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. Can you make sure to keep the same format as the original song?\nOriginal song:\n[Verse 1]\nJust a small-town girl, livin' in a lonely world\nShe took the midnight train goin' anywhere\nJust a city boy, born and raised in South Detroit\nHe took the midnight train goin' anywhere\n\n[Verse 2]\nA singer in a smoky room\nThe smell of wine and cheap perfume\nFor a smile, they can share the night\nIt goes on and on and on and on\n\n[Pre-Chorus]\nStrangers waitin'\nUp and down the boulevard\nTheir shadows searchin' in the night\nStreetlights, people\nLivin' just to find emotion\nHidin' somewhere in the night\n\n[Verse 3]\nWorkin' hard to get my fill\nEverybody wants a thrill\nPayin' anything to roll the dice\nJust one more time\n[Verse 4]\nSome will win, some will lose\nSome are born to sing the blues\nOh, the movie never ends\nIt goes on and on and on and on\n\n[Pre-Chorus]\nStrangers waitin'\nUp and down the boulevard\nTheir shadows searchin' in the night\nStreetlights, people\nLivin' just to find emotion\nHidin' somewhere in the night\n\n[Guitar Solo]\n\n[Chorus]\nDon't stop believin'\nHold on to that feelin'\nStreetlights, people\nDon't stop believin'\nHold on\nStreetlights, people\nDon't stop believin'\nHold on to that feelin'\nStreetlights, people\nAlready generated parody:\n[Verse 1]\nwhy pineapple should not be on a pizza is\nwhy pineapple should not be on a pizza\nhere's my attempt at a parody of the song\nwhy pineapple should not be onond aka\n\n[Verse 2]\nwhy pineapple should not be on\nwhy pineapple should not be on\nwhy pineapple should not be on\nwhy pineapple should not be on a\n\n[Pre-Chorus]\nwhy pineaped\npineapple on a pizza\nwhy pineapple should not be on\nparody verse\nwhy pineapple should not be on\nwhy pineapple should not gone\n\n[Verse 3]\nwhy pineapple should not be\nwhy pineapple should not be\nwhy pineapple should not be on a\nwhy pineapple\n\n[Verse 4]\nwhy pineapple should not\nwhy pineapple should not got\nwhy pineapple should not be\nwhy pineapple should not be on a\n\n[Guitar Solo]\n\n[Chorus]\nwhy pineapple should not\nwhy pineapple should not\nwhy pineapple\nwhy pineapple should not\nwhy on\nwhy pineal\nwhy pineapple should not\nwhy pineapple should not [/INST]\nSure here it is:\n",
+    "constraints_used": "Syllable Constraint | Rhyming Constraint | POS Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "RhymingConstraintLBL": {
+            "max_possible_syllable_count": 3,
+            "good_beamscore_multiplier_same_rhyme_type": 0.9,
+            "good_rhyming_token_multiplier": 0.9,
+            "top_k_rhyme_words": 10,
+            "rhyme_type": "perfect",
+            "frequent_words": false
+        },
+        "PosConstraintLBL": {
+            "top_k_tokens_to_consider": 200,
+            "good_beamscore_multiplier": 0.6,
+            "good_token_multiplier": 0.6,
+            "limit_of_pos_similarity_to_satisfy_constraint": 0.5
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.9 | temperature: 0.75",
+    "state": "Finished Correctly",
+    "date": "10-05-2024",
+    "time": "20h-34m-09s",
+    "generation_duration": 493.22,
+    "parodie": "[Verse 1]\nwhy pineapple should not be on a pizza is\nwhy pineapple should not be on a pizza\nhere's my attempt at a parody of the song\nwhy pineapple should not be onond aka\n\n[Verse 2]\nwhy pineapple should not be on\nwhy pineapple should not be on\nwhy pineapple should not be on\nwhy pineapple should not be on a\n\n[Pre-Chorus]\nwhy pineaped\npineapple on a pizza\nwhy pineapple should not be on\nparody verse\nwhy pineapple should not be on\nwhy pineapple should not gone\n\n[Verse 3]\nwhy pineapple should not be\nwhy pineapple should not be\nwhy pineapple should not be on a\nwhy pineapple\n\n[Verse 4]\nwhy pineapple should not\nwhy pineapple should not got\nwhy pineapple should not be\nwhy pineapple should not be on a\n\n[Pre-Chorus]\nwhy pineaped\npineapple on a pizza\nwhy pineapple should not be on\nparody verse\nwhy pineapple should not be on\nwhy pineapple should not gone\n\n[Guitar Solo]\n\n\n[Chorus]\nwhy pineapple should not\nwhy pineapple should not\nwhy pineapple\nwhy pineapple should not\nwhy on\nwhy pineal\nwhy pineapple should not\nwhy pineapple should not\nwhy pimental\n"
+}

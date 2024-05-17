@@ -10,4 +10,4 @@ export HF_HOME="/scratch/leuven/361/vsc36141/HF/"
 
 source ThesisEnv/bin/activate
 cd Thesis
-python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate no_constraints_with_guardrails None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/NoConstraintsWithGuardrails/0
+python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate no_constraints_with_guardrails None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/NoConstraintsWithGuardrails/1

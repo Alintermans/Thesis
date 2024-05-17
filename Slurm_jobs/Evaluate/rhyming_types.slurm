@@ -10,4 +10,4 @@ export HF_HOME="/scratch/leuven/361/vsc36141/HF/"
 
 source ThesisEnv/bin/activate
 cd Thesis
-python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate rhyming_types None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/RhymingTypes/0
+python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate rhyming_types None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/RhymingTypes

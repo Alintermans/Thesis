@@ -1,0 +1,40 @@
+{
+    "original_song_title": "Revenge",
+    "original_song_artist": "XXXTENTACION",
+    "language_model_name": "Llama 2 70B Chat",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. \nAlso make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. \nYou will write the parody verse by verse, the user will give you the original song as well as part of the parody that already has been generated. You have to start writing the line directly, and don't add anything else except the next verse. So your answer only consists of one line of the parody.",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. Can you make sure to keep the same format as the original song?\nOriginal song:\n{{$SONG}}\nAlready generated parody:\n{{$PARODY}}",
+    "assistant_prompt": "Sure here it is:",
+    "prompt": "[INST] <<SYS>>\nYou're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. \nAlso make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. \nYou will write the parody verse by verse, the user will give you the original song as well as part of the parody that already has been generated. You have to start writing the line directly, and don't add anything else except the next verse. So your answer only consists of one line of the parody.\n<</SYS>>\n\nWrite a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. Can you make sure to keep the same format as the original song?\nOriginal song:\n[Intro]\nI think I, I think I finally\nFound a way to forgive myself\nFor the mistakes I made in my past\nI think that's the first step, right?\nYou agree?\n\n[Verse]\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\n\n[Chorus]\nIn my grave, I'll rot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\n[Outro]\nIn my grave, I'll rot\nI'll rot, I'll rot, I'll rot\nIs my pain your freedom?\nIs all of my pain your freedom?\nEnjoy\nAlready generated parody:\n[Intro]\nI think I I think I finally\nfound a way to stop my cravings\nI think that pineapple has no place\nI've dug a hole for pineapp\nI canny\n\n[Verse]\nI've dug two holes for pineapples\nI can't pretend that pineapples belong on paddles\nI've dug two holes for pineapples they\nI've heard that pineapples on pizza is a\na way to forgive myself for\nI've dug two holes for pineapples they don't belong on\nI've dug two holes for pineapples they don\nI've dug two holes for pineapples they don't belong on top\nI've dug two holes for pineapples\nI've dug two holes for pineapples they don' under sandals\nI've dug two holes for piscataway\nI've dug two holes for pineapples theora\na hole for pineapples thatcher\nI've dug two holes for pineapples they don'ty donilon\nI've dug two holes for pineapples eon\nI've dug two holes for pineapples they don'ty belong atop\n\n[Chorus]\nin my mind I think\nin my vandenbrink\nin my mind I think have you\nin my mind lorenc\nI've dug a hole for pelleu\nI've dug a hole sink\n\n[Outro]\nI've dug a hole for\nI've dug alexander\nI've dug a hole for the\nI've dug a hole forsythia [/INST]\nSure here it is:\n",
+    "constraints_used": "Syllable Constraint | Rhyming Constraint | POS Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "RhymingConstraintLBL": {
+            "max_possible_syllable_count": 3,
+            "good_beamscore_multiplier_same_rhyme_type": 0.9,
+            "good_rhyming_token_multiplier": 0.9,
+            "top_k_rhyme_words": 10,
+            "rhyme_type": "perfect",
+            "frequent_words": false
+        },
+        "PosConstraintLBL": {
+            "top_k_tokens_to_consider": 200,
+            "good_beamscore_multiplier": 0.6,
+            "good_token_multiplier": 0.6,
+            "limit_of_pos_similarity_to_satisfy_constraint": 0.5
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.9 | temperature: 0.75",
+    "state": "Finished Correctly",
+    "date": "10-05-2024",
+    "time": "10h-24m-26s",
+    "generation_duration": 1306.32,
+    "parodie": "[Intro]\nI think I I think I finally\nfound a way to stop my cravings\nI think that pineapple has no place\nI've dug a hole for pineapp\nI canny\n\n[Verse]\nI've dug two holes for pineapples\nI can't pretend that pineapples belong on paddles\nI've dug two holes for pineapples they\nI've heard that pineapples on pizza is a\na way to forgive myself for\nI've dug two holes for pineapples they don't belong on\nI've dug two holes for pineapples they don\nI've dug two holes for pineapples they don't belong on top\nI've dug two holes for pineapples\nI've dug two holes for pineapples they don' under sandals\nI've dug two holes for piscataway\nI've dug two holes for pineapples theora\na hole for pineapples thatcher\nI've dug two holes for pineapples they don'ty donilon\nI've dug two holes for pineapples eon\nI've dug two holes for pineapples they don'ty belong atop\n\n[Chorus]\nin my mind I think\nin my vandenbrink\nin my mind I think have you\nin my mind lorenc\nI've dug a hole for pelleu\nI've dug a hole sink\n\n[Outro]\nI've dug a hole for\nI've dug alexander\nI've dug a hole for the\nI've dug a hole forsythia\nI'vel\n"
+}

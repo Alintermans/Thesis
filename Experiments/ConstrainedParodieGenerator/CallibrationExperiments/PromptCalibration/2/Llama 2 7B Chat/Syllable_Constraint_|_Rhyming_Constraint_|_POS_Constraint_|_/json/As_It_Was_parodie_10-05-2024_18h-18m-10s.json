@@ -1,0 +1,40 @@
+{
+    "original_song_title": "As It Was",
+    "original_song_artist": "Harry Styles",
+    "language_model_name": "Llama 2 7B Chat",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. \nAlso make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. \nYou will write the parody verse by verse, the user will give you the original song as well as part of the parody that already has been generated. You have to start writing the line directly, and don't add anything else except the next verse.  So your answer only consists of one line of the parody.",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. Can you make sure to keep the same format as the original song?\nOriginal song:\n{{$SONG}}\nAlready generated parody:\n{{$PARODY}}\nThe next line, you will write,  needs to have {{$SYLLABLE_AMOUNT}} syllables, and rhyme with {{$RHYMING_WORD}} (If its None, no end rhyme word is needed), and have the following POS-tag sequence: {{$POS_TAGS}}. ",
+    "assistant_prompt": "Sure here it is:\n",
+    "prompt": "[INST] <<SYS>>\nYou're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. \nAlso make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. \nYou will write the parody verse by verse, the user will give you the original song as well as part of the parody that already has been generated. You have to start writing the line directly, and don't add anything else except the next verse.  So your answer only consists of one line of the parody.\n<</SYS>>\n\nWrite a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. Can you make sure to keep the same format as the original song?\nOriginal song:\n[Intro]\nCome on, Harry, we wanna say goodnight to you\n\n[Verse 1]\nHoldin' me back\nGravity's holdin' me back\nI want you to hold out the palm of your hand\nWhy don't we leave it at that?\nNothin' to say\nWhen everything gets in the way\nSeems you cannot be replaced\nAnd I'm the one who will stay, oh-oh-oh\n\n[Chorus]\nIn this world, it's just us\nYou know it's not the same as it was\nIn this world, it's just us\nYou know it's not the same as it was\nAs it was, as it was\nYou know it's not the same\n\n[Verse 2]\nAnswer the phone\n\"Harry, you're no good alone\nWhy are you sitting at home on the floor?\nWhat kind of pills are you on?\"\nRingin' the bell\nAnd nobody's coming to help\nYour daddy lives by himself\nHe just wants to know that you're well, oh-oh-oh\n[Chorus]\nIn this world, it's just us\nYou know it's not the same as it was\nIn this world, it's just us\nYou know it's not the same as it was\nAs it was, as it was\nYou know it's not the same\n\n[Bridge]\nGo home, get ahead, light-speed internet\nI don't wanna talk about the way that it was\nLeave America, two kids follow her\nI don't wanna talk about who's doin' it first\n\n[Outro]\n(Hey)\nAs it was\nYou know it's not the same as it was\nAs it was, as it was\nAlready generated parody:\n[Intro]\nwhy pineapple should not be on a pizza ton\n\n[Verse 1]\nwhy pineapple\npineapple on topical\nwhy pineapple should not be on a pizza\nwhy pineapple should not be on\nwhy pineappe should\nwhy pineapple should not beechwood\nwhy pineapple should not be\nwhy pineapple should not be on a pie\n\n[Chorus]\nwhy pineapple should not\nwhy pineapple should not be on a\nwhy pineapple should not\nwhy pineapple should not beaujolais\nwhy pineapple isa\nwhy pineapple should not\n\n[Verse 2]\nwhy pineapple\nwhy pineapple can' badal\nwhy pineapple should not be on a pie\nwhy pineapple on pizza\npineapple doesn\nwhy pineapple on a pizza\nwhy pineapple on a pie\nwhy pineapple should not be on a pie ton\n\n[Bridge]\nwhy pineapple on a pizza tonight\nwhy pineapple on a pizza tonightshould not be\nwhy pineapple on a pizza tonight\nwhy pineapple on a pizza tonight should not be\n\n[Outro]\nre\nwhy pine does\nwhy pineapple on arizon is\n\nThe next line, you will write,  needs to have 6 syllables, and rhyme with does (If its None, no end rhyme word is needed), and have the following POS-tag sequence: ADP, PRON, VERB, ADP, PRON, VERB. [/INST]\nSure here it is:\n",
+    "constraints_used": "Syllable Constraint | Rhyming Constraint | POS Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "RhymingConstraintLBL": {
+            "max_possible_syllable_count": 3,
+            "good_beamscore_multiplier_same_rhyme_type": 0.9,
+            "good_rhyming_token_multiplier": 0.9,
+            "top_k_rhyme_words": 10,
+            "rhyme_type": "perfect",
+            "frequent_words": false
+        },
+        "PosConstraintLBL": {
+            "top_k_tokens_to_consider": 200,
+            "good_beamscore_multiplier": 0.6,
+            "good_token_multiplier": 0.6,
+            "limit_of_pos_similarity_to_satisfy_constraint": 0.5
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.9 | temperature: 0.75",
+    "state": "Finished Correctly",
+    "date": "10-05-2024",
+    "time": "18h-18m-10s",
+    "generation_duration": 731.88,
+    "parodie": "[Intro]\nwhy pineapple should not be on a pizza ton\n\n[Verse 1]\nwhy pineapple\npineapple on topical\nwhy pineapple should not be on a pizza\nwhy pineapple should not be on\nwhy pineappe should\nwhy pineapple should not beechwood\nwhy pineapple should not be\nwhy pineapple should not be on a pie\n\n[Chorus]\nwhy pineapple should not\nwhy pineapple should not be on a\nwhy pineapple should not\nwhy pineapple should not beaujolais\nwhy pineapple isa\nwhy pineapple should not\n\n[Verse 2]\nwhy pineapple\nwhy pineapple can' badal\nwhy pineapple should not be on a pie\nwhy pineapple on pizza\npineapple doesn\nwhy pineapple on a pizza\nwhy pineapple on a pie\nwhy pineapple should not be on a pie ton\n\n[Chorus]\nwhy pineapple should not\nwhy pineapple should not be on a\nwhy pineapple should not\nwhy pineapple should not beaujolais\nwhy pineapple isa\nwhy pineapple should not\n\n[Bridge]\nwhy pineapple on a pizza tonight\nwhy pineapple on a pizza tonightshould not be\nwhy pineapple on a pizza tonight\nwhy pineapple on a pizza tonight should not be\n\n[Outro]\nre\nwhy pine does\nwhy pineapple on arizon is\nwhy pineapple canas\n"
+}

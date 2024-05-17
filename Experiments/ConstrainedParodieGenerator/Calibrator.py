@@ -3418,7 +3418,7 @@ export HF_HOME="/scratch/leuven/361/vsc36141/HF/"
 
 source ThesisEnv/bin/activate
 cd Thesis
-python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate prompt None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/PromptCalibration/0
+python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate prompt None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/PromptCalibration
 
 #### rhymin frequency ####
 
@@ -3434,7 +3434,7 @@ export HF_HOME="/scratch/leuven/361/vsc36141/HF/"
 
 source ThesisEnv/bin/activate
 cd Thesis
-python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate rhymin_frequency None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/RhymingFrequency/0
+python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate rhymin_frequency None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/RhymingFrequency
 
 #### rhyming types ####
 
@@ -3450,7 +3450,7 @@ export HF_HOME="/scratch/leuven/361/vsc36141/HF/"
 
 source ThesisEnv/bin/activate
 cd Thesis
-python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate rhyming_types None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/RhymingTypes/0
+python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate rhyming_types None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/RhymingTypes
 
 #### backtracking ####
 
@@ -3466,7 +3466,7 @@ export HF_HOME="/scratch/leuven/361/vsc36141/HF/"
 
 source ThesisEnv/bin/activate
 cd Thesis
-python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate backtracking None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/Backtracking/0
+python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate backtracking None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/Backtracking
 
 #### all non chat ####
 
@@ -3482,7 +3482,7 @@ export HF_HOME="/scratch/leuven/361/vsc36141/HF/"
 
 source ThesisEnv/bin/activate
 cd Thesis
-python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate all_non_chat None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/AllNonChat/0
+python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate all_non_chat None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/AllNonChat/1
 
 #### all chat ####
 
@@ -3498,7 +3498,7 @@ export HF_HOME="/scratch/leuven/361/vsc36141/HF/"
 
 source ThesisEnv/bin/activate
 cd Thesis
-python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate all_chat None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/AllChat/0
+python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate all_chat None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/AllChat/1
 
 #### no constraints with guardrails ####
 
@@ -3514,7 +3514,7 @@ export HF_HOME="/scratch/leuven/361/vsc36141/HF/"
 
 source ThesisEnv/bin/activate
 cd Thesis
-python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate no_constraints_with_guardrails None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/NoConstraintsWithGuardrails/0
+python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate no_constraints_with_guardrails None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/NoConstraintsWithGuardrails/1
 
 
 

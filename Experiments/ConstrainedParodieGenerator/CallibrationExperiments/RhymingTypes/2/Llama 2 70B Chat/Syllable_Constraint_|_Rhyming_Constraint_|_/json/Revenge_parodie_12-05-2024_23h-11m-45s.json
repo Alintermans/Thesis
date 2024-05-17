@@ -1,0 +1,34 @@
+{
+    "original_song_title": "Revenge",
+    "original_song_artist": "XXXTENTACION",
+    "language_model_name": "Llama 2 70B Chat",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] <<SYS>>\nYou're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. \n<</SYS>>\n\nWrite a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Intro]\nI think I, I think I finally\nFound a way to forgive myself\nFor the mistakes I made in my past\nI think that's the first step, right?\nYou agree?\n\n[Verse]\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\n\n[Chorus]\nIn my grave, I'll rot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\n[Outro]\nIn my grave, I'll rot\nI'll rot, I'll rot, I'll rot\nIs my pain your freedom?\nIs all of my pain your freedom?\nEnjoy [/INST]\nParody:\n[Intro]\nI think I've found a way to express\nmy hate for pineapple on a\npizza crust that's oh so fine and fair\nit's just not right to put it\nthere andress\n\n[Verse]\nI've dug a hole for pineapple\ncan't pretend that it's a topping that's worth arable\noh man what a flavor the things I\nhear people say it's delicious I just can\nnot agree at all it's such a\nfaux pas it's like putting ketchup on a hot dog really\nsome like it hot some like it cold some break\nthe rules and put pineapple on their pizza bold andante\nand you'd have thought that I would let\nit slide and just move on but no I can't abnormal\nI've dug a hole for pineapple I\ncan't pretend that it's a tobiason\nworthy of being puttenbay\noh man what a flavor the things I hear people say it\ns delicious I just can not agree\nat all it's such a faux pas it's like putting ketchup on a\n\n[Chorus]\nin my grave I'll rot\nin my grave I'll rot\nin my grave I'll rot ot ot\nin my grave I'll rot\nin my grave I'll rotary\nin my grave I'll rot\n\n[Outro]\nin my grave I'll rot\nI'll rot I'll rot I'll rot\nis my taste your freedom\nis all of my taste your freedom\n",
+    "constraints_used": "Syllable Constraint | Rhyming Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": false
+        },
+        "RhymingConstraintLBL": {
+            "max_possible_syllable_count": 3,
+            "good_beamscore_multiplier_same_rhyme_type": 0.9,
+            "good_rhyming_token_multiplier": 0.9,
+            "top_k_rhyme_words": 10,
+            "rhyme_type": "near",
+            "frequent_words": false
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.9 | temperature: 0.75",
+    "state": "Finished Correctly",
+    "date": "12-05-2024",
+    "time": "23h-11m-45s",
+    "generation_duration": 822.91,
+    "parodie": "[Intro]\nI think I've found a way to express\nmy hate for pineapple on a\npizza crust that's oh so fine and fair\nit's just not right to put it\nthere andress\n\n[Verse]\nI've dug a hole for pineapple\ncan't pretend that it's a topping that's worth arable\noh man what a flavor the things I\nhear people say it's delicious I just can\nnot agree at all it's such a\nfaux pas it's like putting ketchup on a hot dog really\nsome like it hot some like it cold some break\nthe rules and put pineapple on their pizza bold andante\nand you'd have thought that I would let\nit slide and just move on but no I can't abnormal\nI've dug a hole for pineapple I\ncan't pretend that it's a tobiason\nworthy of being puttenbay\noh man what a flavor the things I hear people say it\ns delicious I just can not agree\nat all it's such a faux pas it's like putting ketchup on a\n\n[Chorus]\nin my grave I'll rot\nin my grave I'll rot\nin my grave I'll rot ot ot\nin my grave I'll rot\nin my grave I'll rotary\nin my grave I'll rot\n\n[Outro]\nin my grave I'll rot\nI'll rot I'll rot I'll rot\nis my taste your freedom\nis all of my taste your freedom\nenjo\n"
+}
