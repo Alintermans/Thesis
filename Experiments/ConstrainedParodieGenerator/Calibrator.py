@@ -1961,7 +1961,7 @@ async def evaluate_rhyming_types(folder_path):
     original_results = []
 
     print("Evaluating Rhyming Types")
-    constraint_folder_path = "Syllable_Constraint_|_Rhyming_Constraint_|_POS_Constraint_|_/"
+    constraint_folder_path = "Syllable_Constraint_|_Rhyming_Constraint_|_/"
     async for language_model in atqdm(LANGUAGE_MODELS_CHAT):
         original_results_per_model = []
         language_model = AVAILABLE_LMS[language_model].get_name()
@@ -2469,7 +2469,7 @@ async def evaluate_all_non_chat(folder_path):
         original_results_per_model = []
         language_model = AVAILABLE_LMS[language_model].get_name()
         constraint_folder_path = "Syllable_Constraint_|_Rhyming_Constraint_|_POS_Constraint_|_/"
-        temp_folder_path = folder_path + language_model + constraint_folder_path + "json/"
+        temp_folder_path = folder_path + language_model + '/' + constraint_folder_path + "json/"
         if await aiofiles.os.path.isdir(temp_folder_path):
 
             dir_list = await aiofiles.os.listdir(temp_folder_path)
@@ -2597,7 +2597,7 @@ async def evaluate_all_chat(folder_path):
     async for language_model in atqdm(LANGUAGE_MODELS_CHAT):
         original_results_per_model = []
         language_model = AVAILABLE_LMS[language_model].get_name()
-        temp_folder_path = folder_path + language_model + constraint_folder_path + "json/"
+        temp_folder_path = folder_path + language_model + '/' + constraint_folder_path + "json/"
         if await aiofiles.os.path.isdir(temp_folder_path):
 
             dir_list = await aiofiles.os.listdir(temp_folder_path)
