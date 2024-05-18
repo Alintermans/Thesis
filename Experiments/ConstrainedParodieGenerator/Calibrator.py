@@ -743,8 +743,8 @@ def calibrate_pos_constraint(song_file_path, prompt_nb, language_model, beam_ind
         
 
 @ray.remote
-def calculate_song_evaluation(file, folder_path):
-    results = evaluate_song(folder_path + file)
+def calculate_song_evaluation(file, folder_path, rhyme_type='perfect'):
+    results = evaluate_song(folder_path + file, rhyme_type=rhyme_type)
     return results
 
 def plot_results(x_data, y_data, xlabel, ylabel, title, file_name):
@@ -1509,7 +1509,8 @@ def process_prompt_results():
     results = data["results"]
     possible_prompts = data["possible_prompts"]
 
-    for language_model in LANGUAGE_MODELS_CHAT:
+    for i in range(len(LANGUAGE_MODELS_CHAT)):
+        language_model = LANGUAGE_MODELS_CHAT[i]
         avg_perplexities = []
         avg_perplexities_difference = []
         avg_syllable_differences = []
@@ -1524,7 +1525,7 @@ def process_prompt_results():
         avg_repetition_difference = []
         avg_rhyme_word_length = []
 
-        for result in results:
+        for result in results[i]:
             perplexities = []
             perplexities_difference = []
             syllable_differences = []
@@ -1971,7 +1972,7 @@ async def evaluate_rhyming_types(folder_path):
 
                 dir_list = await aiofiles.os.listdir(temp_folder_path)
 
-                results = ray.get([calculate_song_evaluation.remote(file, temp_folder_path) for file in dir_list])
+                results = ray.get([calculate_song_evaluation.remote(file, temp_folder_path, possible_rhyming_types[i]) for file in dir_list])
                 for result,file in zip(results, dir_list):
                     with open(temp_folder_path + file, "r") as f:
                         data = json.load(f)
@@ -2002,7 +2003,8 @@ def process_rhyming_types_results():
     results = data["results"]
     possible_rhyming_types = data["possible_rhyming_types"]
 
-    for language_model in LANGUAGE_MODELS_CHAT:
+    for i in range(len(LANGUAGE_MODELS_CHAT)):
+        language_model = LANGUAGE_MODELS_CHAT[i]
         avg_perplexities = []
         avg_perplexities_difference = []
         avg_syllable_differences = []
@@ -2017,7 +2019,7 @@ def process_rhyming_types_results():
         avg_repetition_difference = []
         avg_rhyme_word_length = []
 
-        for result in results:
+        for result in results[i]:
             perplexities = []
             perplexities_difference = []
             syllable_differences = []
@@ -2044,7 +2046,7 @@ def process_rhyming_types_results():
                 mean_deviation_pos_similarity.append(song["mean_deviation_pos_tag_similarity"])
                 correct_pos_lines.append(song["nb_correct_pos_similarities"]/song["correct_nb_lines"])
                 overlap.append(song["overlap"])
-                repetition_difference.append(song["original_song_repetition_score"] - song["parody_song_repition_score"])
+                repetition_difference.append(song["original_song_repetition_score"] - song["parody_song_repetition_score"])
                 rhyme_word_length.append(song["avg_rhyme_word_length"])
 
             avg_perplexities.append(statistics.median(perplexities))
@@ -2257,7 +2259,8 @@ def process_backtracking_results():
     results = data["results"]
     possible_backtracking = data["possible_backtracking"]
 
-    for language_model in LANGUAGE_MODELS_CHAT:
+    for i in range(len(LANGUAGE_MODELS_CHAT)):
+        language_model = LANGUAGE_MODELS_CHAT[i]
         avg_perplexities = []
         avg_perplexities_difference = []
         avg_syllable_differences = []
@@ -2272,7 +2275,7 @@ def process_backtracking_results():
         avg_repetition_difference = []
         avg_rhyme_word_length = []
 
-        for result in results:
+        for result in results[i]:
             perplexities = []
             perplexities_difference = []
             syllable_differences = []
@@ -3082,7 +3085,7 @@ def process(constraint, language_model):
     elif constraint == "pos":
         process_rhyming_or_pos_results(language_model_name, "pos")
     elif constraint == "prompt":
-        process_prompt_results(language_model_name)
+        process_prompt_results()
     elif constraint == "rhymin_frequency":
         process_rhyming_frequencies_results()
     elif constraint == "rhyming_types":
