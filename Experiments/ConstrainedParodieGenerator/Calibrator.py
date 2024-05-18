@@ -1972,7 +1972,7 @@ async def evaluate_rhyming_types(folder_path):
 
                 dir_list = await aiofiles.os.listdir(temp_folder_path)
 
-                results = ray.get([calculate_song_evaluation.remote(file, temp_folder_path, possible_rhyming_types[i]) for file in dir_list])
+                results = ray.get([calculate_song_evaluation.remote(file, temp_folder_path, possible_rhyming_types[index]) for file in dir_list])
                 for result,file in zip(results, dir_list):
                     with open(temp_folder_path + file, "r") as f:
                         data = json.load(f)
