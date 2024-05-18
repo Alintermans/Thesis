@@ -2468,7 +2468,7 @@ async def evaluate_all_non_chat(folder_path):
 
     print("Evaluating All Non Chat")
 
-    async for language_model in atqdm(LANGUAGE_MODELS_NON_CHAT):
+    async for language_model in atqdm(LANGUAGE_MODELS_NON_CHAT-1):
         original_results_per_model = []
         language_model = AVAILABLE_LMS[language_model].get_name()
         constraint_folder_path = "Syllable_Constraint_|_Rhyming_Constraint_|_POS_Constraint_|_/"
