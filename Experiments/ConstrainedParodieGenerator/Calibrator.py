@@ -280,8 +280,8 @@ def calibrate_backtracking(song_file_path):
 
     syllable_constraint_hyperparameters = SyllableConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.9, top_k_tokens_to_consider=200, all_beams_have_syllable_amount=False)
     pos_constraint_hyperparameters = PosConstraintLBL.hyperparameters_config(good_beamscore_multiplier=0.6, good_token_multiplier=0.6, limit_of_pos_similarity_to_satisfy_constraint=0.5, top_k_tokens_to_consider=200)
-    rhyming_constraint_hyperparameters = RhymingConstraintLBL.hyperparameters_config(max_possible_syllable_count=3, good_beamscore_multiplier_same_rhyme_type=0.9, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=10, rhyme_type='perfect')
-    folder_path_for_generated_parodies = START_FOLDER + "Backtracking/"
+    rhyming_constraint_hyperparameters = RhymingConstraintLBL.hyperparameters_config(max_possible_syllable_count=2, good_beamscore_multiplier_same_rhyme_type=0.9, good_rhyming_token_multiplier=0.9, top_k_rhyme_words=10, rhyme_type='perfect')
+    folder_path_for_generated_parodies = START_FOLDER + "Backtracking_2/"
 
     if not os.path.exists(folder_path_for_generated_parodies):
         os.makedirs(folder_path_for_generated_parodies)
