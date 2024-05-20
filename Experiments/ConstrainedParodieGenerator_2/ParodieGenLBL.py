@@ -115,7 +115,7 @@ def set_constraints():
 
     pos_constraint = PosConstraintLBL(tokenizer, start_token=start_token)
 
-    forbidden_charachters = ['[', ']', '(', ')', '{', '}', '<', '>', '|', '/', '_', '——', '.' '+', '=', '*', '&', '^', '%', '$', '#', '@', '!', '~', '`', ';', ':', '"', "'", ',', '.', '?']
+    forbidden_charachters = ['[', ']', '{', '}', '<', '>', '|', '/', '_', '——', '.' '+', '=', '*', '&', '^', '%', '$', '#', '@', '~', '`', ';', ':', '"', "'", ',']
     forbidden_tokens = forbidden_charachters_to_tokens(tokenizer, forbidden_charachters)
     forbidden_tokens_logit_processor = NoBadWordsLogitsProcessor(forbidden_tokens, eos_token_id=tokenizer.eos_token_id)
 
