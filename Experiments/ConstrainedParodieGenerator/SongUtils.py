@@ -912,7 +912,42 @@ def rhyming_words_to_tokens_and_syllable_count(tokenizer, rhyming_words, start_t
     return result, max_syllable_count
 
 
+def count_syllables_of_rhyme_words_in_songs():
 
+    songs_dir = "Songs/json/"
+    rhyming_words = []
+    for file in os.listdir(songs_dir):
+        
+        if file.endswith(".json"):
+            song = read_song(songs_dir + file)
+            song = divide_song_into_paragraphs(song)
+            for (title, paragraph) in song:
+                rhyming_lines = _get_rhyming_lines(paragraph, "perfect")
+                rhyming_words_temp = []
+                for i in range(len(paragraph)):
+                    if (rhyming_lines[i] is not None):
+                        rhyming_words_temp.append(get_final_word_of_line(paragraph[i]))
+                        rhyming_words_temp.append(get_final_word_of_line(paragraph[rhyming_lines[i]]))
+                rhyming_words_temp = list(set(rhyming_words_temp))
+                rhyming_words += rhyming_words_temp
+    rhyming_words = list(set(rhyming_words))
+    number_of_syllables = dict()
+    for word in rhyming_words:
+        number_of_word_syllables= count_syllables(word)
+        if number_of_word_syllables not in number_of_syllables:
+            number_of_syllables[number_of_word_syllables] = 1
+        else:
+            number_of_syllables[number_of_word_syllables] += 1
+    print(number_of_syllables)
+    # print the number of syllables of the rhyming words in percentage
+    total = sum(number_of_syllables.values())
+    number_of_syllables_percentage = dict()
+    for key in number_of_syllables:
+        number_of_syllables_percentage[key] = number_of_syllables[key]/total
+    
+    print("Total: " + str(total))
+    print(number_of_syllables_percentage)
+    
 
 
 ################################################## POS TAGGING FUNCTIONS ##################################################
@@ -1091,7 +1126,7 @@ if __name__ == "__main__":
     # print(pron_1, pron_2)
 
     # print(do_two_end_phon_seq_near_rhyme(pron_1, pron_2))
-    print(get_perfect_rhyming_words("alone"))
+    #print(get_perfect_rhyming_words("alone"))
     #print(get_pos_tags_of_line("It is "))
    #print(do_two_words_rhyme_perfectly("hello","meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"))
     
@@ -1101,5 +1136,6 @@ if __name__ == "__main__":
     #print(only_adds_regular_characters("I'm a test sentenc", "I'm a test sentenc've"))
     #print(get_syllable_count_of_sentence("Let's fast forward to three hundred takeout coffees later"))
     #print(get_top_frequent_words())
-
+    count_syllables_of_rhyme_words_in_songs()
+        
     

@@ -10,4 +10,4 @@ export HF_HOME="/scratch/leuven/361/vsc36141/HF/"
 
 source ThesisEnv/bin/activate
 cd Thesis
-python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate backtracking None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/Backtracking
+python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate backtracking None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/Backtracking_2
