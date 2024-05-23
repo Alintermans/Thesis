@@ -10,4 +10,4 @@ export HF_HOME="/scratch/leuven/361/vsc36141/HF/"
 
 source ThesisEnv/bin/activate
 cd Thesis
-python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate all_chat None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/AllChat_fixed_beamsearch/1
+python Experiments/ConstrainedParodieGenerator/Calibrator.py evaluate all_chat None Experiments/ConstrainedParodieGenerator/CallibrationExperiments/AllChat_fixed_beamsearch_cleanup/1

@@ -1,0 +1,40 @@
+{
+    "original_song_title": "Smells Like Teen Spirit",
+    "original_song_artist": "Nirvana",
+    "language_model_name": "Llama 2 7B Chat",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] <<SYS>>\nYou're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. \n<</SYS>>\n\nWrite a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Verse 1]\nLoad up on guns, bring your friends\nIt's fun to lose and to pretend\nShe's over-bored and self-assured\nOh no, I know a dirty word\n\n[Pre-Chorus]\nHello, hello, hello, how low\nHello, hello, hello, how low\nHello, hello, hello, how low\nHello, hello, hello\n\n[Chorus]\nWith the lights out, it's less dangerous\nHere we are now, entertain us\nI feel stupid and contagious\nHere we are now, entertain us\nA mulatto, an albino\nA mosquito, my libido\n\n[Post-Chorus]\nYeah, hey, yay\n\n[Verse 2]\nI'm worse at what I do best\nAnd for this gift, I feel blessed\nOur little group has always been\nAnd always will until the end\n[Pre-Chorus]\nHello, hello, hello, how low\nHello, hello, hello, how low\nHello, hello, hello, how low\nHello, hello, hello\n\n[Chorus]\nWith the lights out, it's less dangerous\nHere we are now, entertain us\nI feel stupid and contagious\nHere we are now, entertain us\nA mulatto, an albino\nA mosquito, my libido\n\n[Post-Chorus]\nYeah, hey, yay\n\n[Guitar Solo]\n\n[Verse 3]\nAnd I forget just why I taste\nOh yeah, I guess it makes me smile\nI found it hard, it's hard to find\nOh well, whatever, never mind\n\n[Pre-Chorus]\nHello, hello, hello, how low\nHello, hello, hello, how low\nHello, hello, hello, how low\nHello, hello, hello\n[Chorus]\nWith the lights out, it's less dangerous\nHere we are now, entertain us\nI feel stupid and contagious\nHere we are now, entertain us\nA mulatto, an albino\nA mosquito, my libido\n\n[Outro]\nA denial, a denial\nA denial, a denial\nA denial, a denial\nA denial, a denial\nA denial [/INST]\nParody:\n[Verse 1]\nPineapple on a pizza\nIt's a topping that's just not right\nIt clashes with the cheese and sauce, oh boy\nIt's a flavor that's just not tight\n\n[Pre-Chorus]\nDon't put it on, don't put\nDon't put it on, don't put\nDon't put it on, don't put\nDon't putit afoot\n\n[Chorus]\nIt's a crime, it's a sin, it's a shame\nPineapple has got to reclaim\nIts rightful place, it's not mainframe\nOn a pizza, it's just nandaim\u00e9\nA pizza without pineapple\nIs like a day without apsell\n\n[Post-Chorus]\nYeah, hey, yawn\n\n[Verse 2]\nIt's a topping that's just too\nSweet and juicy doesn' bele to\nIt's a flavor that's just too loose, oh\nIt's a crime, it's a sin, itin\n\n[Guitar Solo]\n\n[Verse 3]\nBut we all know the truth, it's plain\nPineapple doesn't belong onp\u0459\nIt's a topping that's just too bland\nIt's a crime, it\u03cas a sin inland\n\n[Outro]\nA denial, a denial\nA denial, a denoble\nA denial, a den iqbal\nA denial, a denial\n",
+    "constraints_used": "Syllable Constraint | Rhyming Constraint | POS Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": true
+        },
+        "RhymingConstraintLBL": {
+            "max_possible_syllable_count": 2,
+            "good_beamscore_multiplier_same_rhyme_type": 0.9,
+            "good_rhyming_token_multiplier": 0.9,
+            "top_k_rhyme_words": 10,
+            "rhyme_type": "perfect",
+            "frequent_words": false
+        },
+        "PosConstraintLBL": {
+            "top_k_tokens_to_consider": 200,
+            "good_beamscore_multiplier": 0.6,
+            "good_token_multiplier": 0.6,
+            "limit_of_pos_similarity_to_satisfy_constraint": 0.5
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.9 | temperature: 0.75",
+    "state": "Finished Correctly",
+    "date": "23-05-2024",
+    "time": "12h-49m-12s",
+    "generation_duration": 659.89,
+    "parodie": "[Verse 1]\nPineapple on a pizza\nIt's a topping that's just not right\nIt clashes with the cheese and sauce, oh boy\nIt's a flavor that's just not tight\n\n[Pre-Chorus]\nDon't put it on, don't put\nDon't put it on, don't put\nDon't put it on, don't put\nDon't putit afoot\n\n[Chorus]\nIt's a crime, it's a sin, it's a shame\nPineapple has got to reclaim\nIts rightful place, it's not mainframe\nOn a pizza, it's just nandaim\u00e9\nA pizza without pineapple\nIs like a day without apsell\n\n[Post-Chorus]\nYeah, hey, yawn\n\n[Verse 2]\nIt's a topping that's just too\nSweet and juicy doesn' bele to\nIt's a flavor that's just too loose, oh\nIt's a crime, it's a sin, itin\n\n[Pre-Chorus]\nDon't put it on, don't put\nDon't put it on, don't put\nDon't put it on, don't put\nDon't putit afoot\n\n[Chorus]\nIt's a crime, it's a sin, it's a shame\nPineapple has got to reclaim\nIts rightful place, it's not mainframe\nOn a pizza, it's just nandaim\u00e9\nA pizza without pineapple\nIs like a day without apsell\n\n[Post-Chorus]\nYeah, hey, yawn\n\n[Guitar Solo]\n\n\n[Verse 3]\nBut we all know the truth, it's plain\nPineapple doesn't belong onp\u0459\nIt's a topping that's just too bland\nIt's a crime, it\u03cas a sin inland\n\n[Pre-Chorus]\nDon't put it on, don't put\nDon't put it on, don't put\nDon't put it on, don't put\nDon't putit afoot\n\n[Chorus]\nIt's a crime, it's a sin, it's a shame\nPineapple has got to reclaim\nIts rightful place, it's not mainframe\nOn a pizza, it's just nandaim\u00e9\nA pizza without pineapple\nIs like a day without apsell\n\n[Outro]\nA denial, a denial\nA denial, a denoble\nA denial, a den iqbal\nA denial, a denial\nA denial\n"
+}

@@ -175,6 +175,7 @@ total = 0
 questions = [0] * 20
 questions_with_constraints = [0] * 20
 questions_no_constraints = [0] * 20
+questions_answered_per_row = [0] * len(df)
 
 for index, row in df.iterrows():
     for i in range(1, 5):
@@ -190,6 +191,7 @@ for index, row in df.iterrows():
                         questions_no_constraints[(i - 1) * 5 + j - 1] += 1
                     total += 1
                     questions[(i - 1) * 5 + j - 1] += 1
+                    questions_answered_per_row[index] += 1
                 elif row[question] == 'Parody 2':
                     if j % 2 == 0:
                         no_constraints[k - 1] += 1
@@ -199,6 +201,9 @@ for index, row in df.iterrows():
                         questions_with_constraints[(i - 1) * 5 + j - 1] += 1
                     total += 1
                     questions[(i - 1) * 5 + j - 1] += 1
+                    questions_answered_per_row[index] += 1
+                
+                
 
 if total % 3 != 0:
     print('Error: Total number of answers is not a multiple of 3')
@@ -207,6 +212,10 @@ total = total // 3
 questions = [x // 3 for x in questions]
 questions_with_constraints = [x // 3 for x in questions_with_constraints]
 questions_no_constraints = [x // 3 for x in questions_no_constraints]
+questions_answered_per_row = [x // 3 for x in questions_answered_per_row]
+questions_answered_per_row = [x for x in questions_answered_per_row if x > 0]
+average_number_of_questions_answered = sum(questions_answered_per_row) / len(questions_answered_per_row)
+
 
 print('No constraints:')
 print('SQ001: ' + str(no_constraints[0] / total))
@@ -222,6 +231,9 @@ print('Total: ' + str(total))
 print('Questions: ' + str(questions))
 print('Questions with constraints: ' + str(questions_with_constraints))
 print('Questions no constraints: ' + str(questions_no_constraints))
+print('Questions answered per row: ' + str(questions_answered_per_row))
+print('Average number of questions answered: ' + str(average_number_of_questions_answered))
+print('Total number of people: ' + str(len(questions_answered_per_row)))
 
 # Function to perform chi-square test for each subquestion
 def perform_chi_square(no_constraints, with_constraints):

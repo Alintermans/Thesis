@@ -1,0 +1,40 @@
+{
+    "original_song_title": "Revenge",
+    "original_song_artist": "XXXTENTACION",
+    "language_model_name": "Llama 2 7B Chat",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] <<SYS>>\nYou're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. \n<</SYS>>\n\nWrite a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Intro]\nI think I, I think I finally\nFound a way to forgive myself\nFor the mistakes I made in my past\nI think that's the first step, right?\nYou agree?\n\n[Verse]\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\n\n[Chorus]\nIn my grave, I'll rot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\n[Outro]\nIn my grave, I'll rot\nI'll rot, I'll rot, I'll rot\nIs my pain your freedom?\nIs all of my pain your freedom?\nEnjoy [/INST]\nParody:\n[Intro]\nI think i, I think I finally\nFound a reason to hate pineapp\nOn a pizza, it shouldn't be, you\nSee, it's just not meant to be\nYou canny\n\n[Verse]\nI've tasted the sweetness, the juic\nBut now I'm filled with disgust, oh so crucified asic\u0459\nThe flavors don't mix, it's a crime\nCan't believe I ever put it on a\nNo, no, no, it's a no from me\nPineapple on pizza, it's a sin, you see? it doesn't\nGo with the flow, it's a no, no, no, no\nCan't take it, can't take it, no, no, no, no, no, no, no\nPineapple on pizza, it' stick\nDon't put it on, don't put it on, no, no waynick\nIn my grave, I'll rot, I'll rot, noontime\nIn my grave, I'll rot, I'll rot, no, noxema\nIn my grave, I'll rot, I willi\nIn my grave, I'll rot, I willi, no, no, no, nobleman\nIn my grave, I'll rot, I'll rot, nobuo\nIn my grave, I'll rot, I'll rot, nobuo, no, no, no, noxso\n\n[Chorus]\nIn my grave, I'll rot\nIn my grave, I'll rott\nIn my grave, I'll rott, won't\nIn my grave, I'll trot\nIn my grave, I'll trot, delmont\nIn my grave, I trot\n\n[Outro]\nIn my grave, I'll rot\nI'll rot, I'll rot whatnot\nIs my hate your freedom\nIs all of my hate your fiefdom\n",
+    "constraints_used": "Syllable Constraint | Rhyming Constraint | POS Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": true
+        },
+        "RhymingConstraintLBL": {
+            "max_possible_syllable_count": 2,
+            "good_beamscore_multiplier_same_rhyme_type": 0.9,
+            "good_rhyming_token_multiplier": 0.9,
+            "top_k_rhyme_words": 10,
+            "rhyme_type": "perfect",
+            "frequent_words": false
+        },
+        "PosConstraintLBL": {
+            "top_k_tokens_to_consider": 200,
+            "good_beamscore_multiplier": 0.6,
+            "good_token_multiplier": 0.6,
+            "limit_of_pos_similarity_to_satisfy_constraint": 0.5
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.9 | temperature: 0.75",
+    "state": "Finished Correctly",
+    "date": "23-05-2024",
+    "time": "08h-00m-59s",
+    "generation_duration": 845.04,
+    "parodie": "[Intro]\nI think i, I think I finally\nFound a reason to hate pineapp\nOn a pizza, it shouldn't be, you\nSee, it's just not meant to be\nYou canny\n\n[Verse]\nI've tasted the sweetness, the juic\nBut now I'm filled with disgust, oh so crucified asic\u0459\nThe flavors don't mix, it's a crime\nCan't believe I ever put it on a\nNo, no, no, it's a no from me\nPineapple on pizza, it's a sin, you see? it doesn't\nGo with the flow, it's a no, no, no, no\nCan't take it, can't take it, no, no, no, no, no, no, no\nPineapple on pizza, it' stick\nDon't put it on, don't put it on, no, no waynick\nIn my grave, I'll rot, I'll rot, noontime\nIn my grave, I'll rot, I'll rot, no, noxema\nIn my grave, I'll rot, I willi\nIn my grave, I'll rot, I willi, no, no, no, nobleman\nIn my grave, I'll rot, I'll rot, nobuo\nIn my grave, I'll rot, I'll rot, nobuo, no, no, no, noxso\n\n[Chorus]\nIn my grave, I'll rot\nIn my grave, I'll rott\nIn my grave, I'll rott, won't\nIn my grave, I'll trot\nIn my grave, I'll trot, delmont\nIn my grave, I trot\n\n[Outro]\nIn my grave, I'll rot\nI'll rot, I'll rot whatnot\nIs my hate your freedom\nIs all of my hate your fiefdom\nEnjoy\n"
+}

@@ -1,0 +1,40 @@
+{
+    "original_song_title": "Revenge",
+    "original_song_artist": "XXXTENTACION",
+    "language_model_name": "Mistral 8x7B Instruct v0.1",
+    "system_prompt": "You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. ",
+    "context": "Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n{{$SONG}}",
+    "assistant_prompt": "Parody:\n{{$PARODY}}",
+    "prompt": "[INST] You're a song parody generator that writes beautifull parodies. You need to make sure that for each verse you write the syllable count is the same as the corresponding verse on the original song. Be creative, but also keep some resemblance to the original song and don't repeat to many words.\nMake sure that each verse stands on its own. Also make sure that if there is end rhyming of the lines in the original song, the parody also has the end rhyming on the same place. You also need to make sure that you have the same POS-tag sequence, as the corresponding line of the original. Write a parody about why pineapple should not be on a pizza. Make sure to adhere to the rules of a song parody. Below you can find the original song. \nOriginal song:\n[Intro]\nI think I, I think I finally\nFound a way to forgive myself\nFor the mistakes I made in my past\nI think that's the first step, right?\nYou agree?\n\n[Verse]\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\nI've dug two graves for us, my dear\nCan't pretend that I was perfect, leavin' you in fear\nOh, man, what a world, the things I hear\nIf I could act on my revenge, no, would I?\nSome kill, some steal, some break your heart\nAnd you'd have thought that I would let it go and let you walk\nWell, broken hearts break bones, so break up fast\nAnd I don't wanna let it go, so in my grave, I'll rot\n\n[Chorus]\nIn my grave, I'll rot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\nIn my grave, I'll rot-ot-ot\nIn my grave, I'll rot\n[Outro]\nIn my grave, I'll rot\nI'll rot, I'll rot, I'll rot\nIs my pain your freedom?\nIs all of my pain your freedom?\nEnjoy [/INST]\nParody:\n[Intro]\nI think i, I think I finally\nFound a way to spurn my guilt, yes\nFor the crime of pineapple on a\nPizza slice, it's such a mess\nYou agree\n\n[Verse]\nI've ruined two slices, oh sohh\nSweet, tangy fruit atop my dough, no, no, no, no, no, no\nOh, man, what a blunder, the words, they\nFlow like a river of dismay, don't you\nThink it's just not right, it's such a\nTravesty, a sin, a mockery of pizza's grace, oh\nI'd take it all back, if I only could\nBut I can't turn back time, I'll just rot, I'm good, I'm good, am\nI? no, I've ruined two slices\nSweet, tangy fruit atop my dough, no, no, no, no, no, no\nOh, man, what a blunder, the dismay\nThe words flow like a river, don't belew\nDah, it's just not right, itasca\nTravesty, a sin, a mockery of pizza isgro\nI'd take it all back, if I only would\nBut I can't turn back time, I'll just rot, I'm good, I tungsram\n\n[Chorus]\nIn my grave, I'll rot\nIn my grave, I' rott\nIn my grave, I'll rotttottotttt\nIn my grave, I'll ottt\nIn my grave, I'll rosselotttt\nIn my grave, I'll ottt\n\n[Outro]\nIn my grave, I'll rottt\nI'll rott, I'll rott, lysaghtt\nIs my pizza's dishon\nIs all of its grace, your dishman\n",
+    "constraints_used": "Syllable Constraint | Rhyming Constraint | POS Constraint | ",
+    "chosen_hyper_parameters": {
+        "SyllableConstraintLBL": {
+            "good_beamscore_multiplier": 0.9,
+            "top_k_tokens_to_consider": 200,
+            "all_beams_have_syllable_amount": true
+        },
+        "RhymingConstraintLBL": {
+            "max_possible_syllable_count": 2,
+            "good_beamscore_multiplier_same_rhyme_type": 0.9,
+            "good_rhyming_token_multiplier": 0.9,
+            "top_k_rhyme_words": 10,
+            "rhyme_type": "perfect",
+            "frequent_words": false
+        },
+        "PosConstraintLBL": {
+            "top_k_tokens_to_consider": 200,
+            "good_beamscore_multiplier": 0.6,
+            "good_token_multiplier": 0.6,
+            "limit_of_pos_similarity_to_satisfy_constraint": 0.5
+        }
+    },
+    "num_beams": 5,
+    "seed": 42,
+    "way_of_generation": "Line by Line",
+    "decoding_method": "Sampling Beam Search | top_p: 0.9 | temperature: 0.75",
+    "state": "Finished Correctly",
+    "date": "23-05-2024",
+    "time": "08h-58m-55s",
+    "generation_duration": 893.23,
+    "parodie": "[Intro]\nI think i, I think I finally\nFound a way to spurn my guilt, yes\nFor the crime of pineapple on a\nPizza slice, it's such a mess\nYou agree\n\n[Verse]\nI've ruined two slices, oh sohh\nSweet, tangy fruit atop my dough, no, no, no, no, no, no\nOh, man, what a blunder, the words, they\nFlow like a river of dismay, don't you\nThink it's just not right, it's such a\nTravesty, a sin, a mockery of pizza's grace, oh\nI'd take it all back, if I only could\nBut I can't turn back time, I'll just rot, I'm good, I'm good, am\nI? no, I've ruined two slices\nSweet, tangy fruit atop my dough, no, no, no, no, no, no\nOh, man, what a blunder, the dismay\nThe words flow like a river, don't belew\nDah, it's just not right, itasca\nTravesty, a sin, a mockery of pizza isgro\nI'd take it all back, if I only would\nBut I can't turn back time, I'll just rot, I'm good, I tungsram\n\n[Chorus]\nIn my grave, I'll rot\nIn my grave, I' rott\nIn my grave, I'll rotttottotttt\nIn my grave, I'll ottt\nIn my grave, I'll rosselotttt\nIn my grave, I'll ottt\n\n[Outro]\nIn my grave, I'll rottt\nI'll rott, I'll rott, lysaghtt\nIs my pizza's dishon\nIs all of its grace, your dishman\nEnjiy\n"
+}
