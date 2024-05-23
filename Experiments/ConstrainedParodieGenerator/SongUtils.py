@@ -216,7 +216,7 @@ def cleanup_line(line):
     line = line.replace(",,", ",")
 
     #delete all non regular characters
-    line = ''.join(e for e in line if e.isalnum() or e in [" ", "'", "-", ",", ".", "!", "?", "(", ")"])
+    line = ''.join(e for e in line if e.isalpha() or e in [" ", "'", "-", ",", ".", "!", "?", "(", ")"])
 
     return line
 
