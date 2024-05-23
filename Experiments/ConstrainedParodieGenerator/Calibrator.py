@@ -2589,9 +2589,9 @@ def process_all_non_chat_results():
 
 
 async def evaluate_all_chat(folder_path):
-    dest_folder = "Experiments/ConstrainedParodieGenerator/CalibrationResults/AllChat/"
+    dest_folder = "Experiments/ConstrainedParodieGenerator/CalibrationResults/AllChat_fixed_beamsearch/"
     if platform.system() == 'Linux':
-        dest_folder = os.environ["VSC_DATA"] + "/CalibrationResults/AllChat/"
+        dest_folder = os.environ["VSC_DATA"] + "/CalibrationResults/AllChat_fixed_beamsearch/"
 
     original_results = []
 
@@ -2624,9 +2624,9 @@ async def evaluate_all_chat(folder_path):
         }, f, indent=4)
 
 def process_all_chat_results():
-    dest_folder = "Experiments/ConstrainedParodieGenerator/CalibrationResults/AllChat/"
+    dest_folder = "Experiments/ConstrainedParodieGenerator/CalibrationResults/AllChat_fixed_beamsearch/"
     if platform.system() == 'Linux':
-        dest_folder = os.environ["VSC_DATA"] + "/CalibrationResults/AllChat/"
+        dest_folder = os.environ["VSC_DATA"] + "/CalibrationResults/AllChat_fixed_beamsearch/"
     
     data = None
     with open(dest_folder+"results.json", "r") as f:

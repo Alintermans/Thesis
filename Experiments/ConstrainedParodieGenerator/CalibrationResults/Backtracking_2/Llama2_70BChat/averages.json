@@ -1,0 +1,58 @@
+{
+    "avg_perplexities": [
+        514.1577758789062,
+        456.9720916748047
+    ],
+    "avg_perplexities_difference": [
+        349.77536392211914,
+        373.9742908477783
+    ],
+    "avg_syllable_differences": [
+        0.0,
+        0.0
+    ],
+    "avg_mean_deviation_syllable_count": [
+        0.0,
+        0.0
+    ],
+    "avg_correct_syllable_count": [
+        1.0,
+        1.0
+    ],
+    "avg_duration": [
+        1898.66,
+        1328.325
+    ],
+    "avg_correct_rhymes": [
+        0.9226190476190477,
+        0.6770833333333333
+    ],
+    "avg_rhyme_word_length": [
+        2.083881578947368,
+        2.174242424242424
+    ],
+    "avg_pos_similarity": [
+        0.7804840502775091,
+        0.7587803002607505
+    ],
+    "avg_mean_deviation_pos_similarity": [
+        0.12392318829177103,
+        0.13907190077345974
+    ],
+    "avg_correct_pos_lines": [
+        0.17305672268907563,
+        0.1666396103896104
+    ],
+    "avg_overlap": [
+        0.30586222982428857,
+        0.3503606718500447
+    ],
+    "avg_repetition_difference": [
+        0.02266296464424633,
+        0.026008111391949362
+    ],
+    "possible_backtracking": [
+        true,
+        false
+    ]
+}
