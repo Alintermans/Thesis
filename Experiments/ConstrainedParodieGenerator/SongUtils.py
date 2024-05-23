@@ -541,7 +541,9 @@ def load_rhyming_dicts(use_frequent_words = False):
 def get_pronounciation_of_unknown_word(word):
     #remove special characters
     word = word.replace("’", "'")
-    word = ''.join(e for e in word if e.isalnum() or e in ["'", "-"])
+    word = ''.join(e for e in word if e.isalpha()  or e in ["'", "-"])
+
+
 
     return g2P(word)
 
