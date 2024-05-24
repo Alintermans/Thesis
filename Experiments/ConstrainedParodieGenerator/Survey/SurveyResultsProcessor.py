@@ -216,6 +216,8 @@ questions_answered_per_row = [x // 3 for x in questions_answered_per_row]
 questions_answered_per_row = [x for x in questions_answered_per_row if x > 0]
 average_number_of_questions_answered = sum(questions_answered_per_row) / len(questions_answered_per_row)
 
+print(no_constraints)
+print(with_constraints)
 
 print('No constraints:')
 print('SQ001: ' + str(no_constraints[0] / total))
