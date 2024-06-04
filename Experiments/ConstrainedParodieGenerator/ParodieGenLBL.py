@@ -455,7 +455,7 @@ if(__name__ == '__main__'):
         top_p=0.9, 
         temperature=0.75, 
         #temperature=float(2),
-        num_beams=2, 
+        num_beams=3, 
         seed=42, 
         syllable_constrained = True,
         rhyming_constrained = True,

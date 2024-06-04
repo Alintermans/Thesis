@@ -1138,6 +1138,7 @@ if __name__ == "__main__":
     #print(only_adds_regular_characters("I'm a test sentenc", "I'm a test sentenc've"))
     #print(get_syllable_count_of_sentence("Let's fast forward to three hundred takeout coffees later"))
     #print(get_top_frequent_words())
-    count_syllables_of_rhyme_words_in_songs()
+    #count_syllables_of_rhyme_words_in_songs()
+    print(d['myette'])
         
     

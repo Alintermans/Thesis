@@ -273,21 +273,36 @@ plot_questions(questions)
 
 def plot_results(no_constraints, with_constraints):
     labels = ['Coherency', 'Singability', 'Humor']
-    title = 'Survey results'
+    title = 'Survey results (%)'
 
     no_constraints = [x / total for x in no_constraints]
     with_constraints = [x / total for x in with_constraints]
+
+    no_constraints = [round(x * 100, 2) for x in no_constraints]
+    with_constraints = [round(x * 100, 2) for x in with_constraints]
 
     x = range(len(labels))
 
     fig, ax = plt.subplots()
     ax.bar(x, no_constraints, width=0.4, label='No constraints')
     ax.bar([i + 0.4 for i in x], with_constraints, width=0.4, label='With constraints')
-
+    
     ax.set_xticks([i + 0.2 for i in x])
     ax.set_xticklabels(labels)
     ax.set_title(title)
     ax.set_ylabel('Percentage')
+
+    for i, v in enumerate(no_constraints):
+        stringed_no_constraints = str(no_constraints[i])
+        if len(stringed_no_constraints) == 4:
+            stringed_no_constraints += '0'
+
+        ax.text(i - 0.17, v - 3.2, stringed_no_constraints + '%', color='white', fontweight='bold')
+    for i, v in enumerate(with_constraints):
+        stringed_with_constraints = str(with_constraints[i])
+        if len(stringed_with_constraints) == 4:
+            stringed_with_constraints += '0'
+        ax.text(i + 0.22, v - 3.2, stringed_with_constraints + '%', color='white', fontweight='bold')
 
     ax.legend()
     plt.savefig('Experiments/ConstrainedParodieGenerator/Survey/results-survey655765.png', dpi=300)
