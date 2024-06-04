@@ -136,7 +136,7 @@ class SyllableConstraintLBL(Constraint):
                 last_line = last_line.replace(self.eos_string, '')
             sum = get_syllable_count_of_sentence(last_line)
             last_token = input[-1].item()
-            if sum >self.new_syllable_amount or last_token == self.tokenizer.eos_token_id:
+            if sum >=self.new_syllable_amount or last_token == self.tokenizer.eos_token_id:
                 #print('sum: ',sum, 'sentence: ', sentences[len(self.original_prompt):])
                 result.append(True)
             elif input.shape[-1] - self.tokenized_prompt_length > 50:
